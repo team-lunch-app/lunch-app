@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import logo from './logo.svg'
+import './App.css'
 
-function App() {
+const App = () => {
+  const [restaurantName, setRestaurantName] = useState(null)
+
+  const changeRestaurantHandler = newText => event => {
+    event.preventDefault()
+    setRestaurantName(newText)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+    <div className='App'>
+      <header className='App-header'>
+        <img src={logo} className='App-logo' alt='logo' />
+        <p data-testid='Restaurant-Name'>
+          {restaurantName
+            ? `And the winner is: ${restaurantName}`
+            : 'Press the button, I dare you!'}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          className='Hangry-button'
+          data-testid='Hangry-button'
+          onClick={changeRestaurantHandler('Ravintola Artjärvi')}
         >
-          Learn React
-        </a>
+          I am hungry!
+        </button>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
