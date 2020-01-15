@@ -1,68 +1,68 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Lunch Application
+=================
+[![CircleCI](https://circleci.com/gh/team-lunch-app/lunch-app.svg?style=svg)](https://circleci.com/gh/team-lunch-app/lunch-app)
 
-## Available Scripts
+Everyone knows the struggle with *"Where should we go for lunch today?"* We aim to provide a quick and easy fix for that with the *Lunch Application*.
 
-In the project directory, you can run:
+*Lunch Application* is a simple app which provides the user with a randomized lunch restaurant from the Helsinki centrum. Just open up the app, press a button and you'll know where and what to eat today.
 
-### `yarn start`
+Production-ready/Staging version of the application is available at [lunch-application.herokuapp.com](https://lunch-application.herokuapp.com) *(Heroku)*
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Table of contents
+-----------------
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Contributing](#Contributing)
+- [Credits](#Credits)
+- [Licensing](#Licensing)
 
-### `yarn test`
+Installation
+------------
+### Running locally
+For running the development version:
+ 1. `git clone` the repo
+ 2. `yarn start`
+ 3. Browser window should start with address [localhost:3000](http://localhost:3000)
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+For running the production version locally:
+ 1. `git clone` the repo
+ 2. `yarn build`
+ 3. `node ./server/index.js`
 
-### `yarn build`
+This builds the frontend into a static site and starts the backend server, running on port 3001. By default, when running from the root of the project, the backend is configured to find the static content from `build/`.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To configure the port the server backend listens to, set environment variable `PORT` to desired port.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### Running directly in The Cloud
+Ensure that `build/` artifact directory produced by `yarn build` exists and is included in files being pushed and move the files to cloud service of your choosing.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Ensure that `yarn install --production` has been called on the cloud to install the required backend dependencies. Alternatively run `yarn build` directly on the cloud.
 
-### `yarn eject`
+After all dependencies are installed and `build/` exists, configure the service to start the server using `node ./server/index.js`.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Setting up to deploy through CI
+General CI configuration is out of scope for this guide. For example *CircleCI* configuration see our default [configuration](.circleci/config.yml).
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Additionally, `HEROKU_APP_NAME` and `HEROKU_API_KEY` must be configured on the CI when using the default configuration. The latter can be generated using `heroku auth:token` for developent builds and `heroku authorization:create` for long-term or production tokens.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Usage
+-----
+`TODO: Short(ish) user guide`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Contributing
+------------
+See [Running Locally](#Installation) for development setup.
 
-## Learn More
+Using TDD for new and updated features is the favored workflow.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`TODO: Link to code style guide etc.`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Credits
+-------
+`TODO: Names and stuff`
 
-### Code Splitting
+Licensing
+---------
+`TODO: What license should we use?`
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
