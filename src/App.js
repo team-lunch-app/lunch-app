@@ -3,11 +3,12 @@ import logo from './logo.svg'
 import './App.css'
 import Randomizer from './components/Randomizer'
 
-const App = () => {
+const App = ({ restaurantService }) => {
+
   return (
     <div className='App'>
       <header className='App-header'>
-        <Randomizer restaurantService={{}} />
+        <Randomizer restaurantService={restaurantService} />
       </header>
     </div>
   )
