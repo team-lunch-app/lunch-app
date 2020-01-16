@@ -33,4 +33,3 @@ test('pressing the button changes the text', () => {
   fireEvent.click(queryByTestId('randomizer-randomizeButton'))
   expect(restaurantNameElement.textContent).not.toBe(originalText)
 })
-

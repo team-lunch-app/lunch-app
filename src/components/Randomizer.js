@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 
 const Randomizer = ({ restaurantService }) => {
-  const [restaurantName, setRestaurantName] = useState(null)
+  const [restaurantName, setRestaurantName] = useState()
 
-  const changeRestaurantHandler = newText => event => {
+  const changeRestaurantHandler = (event) => {
     event.preventDefault()
     const restaurants = restaurantService.getAll()
     if (restaurants) {
@@ -17,7 +17,7 @@ const Randomizer = ({ restaurantService }) => {
   return (
     <div data-testid='randomizer'>
       <h1 data-testid='randomizer-resultLabel'>{restaurantName}</h1>
-      <button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler('Rax')}>Go!</button>
+      <button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler}>Go!</button>
     </div>
   )
 }
