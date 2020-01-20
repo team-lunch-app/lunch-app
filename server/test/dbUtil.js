@@ -1,5 +1,14 @@
 const mongoose = require('mongoose')
 
+const config = require('../config')
+
+const connect = async () => {
+  await mongoose.connect(config.dbUrl, {
+    useNewUrlParser: true,
+    dbName: config.dbName
+  })
+}
+
 /**
  * Called to create a row to the database. Gets the index of the current entry being
  * created as a parameter for generating variations.
@@ -50,6 +59,7 @@ const cleanupAndDisconnect = async () => {
 }
 
 module.exports = {
+  connect,
   createRows,
   createRowsFrom,
   cleanupAndDisconnect

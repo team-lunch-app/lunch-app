@@ -18,7 +18,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "testback": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\""
+    "testback": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,7 +36,8 @@
     ]
   },
   "devDependencies": {
-    "mongodb-memory-server": "^6.2.2",
+    
+    
     "supertest": "^4.0.2"
   }
 }

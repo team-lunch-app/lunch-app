@@ -1,3 +1,4 @@
+require('dotenv').config()
 const NodeEnvironment = require('jest-environment-node')
 const MongodbMemoryServer = require('mongodb-memory-server')
 
