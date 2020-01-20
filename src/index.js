@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import restaurantService from './services/restaurant_stub'
+import restaurantService from './services/restaurant'
 
 ReactDOM.render(<App restaurantService={restaurantService} />, document.getElementById('root'));
 

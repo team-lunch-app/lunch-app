@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 
 const Randomizer = ({ restaurantService }) => {
-  const [restaurantName, setRestaurantName] = useState()
+  const [restaurantName, setRestaurantName] = useState('Press the button')
 
-  const changeRestaurantHandler = (event) => {
+  const changeRestaurantHandler = async (event) => {
     event.preventDefault()
-    const restaurants = restaurantService.getAll()
-    if (restaurants) {
+    const restaurants = await restaurantService.getAll()
+    if (restaurants && restaurants.length > 0) {
       const newRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)].name
       setRestaurantName(newRestaurant)
     } else {
-      setRestaurantName('Error: No restaurants in the database')
+      setRestaurantName('Sorry, No restaurants available :C')
     }
   }
 

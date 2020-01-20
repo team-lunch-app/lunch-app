@@ -30,7 +30,7 @@ jobs:
 
       # run tests!
       - run: yarn test
-      - run: yarn testback
+      - run: yarn test:backci
 
   deploy:
     docker:
