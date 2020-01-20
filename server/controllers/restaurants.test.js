@@ -2,39 +2,31 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 const Restaurant = require('../models/restaurant')
 
-const createRestaurant = async (name, url) => {
-  const restaurant = new Restaurant({ name, url })
+const dbUtil = require('../test/dbUtil')
 
-  return await restaurant.save()
-}
+const restaurantData = [
+  {
+    name: 'Torigrilli',
+    url: 'https://www.torigrilli.fi',
+  },
+  {
+    name: 'Jaskan Pitsa & Kebab Oy',
+    url: 'https://www.jaskankebu.fi',
+  },
+  {
+    name: 'Steissin BK',
+    url: 'https://www.steissin-bk.fi',
+  },
+]
 
 let server
 beforeEach(async () => {
-  const app = require('../app')
-  server = supertest(app)
-
-  const maybeAdded = []
-  for (var i = 0; i < 3; i++) {
-    maybeAdded.push(createRestaurant(
-      `Restaurant #${i}`,
-      `http://url-${i}.com`,
-    ))
-  }
-
-  await Promise.all(maybeAdded)
+  server = supertest(require('../app'))
+  await dbUtil.createRowsFrom(Restaurant, restaurantData)
 })
 
 afterEach(async () => {
-  for (const i in mongoose.connection.collections) {
-    mongoose.connection.collections[i].deleteMany(() => { })
-  }
-
-  await mongoose.connection.dropDatabase()
-  await mongoose.disconnect()
-})
-
-afterAll(() => {
-  mongoose.connection.close()
+  await dbUtil.cleanupAndDisconnect()
 })
 
 test('that get request to /api/restaurants returns correct number of restaurants', async () => {
