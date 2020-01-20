@@ -1,17 +1,15 @@
-const express = require('express')
-const path = require('path')
-const app = express();
-const cors = require('cors')
-
 const config = require('./config')
+const app = require('./app')
+const http = require('http')
+const mongoose = require('mongoose')
 
-app.use(express.static(config.staticDir))
-app.use(cors())
+const server = http.createServer(app)
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(config.staticDir, 'index.html'))
-})
-
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`)
+mongoose.connect(config.dbUrl, {
+  useNewUrlParser: true,
+  dbName: config.dbName
+}).then(() => {
+  server.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`)
+  })
 })
