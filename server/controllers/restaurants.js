@@ -33,7 +33,11 @@ restaurantsRouter.delete('/:id', async (request, response, next) => {
   const id = request.params.id
 
   try {
-    await Restaurant.findByIdAndRemove(id)
+    const result = await Restaurant.findByIdAndRemove(id)
+    if (result === null) {
+      return response.status(400).send({ error: 'unknown id' })
+    }
+
     return response.status(200).end()
   } catch (error) {
     if (error.name === 'CastError' && error.kind === 'ObjectId') {

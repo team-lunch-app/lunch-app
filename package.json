@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "axios": "^0.19.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "mongoose": "^5.8.7",
@@ -18,8 +19,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "testback": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand"
+    "test:back": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand --watch",
+    "test:backci": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand",
+    "start:back": "nodemon server/index.js"
   },
+  "proxy": "http://localhost:3001",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -37,6 +41,7 @@
   },
   "devDependencies": {
     "mongodb-memory-server": "^6.2.2",
+    "nodemon": "^2.0.2",
     "supertest": "^4.0.2"
   }
 }
