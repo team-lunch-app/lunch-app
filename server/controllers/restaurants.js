@@ -29,4 +29,19 @@ restaurantsRouter.post('/', async (request, response, next) => {
 
 })
 
+restaurantsRouter.delete('/:id', async (request, response, next) => {
+  const id = request.params.id
+
+  try {
+    await Restaurant.findByIdAndRemove(id)
+    return response.status(200).end()
+  } catch (error) {
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+      return response.status(400).send({ error: error.message })
+    }
+    console.log('unknown error:', error)
+    next(error)
+  }
+})
+
 module.exports = restaurantsRouter

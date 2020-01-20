@@ -96,7 +96,7 @@ test('delete request to /api/restaurants/id with proper ID removes the restauran
   await server.delete(`/api/restaurants/${id}`)
 
   const restaurant = await Restaurant.findById(id)
-  expect(restaurant).not.toBeDefined()
+  expect(restaurant).toBeNull()
 })
 
 test('delete request to /api/restaurants/id with invalid ID fails', async () => {
