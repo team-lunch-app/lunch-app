@@ -14,6 +14,7 @@ const AddForm = ({ restaurantService }) => {
       restaurantService.add(name, url)
       setName('')
       setUrl('')
+      setError('')
       setVisible(!visible)
     } else {
       setError('Name and/or URL cannot be empty!')
