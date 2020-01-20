@@ -1,6 +1,12 @@
 const NodeEnvironment = require('jest-environment-node')
 const MongodbMemoryServer = require('mongodb-memory-server')
 
+/**
+ * Custom jest test environment for spinning up in-memory MongoDB server, based on
+ * default 'node' environment setting.
+ * 
+ * Configured in `jest.config.js` via `testEnvironment`
+ */
 class MongoDBEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config)
@@ -8,7 +14,7 @@ class MongoDBEnvironment extends NodeEnvironment {
       instance: {
       },
       binary: {
-        version: '3.6.1',
+        version: '4.2.2',
       },
     })
   }
