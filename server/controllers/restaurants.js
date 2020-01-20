@@ -18,10 +18,14 @@ restaurantsRouter.post('/', async (request, response, next) => {
   try {
     const savedRestaurant = await restaurant.save()
     response.json(savedRestaurant.toJSON())
-  } catch (exception) {
-    console.log('error', exception)
-    next(exception)
-  } 
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return response.status(400).send({ error: error.message })
+    }
+
+    console.log('unknown error:', error)
+    next(error)
+  }
 
 })
 

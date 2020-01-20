@@ -45,7 +45,7 @@ test('post request to /api/restaurants with valid data succeeds', async () => {
     .expect('Content-Type', /application\/json/i)
 })
 
-/*test('post request to /api/restaurants with valid data gets added restaurant as response', async () => {
+test('post request to /api/restaurants with valid data gets added restaurant as response', async () => {
   const response = await server
     .post('/api/restaurants')
     .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
@@ -58,14 +58,26 @@ test('post request to /api/restaurants with valid data succeeds', async () => {
 })
 
 test('post request to /api/restaurants with valid data adds the restaurant to DB', async () => {
+  const response = await server
+    .post('/api/restaurants')
+    .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
 
+  const id = response.body.id
+  const restaurant = await Restaurant.findById(id)
+  expect(restaurant).toBeDefined()
 })
 
 test('post request to /api/restaurants without url succeeds', async () => {
-
+  await server
+    .post('/api/restaurants')
+    .send({ name: 'Ravintola Artjärvi' })
+    .expect(200)
+    .expect('Content-Type', /application\/json/i)
 })
 
-test('post request to /api/restaurants without name fails', async () => {
-
-})*/
-
+test('post request to /api/restaurants with url but without name fails', async () => {
+  await server
+    .post('/api/restaurants')
+    .send({ url: 'http://some-url.com' })
+    .expect(400)
+})
