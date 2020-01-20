@@ -1,3 +1,3 @@
 module.exports = {
-  testEnvironment: 'node'
+  testEnvironment: './test/mongodb.environment.js'
 }
