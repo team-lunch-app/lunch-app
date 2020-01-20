@@ -2,6 +2,8 @@ import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
+import App from '../App'
+import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('../services/restaurant.js')
 
@@ -9,46 +11,47 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-test('component is hidden initially', () => {
-  const { queryByTestId } = render(<AddForm />)
-  const form = queryByTestId('addForm')
-  expect(form).not.toBeInTheDocument()
-})
+test('invalid input displays an error message', async () => {
+  const { queryByTestId } = render(
+    <MemoryRouter initialEntries={['/add']}>
+      <App restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
 
-test('visibility toggle button is visible initially', () => {
-  const { queryByTestId } = render(<AddForm />)
-  const button = queryByTestId('visibilityToggle')
-  expect(button).toBeInTheDocument()
-})
-
-test('component is rendered when button is pressed', () => {
-  const { queryByTestId } = render(<AddForm />)
-  const button = queryByTestId('visibilityToggle')
-  fireEvent.click(button)
-  const form = queryByTestId('addForm')
-  expect(form).toBeInTheDocument()
-})
-
-test('invalid input displays an error message', () => {
-  const { queryByTestId } = render(<AddForm restaurantService={restaurantService} />)
-
-  // Open the form
-  const button = queryByTestId('visibilityToggle')
-  fireEvent.click(button)
-
-  const buttonElement = queryByTestId('addForm-addButton')
+  const buttonElement = await queryByTestId('addForm-addButton')
   fireEvent.click(buttonElement)
 
-  const error = queryByTestId('addForm-errorMessage')
+  const error = await queryByTestId('addForm-errorMessage')
   expect(error).toBeInTheDocument()
 })
 
-test('add button calls restaurantservice', () => {
-  const { queryByTestId } = render(<AddForm restaurantService={restaurantService} />)
+test('add button calls restaurantservice', async () => {
+  const { queryByTestId } = render(
+    <MemoryRouter initialEntries={['/add']}>
+      <App restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
 
-  // Open the form
-  const button = queryByTestId('visibilityToggle')
-  fireEvent.click(button)
+  // Input test data
+  const nameElement = await queryByTestId('addForm-nameField')
+  fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  const urlElement = await queryByTestId('addForm-urlField')
+  fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
+
+  // Test that the restaurant service is called
+  const buttonElement = await queryByTestId('addForm-addButton')
+  fireEvent.click(buttonElement)
+
+  expect(restaurantService.add).toBeCalled()
+})
+
+
+test('form is closed after adding a restaurant', () => {
+  const { queryByTestId } = render(
+    <MemoryRouter initialEntries={['/add']}>
+      <App restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
 
   // Input test data
   const nameElement = queryByTestId('addForm-nameField')
@@ -56,10 +59,8 @@ test('add button calls restaurantservice', () => {
   const urlElement = queryByTestId('addForm-urlField')
   fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
 
-  // Test that the restaurant service is called
   const buttonElement = queryByTestId('addForm-addButton')
   fireEvent.click(buttonElement)
-  expect(restaurantService.add).toBeCalled()
 
   // Test that the form is closed after hitting submit
   const form = queryByTestId('addForm')
@@ -67,11 +68,11 @@ test('add button calls restaurantservice', () => {
 })
 
 test('pressing cancel hides the component', () => {
-  const { queryByTestId } = render(<AddForm restaurantService={restaurantService} />)
-
-  // Open the form
-  const button = queryByTestId('visibilityToggle')
-  fireEvent.click(button)
+  const { queryByTestId } = render(
+    <MemoryRouter initialEntries={['/add']}>
+      <App restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
 
   // Hide the form
   const buttonElement = queryByTestId('addForm-cancelButton')
