@@ -81,3 +81,28 @@ test('post request to /api/restaurants with url but without name fails', async (
     .send({ url: 'http://some-url.com' })
     .expect(400)
 })
+
+test('delete request to /api/restaurants/id with proper ID succeeds', async () => {
+  const id = restaurants[1]._id
+
+  await server
+    .delete(`/api/restaurants/${id}`)
+    .expect(200)
+})
+
+test('delete request to /api/restaurants/id with proper ID removes the restaurant from DB', async () => {
+  const id = restaurants[1]._id
+
+  await server.delete(`/api/restaurants/${id}`)
+
+  const restaurant = await Restaurant.findById(id)
+  expect(restaurant).not.toBeDefined()
+})
+
+test('delete request to /api/restaurants/id with invalid ID fails', async () => {
+  const id = 'invalid'
+
+  await server
+    .delete(`/api/restaurants/${id}`)
+    .expect(400)
+})
