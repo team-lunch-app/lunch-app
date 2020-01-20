@@ -1,33 +1,50 @@
 import React, { useState } from 'react'
+import { Form, Button, Alert } from 'react-bootstrap'
 
 const AddForm = ({ restaurantService }) => {
   const [visible, setVisible] = useState(false)
+  const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
 
   const addRestaurant = (event) => {
     event.preventDefault()
 
-    restaurantService.add(name, url)
-    setName('')
-    setUrl('')
-    setVisible(!visible)
+    if (name && url) {
+      restaurantService.add(name, url)
+      setName('')
+      setUrl('')
+      setVisible(!visible)
+    } else {
+      setError('Name and/or URL cannot be empty!')
+    }
   }
 
   const form = () => {
     return (
-      <form data-testid='addForm' onSubmit={(event) => addRestaurant(event)}>
-        <input type='text' onChange={(event) => setName(event.target.value)} />
-        <input type='text' onChange={(event) => setUrl(event.target.value)} />
-        <button data-testid='addForm-cancelButton' onClick={() => setVisible(!visible)}>Cancel</button>
-        <button data-testid='addForm-addButton' type='submit'>Add</button>
-      </form>
+      <div>
+        {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
+        <Form data-testid='addForm' onSubmit={(event) => addRestaurant(event)}>
+          <Form.Group>
+            <Form.Label>Restaurant Name</Form.Label>
+            <Form.Control data-testid='addForm-nameField' type='text' onChange={(event) => setName(event.target.value)} />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Restaurant Website</Form.Label>
+            <Form.Control data-testid='addForm-urlField' type='text' onChange={(event) => setUrl(event.target.value)} />
+          </Form.Group>
+
+          <Button data-testid='addForm-addButton' type='submit' variant='primary' block>Add</Button>
+          <Button data-testid='addForm-cancelButton' onClick={() => setVisible(!visible)} variant='secondary' block>Cancel</Button>
+        </Form>
+      </div>
     )
   }
 
   const button = () => {
     return (
-      <button data-testid='visibilityToggle' onClick={() => setVisible(!visible)}>+</button>
+      <Button data-testid='visibilityToggle' onClick={() => setVisible(!visible)}>+</Button>
     )
   }
 
