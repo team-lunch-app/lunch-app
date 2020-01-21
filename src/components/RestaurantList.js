@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Alert } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import RestaurantEntry from './RestaurantEntry'
 
 const RestaurantList = ({ restaurantService }) => {
   const [restaurants, setRestaurants] = useState()
@@ -8,6 +9,13 @@ const RestaurantList = ({ restaurantService }) => {
   useEffect(() => {
     restaurantService.getAll().then(setRestaurants)
   }, [restaurantService])
+
+  const removeRestaurant = async (restaurant) => {
+    const result = await restaurantService.remove(restaurant.id)
+    if (result && result.status === 200) {
+      setRestaurants(restaurants.filter(r => r.id !== restaurant.id))
+    }
+  }
 
   // Show loading text when restaurants haven't yet been fetched
   if (restaurants === undefined || restaurants === null) {
@@ -20,7 +28,7 @@ const RestaurantList = ({ restaurantService }) => {
       <h1 data-testid='restaurantList-title'>Restaurants</h1>
       {restaurants.length === 0
         ? <Alert data-testid='restaurantList-alertMessage' variant='warning'>Sorry, No restaurants available :C</Alert>
-      : restaurants.map((restaurant) => <p key={restaurant.id} data-testid='restaurantList-restaurantEntry'>{restaurant.name}</p>)
+        : restaurants.map((restaurant) => <RestaurantEntry key={restaurant.id} restaurant={restaurant} onRemove={removeRestaurant} />)
       }
     </div>
   )

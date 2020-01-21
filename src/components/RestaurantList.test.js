@@ -121,3 +121,23 @@ test('multiple restaurants are rendered if more than one exist', async () => {
   const restaurants = await queryAllByTestId('restaurantList-restaurantEntry')
   expect(restaurants.length).toBeGreaterThan(1)
 })
+
+test('pressing the delete button calls the service to remove the restaurant', async () => {
+  restaurantService.getAll.mockResolvedValue([{
+    name: "Luigi's pizza",
+    url: "www.pizza.fi",
+    id: 13
+  }])
+
+  const { getByTestId } = render(
+    <MemoryRouter initialEntries={['/restaurants']}>
+      <RestaurantList restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
+
+  await waitForElementToBeRemoved(() => getByTestId('restaurantList-loading'))
+
+  const removeButton = getByTestId('restaurantEntry-removeButton')
+  fireEvent.click(removeButton)
+  expect(restaurantService.remove).toBeCalledWith(13)
+})

@@ -1,7 +1,8 @@
 .main-navbar {
-    height: 3em;
+    height: 56px;
 }
 
 .main-container {
-    height: calc(100% - 3em);
+    padding: 4em;
+    height: calc(100% - 56px);
 }
