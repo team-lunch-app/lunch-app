@@ -21,7 +21,8 @@ restaurantService.getAll.mockResolvedValue(
       url: "www.bestfood.fi",
       id: 3
     }
-  ])
+  ]
+)
 
 test('new restaurant button exists', () => {
   const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)

@@ -1,16 +1,35 @@
 import React from 'react'
 import './App.css'
 import { Route, Link, } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
+import { Nav, Navbar, Container } from 'react-bootstrap'
 import Randomizer from './components/Randomizer'
 import AddForm from './components/AddForm'
+import restaurantService from './services/restaurant'
+import RestaurantList from './components/RestaurantList'
 
-const App = ({ restaurantService }) => {
+const App = () => {
+  const navbar = () => {
+    return (
+      <Navbar bg="light" expand="lg">
+        <Navbar.Brand>Lunch Application</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Link data-testid='addForm-link' className='nav-link' to='/add'>
+              Add a Restaurant
+            </Link>
+            <Link data-testid='restaurantList-link' className='nav-link' to='/restaurants'>
+              List Restaurants
+            </Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    )
+  }
 
   const homeView = () => {
     return (
       <>
-        <Link data-testid='addForm-link' to='/add'><Button >+</Button></Link>
         <Randomizer restaurantService={restaurantService} />
       </>
     )
@@ -25,12 +44,16 @@ const App = ({ restaurantService }) => {
   }
 
   return (
-    <div className='App'>
-      <header className='App-header'>
-          <Route exact path="/" render={() => homeView()} />
-          <Route exact path="/add" render={() => addFormView()} />
+    <>
+      <header className='main-navbar'>
+        {navbar()}
       </header>
-    </div>
+      <section className='main-container'>
+        <Route exact path="/" render={() => homeView()} />
+        <Route path="/add" render={() => addFormView()} />
+        <Route path="/restaurants" render={() => <RestaurantList restaurantService={restaurantService} />} />
+      </section>
+    </>
   )
 }
 
