@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { Form, Button, Alert } from 'react-bootstrap'
+import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+
+import './AddForm.css'
 
 const AddForm = ({ restaurantService }) => {
   const [error, setError] = useState('')
@@ -25,25 +27,41 @@ const AddForm = ({ restaurantService }) => {
   return (
     <div>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
-      <Form data-testid='addForm' onSubmit={(event) => addRestaurant(event)}>
+      <Form data-testid='addForm' onSubmit={(event) => addRestaurant(event)} className='add-form'>
         <Form.Group>
           <Form.Label>Restaurant Name</Form.Label>
-          <Form.Control data-testid='addForm-nameField' type='text' value={name} onChange={(event) => setName(event.target.value)} />
+          <Form.Control
+            data-testid='addForm-nameField'
+            type='text'
+            value={name}
+            onChange={(event) => setName(event.target.value)} />
         </Form.Group>
 
         <Form.Group>
           <Form.Label>Restaurant Website</Form.Label>
-          <Form.Control data-testid='addForm-urlField' type='text' value={url} onChange={(event) => setUrl(event.target.value)} />
+          <Form.Control
+            data-testid='addForm-urlField'
+            type='text'
+            value={url}
+            onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
 
-        <Button data-testid='addForm-addButton' type='submit' variant='primary' block>Add</Button>
-
-        <Button
-          data-testid='addForm-cancelButton'
-          onClick={() => history.push('/')}
-          variant='secondary' block>
-          Cancel
-        </Button>
+        <ButtonToolbar>
+          <Button
+            data-testid='addForm-cancelButton'
+            onClick={() => history.push('/')}
+            variant='secondary'
+          >
+            Cancel
+          </Button>
+          <Button
+            data-testid='addForm-addButton'
+            type='submit'
+            variant='primary'
+          >
+            Add
+          </Button>
+        </ButtonToolbar>
       </Form>
     </div>
   )

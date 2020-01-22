@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Link, Router } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
+import './Randomizer.css'
 
 const Randomizer = ({ restaurantService }) => {
   const [restaurantName, setRestaurantName] = useState('Press the button')
@@ -17,9 +17,9 @@ const Randomizer = ({ restaurantService }) => {
   }
 
   return (
-    <div data-testid='randomizer'>
+    <div data-testid='randomizer' className='randomizer'>
       <h1 data-testid='randomizer-resultLabel'>{restaurantName}</h1>
-      <button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler}>Go!</button>
+      <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
     </div>
   )
 }

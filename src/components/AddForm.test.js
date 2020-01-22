@@ -14,7 +14,7 @@ beforeEach(() => {
 test('invalid input displays an error message', async () => {
   const { queryByTestId } = render(
     <MemoryRouter initialEntries={['/add']}>
-      <App restaurantService={restaurantService} />
+      <AddForm restaurantService={restaurantService} />
     </MemoryRouter>
   )
 
@@ -28,7 +28,7 @@ test('invalid input displays an error message', async () => {
 test('add button calls restaurantservice', async () => {
   const { queryByTestId } = render(
     <MemoryRouter initialEntries={['/add']}>
-      <App restaurantService={restaurantService} />
+      <AddForm restaurantService={restaurantService} />
     </MemoryRouter>
   )
 
