@@ -29,7 +29,7 @@ module.exports = {
   ],
   'rules': {
     'indent': [
-      'error',
+      'warn',
       2
     ],
     'linebreak-style': [
@@ -37,7 +37,7 @@ module.exports = {
       'unix'
     ],
     'quotes': [
-      'error',
+      'warn',
       'single'
     ],
     'semi': [
