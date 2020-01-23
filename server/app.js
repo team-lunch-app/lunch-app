@@ -13,7 +13,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use('/api/restaurants', restaurantsRouter)
 
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(config.staticDir, 'index.html'))
 })
 
