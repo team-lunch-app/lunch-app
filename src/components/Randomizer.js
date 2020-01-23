@@ -21,7 +21,7 @@ const Randomizer = ({ restaurantService }) => {
     <div data-testid='randomizer' className='randomizer'>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       {restaurant.url
-        ? <p><a data-testid='randomizer-restaurantUrl' href={restaurant.url}>Website</a></p>
+        ? <p><a data-testid='randomizer-restaurantUrl' href={restaurant.url} target='_blank' rel='noopener noreferrer'>Website</a></p>
         : <></>
       }
       <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
