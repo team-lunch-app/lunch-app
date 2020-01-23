@@ -29,6 +29,7 @@ const RestaurantEntry = ({ restaurant, onRemove }) => {
 
 RestaurantEntry.propTypes = {
   restaurant: PropTypes.shape({
+    id: PropTypes.any.isRequired,
     name: PropTypes.string.isRequired
   }).isRequired,
   onRemove: PropTypes.func

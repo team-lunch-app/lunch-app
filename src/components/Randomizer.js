@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import './Randomizer.css'
 
 const Randomizer = ({ restaurantService }) => {
-  const [restaurant, setRestaurant] = useState('Press the button')
+  const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
 
   const changeRestaurantHandler = async (event) => {
     event.preventDefault()
