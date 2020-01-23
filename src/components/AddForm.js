@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 import './AddForm.css'
 
@@ -65,6 +66,12 @@ const AddForm = ({ restaurantService }) => {
       </Form>
     </div>
   )
+}
+
+AddForm.propTypes = {
+  restaurantService: PropTypes.shape({
+    add: PropTypes.func.isRequired
+  }).isRequired
 }
 
 export default AddForm

@@ -31,6 +31,9 @@ jobs:
       # run tests!
       - run: yarn test
       - run: yarn test:backci
+      # run linter
+      - run: yarn lint --max-warnings=0
+      - run: yarn lint:back --max-warnings=0
 
   deploy:
     docker:

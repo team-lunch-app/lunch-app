@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Card } from 'react-bootstrap'
-import restaurantService from '../services/restaurant'
+import PropTypes from 'prop-types'
 import './RestaurantEntry.css'
 
 const RestaurantEntry = ({ restaurant, onRemove }) => {
@@ -25,6 +25,13 @@ const RestaurantEntry = ({ restaurant, onRemove }) => {
       </Card.Body>
     </Card>
   )
+}
+
+RestaurantEntry.propTypes = {
+  restaurant: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  onRemove: PropTypes.func
 }
 
 export default RestaurantEntry

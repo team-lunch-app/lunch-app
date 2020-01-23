@@ -7,18 +7,18 @@ jest.mock('../services/restaurant.js')
 restaurantService.getAll.mockResolvedValue(
   [
     {
-      name: "Luigi's pizza",
-      url: "www.pizza.fi",
+      name: 'Luigi\'s pizza',
+      url: 'www.pizza.fi',
       id: 1
     },
     {
-      name: "Pizzeria Rax",
-      url: "www.rax.fi",
+      name: 'Pizzeria Rax',
+      url: 'www.rax.fi',
       id: 2
     },
     {
-      name: "Ravintola Artjärvi",
-      url: "www.bestfood.fi",
+      name: 'Ravintola Artjärvi',
+      url: 'www.bestfood.fi',
       id: 3
     }
   ]

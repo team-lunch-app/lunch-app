@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 import './Randomizer.css'
 
 const Randomizer = ({ restaurantService }) => {
@@ -26,6 +27,12 @@ const Randomizer = ({ restaurantService }) => {
       <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
     </div>
   )
+}
+
+Randomizer.propTypes = {
+  restaurantService: PropTypes.shape({
+    getAll: PropTypes.func.isRequired
+  }).isRequired
 }
 
 export default Randomizer

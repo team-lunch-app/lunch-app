@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { Route, Link, } from 'react-router-dom'
-import { Nav, Navbar, Container } from 'react-bootstrap'
+import { Nav, Navbar } from 'react-bootstrap'
 import Randomizer from './components/Randomizer'
 import AddForm from './components/AddForm'
 import restaurantService from './services/restaurant'
