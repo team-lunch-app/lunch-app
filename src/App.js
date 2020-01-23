@@ -10,17 +10,17 @@ import RestaurantList from './components/RestaurantList'
 const App = () => {
   const navbar = () => {
     return (
-      <Navbar bg="light" expand="lg">
+      <Navbar collapseOnSelect bg="light" expand="lg">
         <Navbar.Brand>Lunch Application</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Link data-testid='addForm-link' className='nav-link' to='/add'>
+            <Nav.Link as={Link} href='#' data-testid='addForm-link' to='/add'>
               Add a Restaurant
-            </Link>
-            <Link data-testid='restaurantList-link' className='nav-link' to='/restaurants'>
+            </Nav.Link>
+            <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
               List Restaurants
-            </Link>
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
