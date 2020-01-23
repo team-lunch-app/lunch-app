@@ -23,7 +23,9 @@
     "eject": "react-scripts eject",
     "test:back": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand --watch",
     "test:backci": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand",
-    "start:back": "nodemon server/index.js"
+    "start:back": "nodemon server/index.js",
+    "lint": "eslint src",
+    "lint:back": "eslint server"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
@@ -42,6 +44,8 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.18.0",
     "mongodb-memory-server": "^6.2.2",
     "nodemon": "^2.0.2",
     "supertest": "^4.0.2"
