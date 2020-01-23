@@ -43,6 +43,9 @@ module.exports = {
     'semi': [
       'error',
       'never'
+    ],
+    'eol-last': [
+      'warn'
     ]
   }
 }
