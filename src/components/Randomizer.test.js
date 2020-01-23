@@ -36,6 +36,12 @@ test('restaurant result label exists', () => {
   expect(labelElement).toBeInTheDocument()
 })
 
+test('restaurant result label is not empty initially', () => {
+  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+  const labelElement = queryByTestId('randomizer-resultLabel')
+  expect(labelElement).not.toBeEmpty()
+})
+
 test('restaurant url is not rendered initially (no restaurant is shown)', () => {
   const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
   const url = queryByTestId('randomizer-restaurantUrl')
