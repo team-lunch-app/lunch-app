@@ -36,6 +36,22 @@ test('restaurant result label exists', () => {
   expect(labelElement).toBeInTheDocument()
 })
 
+test('restaurant url is not rendered initially (no restaurant is shown)', () => {
+  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+  const url = queryByTestId('randomizer-restaurantUrl')
+  expect(url).not.toBeInTheDocument()
+})
+
+test('restaurant url is rendered after a restaurant is drawn', async  () => {
+  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+
+  fireEvent.click(queryByTestId('randomizer-randomizeButton'))
+  await waitForDomChange()
+
+  const url = queryByTestId('randomizer-restaurantUrl')
+  expect(url).toBeInTheDocument()
+})
+
 test('pressing the button calls the restaurant service', async () => {
   const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
   const buttonElement = queryByTestId('randomizer-randomizeButton')
