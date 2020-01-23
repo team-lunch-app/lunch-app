@@ -11,7 +11,7 @@ const App = () => {
   const navbar = () => {
     return (
       <Navbar collapseOnSelect bg="light" expand="lg">
-        <Navbar.Brand>Lunch Application</Navbar.Brand>
+        <Navbar.Brand as={Link} href='#' to='/'>Lunch Application</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">

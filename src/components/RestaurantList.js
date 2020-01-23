@@ -12,6 +12,10 @@ const RestaurantList = ({ restaurantService }) => {
   }, [restaurantService])
 
   const removeRestaurant = async (restaurant) => {
+    if (!window.confirm(`Are you sure you want to remove "${restaurant.name}"?`)) {
+      return
+    }
+
     const result = await restaurantService.remove(restaurant.id)
     if (result && result.status === 200) {
       setRestaurants(restaurants.filter(r => r.id !== restaurant.id))

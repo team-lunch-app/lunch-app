@@ -25,7 +25,8 @@
     "test:backci": "jest --config=\"server/jest.config.js\" --runTestsByPath=\"server/\" --runInBand",
     "start:back": "nodemon server/index.js",
     "lint": "eslint src",
-    "lint:back": "eslint server"
+    "lint:back": "eslint server",
+    "lint:all": "yarn lint && yarn lint:back"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {

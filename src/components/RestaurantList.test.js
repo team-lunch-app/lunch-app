@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom'
 jest.mock('../services/restaurant.js')
 
 beforeEach(() => {
+  jest.clearAllMocks()
   restaurantService.getAll.mockResolvedValue(
     [
       {
@@ -121,12 +122,14 @@ test('multiple restaurants are rendered if more than one exist', async () => {
   expect(restaurants.length).toBeGreaterThan(1)
 })
 
-test('pressing the delete button calls the service to remove the restaurant', async () => {
+test('pressing the delete button calls the service to remove the restaurant if OK is pressed', async () => {
   restaurantService.getAll.mockResolvedValue([{
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',
     id: 13
   }])
+
+  window.confirm = jest.fn(() => true)
 
   const { getByTestId } = render(
     <MemoryRouter initialEntries={['/restaurants']}>
@@ -139,4 +142,26 @@ test('pressing the delete button calls the service to remove the restaurant', as
   const removeButton = getByTestId('restaurantEntry-removeButton')
   fireEvent.click(removeButton)
   expect(restaurantService.remove).toBeCalledWith(13)
+})
+
+test('pressing the delete button does not attempt to remove the restaurant if cancel is pressed', async () => {
+  restaurantService.getAll.mockResolvedValue([{
+    name: 'Luigi\'s pizza',
+    url: 'www.pizza.fi',
+    id: 13
+  }])
+
+  window.confirm = jest.fn(() => false)
+
+  const { getByTestId } = render(
+    <MemoryRouter initialEntries={['/restaurants']}>
+      <RestaurantList restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
+
+  await waitForElementToBeRemoved(() => getByTestId('restaurantList-loading'))
+
+  const removeButton = getByTestId('restaurantEntry-removeButton')
+  fireEvent.click(removeButton)
+  expect(restaurantService.remove).not.toBeCalled()
 })
