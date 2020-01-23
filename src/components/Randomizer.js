@@ -17,11 +17,17 @@ const Randomizer = ({ restaurantService }) => {
     }
   }
 
+  const processUrl = (url) => {
+    const hasPrefix = url.startsWith('https://') || url.startsWith('http://') || url.startsWith('//')
+
+    return hasPrefix ? url : `//${url}`
+  }
+
   return (
     <div data-testid='randomizer' className='randomizer'>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       {restaurant.url
-        ? <p><a data-testid='randomizer-restaurantUrl' href={restaurant.url} target='_blank' rel='noopener noreferrer'>Website</a></p>
+        ? <p><a data-testid='randomizer-restaurantUrl' href={processUrl(restaurant.url)} target='_blank' rel='noopener noreferrer'>Website</a></p>
         : <></>
       }
       <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
