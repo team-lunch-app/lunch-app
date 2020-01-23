@@ -3,7 +3,7 @@ module.exports = {
   'env': {
     'node': true,
     'browser': false,
-    'es6': false
+    'es6': true
   },
   'parserOptions': {
     'sourceType': 'script'

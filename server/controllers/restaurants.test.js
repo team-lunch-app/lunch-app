@@ -1,5 +1,4 @@
 const supertest = require('supertest')
-const mongoose = require('mongoose')
 const Restaurant = require('../models/restaurant')
 const app = require('../app')
 

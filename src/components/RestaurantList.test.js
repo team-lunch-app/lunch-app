@@ -4,7 +4,6 @@ import restaurantService from '../services/restaurant'
 import App from '../App'
 import RestaurantList from './RestaurantList'
 import { MemoryRouter } from 'react-router-dom'
-import { fail } from 'assert'
 
 jest.mock('../services/restaurant.js')
 
@@ -12,18 +11,18 @@ beforeEach(() => {
   restaurantService.getAll.mockResolvedValue(
     [
       {
-        name: "Luigi's pizza",
-        url: "www.pizza.fi",
+        name: 'Luigi\'s pizza',
+        url: 'www.pizza.fi',
         id: 1
       },
       {
-        name: "Pizzeria Rax",
-        url: "www.rax.fi",
+        name: 'Pizzeria Rax',
+        url: 'www.rax.fi',
         id: 2
       },
       {
-        name: "Ravintola Artjärvi",
-        url: "www.bestfood.fi",
+        name: 'Ravintola Artjärvi',
+        url: 'www.bestfood.fi',
         id: 3
       }
     ]
@@ -92,8 +91,8 @@ test('informative message is rendered if no restaurants exist', async () => {
 
 test('a restaurant is rendered if one exists', async () => {
   restaurantService.getAll.mockResolvedValue([{
-    name: "Luigi's pizza",
-    url: "www.pizza.fi",
+    name: 'Luigi\'s pizza',
+    url: 'www.pizza.fi',
     id: 1
   }])
 
@@ -124,8 +123,8 @@ test('multiple restaurants are rendered if more than one exist', async () => {
 
 test('pressing the delete button calls the service to remove the restaurant', async () => {
   restaurantService.getAll.mockResolvedValue([{
-    name: "Luigi's pizza",
-    url: "www.pizza.fi",
+    name: 'Luigi\'s pizza',
+    url: 'www.pizza.fi',
     id: 13
   }])
 

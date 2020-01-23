@@ -1,13 +1,12 @@
 import React from 'react'
-import { render, fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
-import restaurantService from '../services/restaurant'
+import { render, fireEvent } from '@testing-library/react'
 import RestaurantEntry from './RestaurantEntry'
 
 jest.mock('../services/restaurant.js')
 
 const testRestaurant = {
-  name: "Luigi's pizza",
-  url: "www.pizza.fi",
+  name: 'Luigi\'s pizza',
+  url: 'www.pizza.fi',
   id: 13
 }
 
