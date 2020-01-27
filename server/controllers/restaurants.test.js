@@ -74,6 +74,24 @@ test('post request to /api/restaurants without url succeeds', async () => {
     .expect('Content-Type', /application\/json/i)
 })
 
+test('post request to /api/restaurants with url containing only whitespace succeeds', async () => {
+  await server
+    .post('/api/restaurants')
+    .send({ name: 'Ravintola Artjärvi', url: '   ' })
+    .expect(200)
+    .expect('Content-Type', /application\/json/i)
+})
+
+test('after post request to /api/restaurants with url containing only whitespace, the url is undefined', async () => {
+  const response = await server
+    .post('/api/restaurants')
+    .send({ name: 'Ravintola Artjärvi', url: '   ' })
+
+  const id = response.body.id
+  const restaurant = await Restaurant.findById(id)
+  expect(restaurant.url).not.toBeDefined()
+})
+
 test('post request to /api/restaurants with url but without name fails', async () => {
   await server
     .post('/api/restaurants')
@@ -103,5 +121,19 @@ test('delete request to /api/restaurants/id with invalid ID fails', async () => 
 
   await server
     .delete(`/api/restaurants/${id}`)
+    .expect(400)
+})
+
+test('post request to /api/restaurants with very long name fails', async () => {
+  await server
+    .post('/api/restaurants')
+    .send({ name: 'abc'.repeat(1337) })
+    .expect(400)
+})
+
+test('post request to /api/restaurants with very long url fails', async () => {
+  await server
+    .post('/api/restaurants')
+    .send({ name: 'Ravintola Artjärvi', url: 'abc'.repeat(4242) })
     .expect(400)
 })
