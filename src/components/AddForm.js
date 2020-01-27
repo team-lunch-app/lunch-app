@@ -11,15 +11,20 @@ const AddForm = ({ restaurantService }) => {
   const [url, setUrl] = useState('')
   let history = useHistory()
 
-  const addRestaurant = (event) => {
+  const addRestaurant = async (event) => {
     event.preventDefault()
 
     if (name && url) {
-      restaurantService.add({ name, url })
-      setName('')
-      setUrl('')
-      setError('')
-      history.push('/')
+      try {
+        await restaurantService.add({ name, url })
+
+        setName('')
+        setUrl('')
+        setError('')
+        history.push('/')
+      } catch (e) {
+        setError(e.response.data.error)
+      }
     } else {
       setError('Name and/or URL cannot be empty!')
     }

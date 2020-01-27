@@ -1,6 +1,17 @@
 const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
 
+const trimAndUndefineIfEmpty = string => {
+  if (string === undefined) {
+    return undefined
+  }
+
+  const trimmedUrl = string.trim()
+  return trimmedUrl.length > 0
+    ? trimmedUrl
+    : undefined
+}
+
 restaurantsRouter.get('/', async (request, response) => {
   const restaurants = await Restaurant
     .find({})
@@ -12,7 +23,7 @@ restaurantsRouter.post('/', async (request, response, next) => {
 
   const restaurant = new Restaurant({
     name: body.name,
-    url: body.url
+    url: trimAndUndefineIfEmpty(body.url)
   })
 
   try {
@@ -26,7 +37,6 @@ restaurantsRouter.post('/', async (request, response, next) => {
     console.log('unknown error:', error)
     next(error)
   }
-
 })
 
 restaurantsRouter.delete('/:id', async (request, response, next) => {
