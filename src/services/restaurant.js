@@ -15,4 +15,15 @@ const remove = async (id) => {
   return await axios.delete(`${baseUrl}/${id}`)
 }
 
-export default { getAll, add, remove }
+const getRandom = async (categoryList) => {
+  //STUB
+  // SIIRTYY BACKENDIIN
+  let restaurants = getAll()
+  const containsCategory = (category) => categoryList.includes(category)
+  restaurants = (categoryList.length !== 0) 
+    ? restaurants.filter(rest => rest.categories.some(containsCategory))
+    : restaurants
+  return restaurants[Math.floor(Math.random() * restaurants.length)]
+}
+
+export default { getAll, add, remove, getRandom }

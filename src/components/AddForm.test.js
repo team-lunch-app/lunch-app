@@ -81,3 +81,14 @@ test('pressing cancel hides the component', () => {
   const form = queryByTestId('addForm')
   expect(form).not.toBeInTheDocument()
 })
+
+test('category dropdown is rendered', () => {
+  const { queryByTestId } = render(
+    <MemoryRouter initialEntries={['/add']}>
+      <App restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
+
+  const dropdown = queryByTestId('category-dropdown')
+  expect(dropdown).toBeInTheDocument()
+})
