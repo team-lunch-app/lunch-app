@@ -30,6 +30,7 @@ const AddForm = ({ restaurantService }) => {
     }
   }
 
+
   return (
     <div>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
