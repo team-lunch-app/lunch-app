@@ -24,13 +24,13 @@ const remove = async (id) => {
 const getRandom = async (categoryList) => {
   //STUB
   // SIIRTYY BACKENDIIN
-  let restaurants = getAll()
+  let restaurants = await getAll()
   const containsCategory = (category) => categoryList
     .map(listCategory => listCategory.name)
     .includes(category)
-  restaurants = (categoryList.length !== 0) ?
-    restaurants.filter(rest => rest.categories.some(containsCategory)) :
-    restaurants
+  restaurants = (categoryList.length !== 0) 
+    ? restaurants.filter(rest => rest.categories.some(containsCategory))
+    : restaurants
   return restaurants[Math.floor(Math.random() * restaurants.length)]
 }
 
