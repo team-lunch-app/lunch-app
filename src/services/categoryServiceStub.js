@@ -1,4 +1,4 @@
-const list = ['Asian', 'Sushi', 'Pizza', 'Burgers', 'Wings', 'Mexican', 'Italian', 'Kebab', 'Chinese']
+const list = [{name: 'Asian', id:1}, {name: 'Sushi', id:2}, {name: 'Pizza', id:3}]
 
 const getAll = () => {
   return list

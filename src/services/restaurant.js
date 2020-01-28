@@ -6,8 +6,14 @@ const getAll = async () => {
   return response.data
 }
 
-const add = async ({ name, url }) => {
-  const response = await axios.post(`${baseUrl}`, { name, url })
+const add = async ({
+  name,
+  url
+}) => {
+  const response = await axios.post(`${baseUrl}`, {
+    name,
+    url
+  })
   return response.data
 }
 
@@ -19,11 +25,18 @@ const getRandom = async (categoryList) => {
   //STUB
   // SIIRTYY BACKENDIIN
   let restaurants = getAll()
-  const containsCategory = (category) => categoryList.includes(category)
-  restaurants = (categoryList.length !== 0) 
-    ? restaurants.filter(rest => rest.categories.some(containsCategory))
-    : restaurants
+  const containsCategory = (category) => categoryList
+    .map(listCategory => listCategory.name)
+    .includes(category)
+  restaurants = (categoryList.length !== 0) ?
+    restaurants.filter(rest => rest.categories.some(containsCategory)) :
+    restaurants
   return restaurants[Math.floor(Math.random() * restaurants.length)]
 }
 
-export default { getAll, add, remove, getRandom }
+export default {
+  getAll,
+  add,
+  remove,
+  getRandom
+}

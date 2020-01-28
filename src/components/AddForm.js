@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { Form, Button, ButtonToolbar, Alert, Dropdown } from 'react-bootstrap'
+import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import CategoryServiceStub from '../services/categoryServiceStub'
 
 import './AddForm.css'
 
@@ -10,7 +9,6 @@ const AddForm = ({ restaurantService }) => {
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
-  const [categories, setCategories]  = useState([])
   let history = useHistory()
 
   const addRestaurant = async (event) => {
@@ -32,12 +30,6 @@ const AddForm = ({ restaurantService }) => {
     }
   }
 
-  const addCategory = (event) => {
-    event.preventDefault()
-    console.log('event', event)
-    setCategories(categories.concat(event.target.value))
-    console.log('Kategoriat: ', categories)
-  }
 
   return (
     <div>
@@ -60,16 +52,6 @@ const AddForm = ({ restaurantService }) => {
             value={url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
-        {categories.length !== 0 
-          ? categories.map(category => <p key={'something'+category}>{category}</p>)
-          : <p key="dummy"></p>
-        }
-        <Dropdown>
-          <Dropdown.Toggle data-testid='category-dropdown' id="dropdown-custom-1">Categories</Dropdown.Toggle>
-          <Dropdown.Menu >
-            {CategoryServiceStub.getAll().map(category => <Dropdown.Item value={category} onClick={addCategory} key={category}> {category} </Dropdown.Item>)}
-          </Dropdown.Menu>
-        </Dropdown>
 
         <ButtonToolbar>
           <Button
