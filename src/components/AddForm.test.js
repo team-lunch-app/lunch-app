@@ -1,7 +1,6 @@
 import React from 'react'
-import { render, fireEvent, waitForDomChange, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
 import AddForm from './AddForm'
-import RestaurantEntry from './RestaurantEntry'
 import restaurantService from '../services/restaurant'
 import App from '../App'
 import { MemoryRouter } from 'react-router-dom'

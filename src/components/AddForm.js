@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
 import { useHistory, useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import CategoryDropdown from './CategoryDropdown'
 
 import './AddForm.css'
 
@@ -10,6 +11,7 @@ const AddForm = ({ restaurantService }) => {
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
   const [restaurant, setRestaurant] = useState({ name: '', url: '' })
+  const [categories, setCategories]  = useState([])
   let history = useHistory()
   let params = useParams()
 
@@ -57,6 +59,16 @@ const AddForm = ({ restaurantService }) => {
     }
   }
 
+  const addCategory = (categoryToAdd) => {
+    const newCategories = [...categories, categoryToAdd]
+    setCategories(newCategories)
+  }
+
+  const removeCategory = (categoryToRemove) => {
+    const newCategories = categories.filter(category => category.id !== categoryToRemove.id)
+    setCategories(newCategories)
+  }
+
   return (
     <div>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
@@ -78,7 +90,11 @@ const AddForm = ({ restaurantService }) => {
             value={restaurant.url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
-
+        {categories.length > 0 
+          ? categories.map(category => console.log(category))
+          : <p key="No filters"></p>
+        }
+        <CategoryDropdown selected={categories} onAdd={addCategory} onRemove={removeCategory} />
         <ButtonToolbar>
           <Button
             data-testid='addForm-cancelButton'
@@ -103,6 +119,7 @@ const AddForm = ({ restaurantService }) => {
 AddForm.propTypes = {
   restaurantService: PropTypes.shape({
     add: PropTypes.func.isRequired,
+    update: PropTypes.func.isRequired,
     getOneById: PropTypes.func.isRequired
   }).isRequired
 }
