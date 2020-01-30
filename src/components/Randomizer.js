@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
+import Filter from './Filter'
 import PropTypes from 'prop-types'
 import './Randomizer.css'
 
 const Randomizer = ({ restaurantService }) => {
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
+  const [filterCategories, setFilterCategories] = useState([{ id: 1, name: 'pizza' }, { id: 2, name: 'burger' }, { id: 3, name: 'salads' }])
 
   const changeRestaurantHandler = async (event) => {
     event.preventDefault()
@@ -31,6 +33,7 @@ const Randomizer = ({ restaurantService }) => {
         : <></>
       }
       <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
+      <Filter setFilterCategories={setFilterCategories} filterCategories={filterCategories}/>
     </div>
   )
 }
