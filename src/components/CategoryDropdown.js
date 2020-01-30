@@ -4,11 +4,12 @@ import categoryService from '../services/categoryServiceStub'
 
 const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [categoryStates, setCategoryStates] = useState()
+  const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    categoryService.getAll()
-      .then(categories => setCategoryStates([...categories]))
+    categoryService
+      .getAll()
+      .then(fetched => setCategories([...fetched]))
   }, [])
 
   const isActive = category => selected.map(c => c.id).includes(category.id)
@@ -17,10 +18,10 @@ const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
     <Dropdown
       show={dropdownOpen}
       onSelect = {(eventKey) => {
-        const clicked = categoryStates.find(c => c.id == eventKey)
+        const clicked = categories.find(c => c.id == eventKey)
 
         if (isActive(clicked)) {
-          onRemove(clicked)
+          onRemove(clicked.id)
         } else {
           onAdd(clicked)
         }
@@ -31,8 +32,8 @@ const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
     >
       <Dropdown.Toggle data-testid='category-dropdown' id="dropdown-custom-1">Categories</Dropdown.Toggle>
       <Dropdown.Menu >
-        {categoryStates
-          ? categoryStates.map(category => 
+        {categories
+          ? categories.map(category => 
             <Dropdown.Item 
               eventKey={category.id} 
               key={category.id}

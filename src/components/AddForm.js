@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
 import { useHistory, useParams } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import CategoryDropdown from './CategoryDropdown'
+
+import restaurantService from '../services/restaurant'
 
 import './AddForm.css'
+import Filter from './Filter'
 
-const AddForm = ({ restaurantService }) => {
+const AddForm = () => {
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
   const [restaurant, setRestaurant] = useState({ name: '', url: '' })
-  const [categories, setCategories]  = useState([])
+  const [selected, setSelected] = useState([])
   let history = useHistory()
   let params = useParams()
 
@@ -59,20 +60,10 @@ const AddForm = ({ restaurantService }) => {
     }
   }
 
-  const addCategory = (categoryToAdd) => {
-    const newCategories = [...categories, categoryToAdd]
-    setCategories(newCategories)
-  }
-
-  const removeCategory = (categoryToRemove) => {
-    const newCategories = categories.filter(category => category.id !== categoryToRemove.id)
-    setCategories(newCategories)
-  }
-
   return (
-    <div>
+    <div data-testid='addForm'>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
-      <Form data-testid='addForm' onSubmit={(event) => saveRestaurant(event)} className='add-form'>
+      <Form onSubmit={(event) => saveRestaurant(event)} className='add-form'>
         <Form.Group>
           <Form.Label>Restaurant Name</Form.Label>
           <Form.Control
@@ -90,11 +81,11 @@ const AddForm = ({ restaurantService }) => {
             value={restaurant.url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
-        {categories.length > 0 
-          ? categories.map(category => console.log(category))
+        {selected.length > 0
+          ? selected.map(category => console.log(category))
           : <p key="No filters"></p>
         }
-        <CategoryDropdown selected={categories} onAdd={addCategory} onRemove={removeCategory} />
+        <Filter filterCategories={selected} setFilterCategories={setSelected} />
         <ButtonToolbar>
           <Button
             data-testid='addForm-cancelButton'
@@ -117,11 +108,6 @@ const AddForm = ({ restaurantService }) => {
 }
 
 AddForm.propTypes = {
-  restaurantService: PropTypes.shape({
-    add: PropTypes.func.isRequired,
-    update: PropTypes.func.isRequired,
-    getOneById: PropTypes.func.isRequired
-  }).isRequired
 }
 
 export default AddForm

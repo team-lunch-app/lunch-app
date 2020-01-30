@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import FilterList from './FilterList'
-import FilterDropdown from './FilterDropdown'
+import CategoryDropdown from './CategoryDropdown'
 
 const Filter = ({ filterCategories, setFilterCategories }) => {
 
@@ -16,7 +16,9 @@ const Filter = ({ filterCategories, setFilterCategories }) => {
   return (
     <>
       <FilterList selected={filterCategories} onRemove={handleRemove} />
-      <FilterDropdown onAdd={handleAdd} />
+      <div data-testid='filter-dropdown'>
+        <CategoryDropdown selected={filterCategories} onAdd={handleAdd} onRemove={handleRemove} />
+      </div>
     </>
   )
 }

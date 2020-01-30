@@ -1,5 +1,6 @@
 import React from 'react'
-import { render, fireEvent, waitForDomChange } from '@testing-library/react'
+import { fireEvent, waitForDomChange } from '@testing-library/react'
+import { actRender } from '../test/utilities'
 import Randomizer from './Randomizer'
 import restaurantService from '../services/restaurant'
 
@@ -24,32 +25,32 @@ restaurantService.getAll.mockResolvedValue(
   ]
 )
 
-test('new restaurant button exists', () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+test('new restaurant button exists', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
   const buttonElement = queryByTestId('randomizer-randomizeButton')
   expect(buttonElement).toBeInTheDocument()
 })
 
-test('restaurant result label exists', () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+test('restaurant result label exists', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
   const labelElement = queryByTestId('randomizer-resultLabel')
   expect(labelElement).toBeInTheDocument()
 })
 
-test('restaurant result label is not empty initially', () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+test('restaurant result label is not empty initially', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
   const labelElement = queryByTestId('randomizer-resultLabel')
   expect(labelElement).not.toBeEmpty()
 })
 
-test('restaurant url is not rendered initially (no restaurant is shown)', () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+test('restaurant url is not rendered initially (no restaurant is shown)', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
   const url = queryByTestId('randomizer-restaurantUrl')
   expect(url).not.toBeInTheDocument()
 })
 
-test('restaurant url is rendered after a restaurant is drawn', async  () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+test('restaurant url is rendered after a restaurant is drawn', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
 
   fireEvent.click(queryByTestId('randomizer-randomizeButton'))
   await waitForDomChange()
@@ -59,7 +60,7 @@ test('restaurant url is rendered after a restaurant is drawn', async  () => {
 })
 
 test('pressing the button calls the restaurant service', async () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+  const { queryByTestId } = await actRender(<Randomizer />)
   const buttonElement = queryByTestId('randomizer-randomizeButton')
 
   fireEvent.click(buttonElement)
@@ -69,7 +70,8 @@ test('pressing the button calls the restaurant service', async () => {
 })
 
 test('pressing the button changes the text', async () => {
-  const { queryByTestId } = render(<Randomizer restaurantService={restaurantService} />)
+  const { queryByTestId } = await actRender(<Randomizer />)
+
   const restaurantNameElement = queryByTestId('randomizer-resultLabel')
   const originalText = restaurantNameElement.textContent
 

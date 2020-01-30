@@ -4,7 +4,9 @@ import Filter from './Filter'
 import PropTypes from 'prop-types'
 import './Randomizer.css'
 
-const Randomizer = ({ restaurantService }) => {
+import restaurantService from '../services/restaurant'
+
+const Randomizer = () => {
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
   const [filterCategories, setFilterCategories] = useState([{ id: 1, name: 'pizza' }, { id: 2, name: 'burger' }, { id: 3, name: 'salads' }])
 
@@ -39,9 +41,6 @@ const Randomizer = ({ restaurantService }) => {
 }
 
 Randomizer.propTypes = {
-  restaurantService: PropTypes.shape({
-    getAll: PropTypes.func.isRequired
-  }).isRequired
 }
 
 export default Randomizer
