@@ -9,7 +9,7 @@ const AddForm = ({ restaurantService }) => {
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
-  const [restaurant, setRestaurant] = useState({name: '', url: ''})
+  const [restaurant, setRestaurant] = useState({ name: '', url: '' })
   let history = useHistory()
   let params = useParams()
 
@@ -18,25 +18,39 @@ const AddForm = ({ restaurantService }) => {
       const fetchedRestaurant = await restaurantService.getOneById(params.id)
       if (fetchedRestaurant) {
         setRestaurant(fetchedRestaurant)
+        setName(fetchedRestaurant.name)
+        setUrl(fetchedRestaurant.url)
       }
     }
 
     findRestaurant()
   }, [params, restaurantService])
 
-  const addRestaurant = async (event) => {
+  const saveRestaurant = async (event) => {
     event.preventDefault()
 
+    // TODO: CLEANUP
     if (name && url) {
-      try {
-        await restaurantService.add({ name, url })
-
-        setName('')
-        setUrl('')
-        setError('')
-        history.push('/')
-      } catch (e) {
-        setError(e.response.data.error)
+      if (restaurant.id) {
+        try {
+          await restaurantService.update(restaurant)
+          setName('')
+          setUrl('')
+          setError('')
+          history.push('/')
+        } catch (e) {
+          setError(e.response.data.error)
+        }
+      } else {
+        try {
+          await restaurantService.add({ name, url })
+          setName('')
+          setUrl('')
+          setError('')
+          history.push('/')
+        } catch (e) {
+          setError(e.response.data.error)
+        }
       }
     } else {
       setError('Name and/or URL cannot be empty!')
@@ -46,7 +60,7 @@ const AddForm = ({ restaurantService }) => {
   return (
     <div>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
-      <Form data-testid='addForm' onSubmit={(event) => addRestaurant(event)} className='add-form'>
+      <Form data-testid='addForm' onSubmit={(event) => saveRestaurant(event)} className='add-form'>
         <Form.Group>
           <Form.Label>Restaurant Name</Form.Label>
           <Form.Control
@@ -78,7 +92,7 @@ const AddForm = ({ restaurantService }) => {
             type='submit'
             variant='primary'
           >
-            Add
+            {restaurant.name ? 'Update' : 'App'}
           </Button>
         </ButtonToolbar>
       </Form>
