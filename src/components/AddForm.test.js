@@ -1,6 +1,7 @@
 import React from 'react'
-import { render, fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, fireEvent, waitForDomChange, waitForElementToBeRemoved } from '@testing-library/react'
 import AddForm from './AddForm'
+import RestaurantEntry from './RestaurantEntry'
 import restaurantService from '../services/restaurant'
 import App from '../App'
 import { MemoryRouter } from 'react-router-dom'
@@ -80,4 +81,39 @@ test('pressing cancel hides the component', () => {
 
   const form = queryByTestId('addForm')
   expect(form).not.toBeInTheDocument()
+})
+
+test('form is empty if restaurant is not found with the given id parameter', () => {
+  const { queryByTestId } = render(
+    <MemoryRouter initialEntries={['/edit/1']}>
+      <AddForm restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
+
+  const nameField = queryByTestId('addForm-nameField')
+  expect(nameField.value).toBe('')
+})
+
+test('form is pre-filled if a restaurant is found with the given id parameter', async () => {
+  restaurantService.getOneById.mockResolvedValue(
+    {
+      name: 'Luigi\'s pizza',
+      url: 'www.pizza.fi',
+      id: 1
+    }
+  )
+
+  let queryByTestId
+  await act(async () => {
+    const renderResult = render(
+      <MemoryRouter initialEntries={['/edit/1']}>
+        <AddForm restaurantService={restaurantService} />
+      </MemoryRouter>
+    )
+    queryByTestId = renderResult.queryByTestId
+  })
+
+  //await waitForDomChange()
+  const nameField = await queryByTestId('addForm-nameField')
+  expect(nameField.value).toBe('Luigi\'s pizza')
 })

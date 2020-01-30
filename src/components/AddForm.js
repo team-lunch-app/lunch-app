@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import './AddForm.css'
@@ -9,7 +9,20 @@ const AddForm = ({ restaurantService }) => {
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
+  const [restaurant, setRestaurant] = useState({name: '', url: ''})
   let history = useHistory()
+  let params = useParams()
+
+  useEffect(() => {
+    const findRestaurant = async () => {
+      const fetchedRestaurant = await restaurantService.getOneById(params.id)
+      if (fetchedRestaurant) {
+        setRestaurant(fetchedRestaurant)
+      }
+    }
+
+    findRestaurant()
+  }, [params, restaurantService])
 
   const addRestaurant = async (event) => {
     event.preventDefault()
@@ -30,7 +43,6 @@ const AddForm = ({ restaurantService }) => {
     }
   }
 
-
   return (
     <div>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
@@ -40,7 +52,7 @@ const AddForm = ({ restaurantService }) => {
           <Form.Control
             data-testid='addForm-nameField'
             type='text'
-            value={name}
+            value={restaurant.name}
             onChange={(event) => setName(event.target.value)} />
         </Form.Group>
 
@@ -49,7 +61,7 @@ const AddForm = ({ restaurantService }) => {
           <Form.Control
             data-testid='addForm-urlField'
             type='text'
-            value={url}
+            value={restaurant.url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
 
@@ -76,7 +88,8 @@ const AddForm = ({ restaurantService }) => {
 
 AddForm.propTypes = {
   restaurantService: PropTypes.shape({
-    add: PropTypes.func.isRequired
+    add: PropTypes.func.isRequired,
+    getOneById: PropTypes.func.isRequired
   }).isRequired
 }
 

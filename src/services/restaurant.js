@@ -6,6 +6,18 @@ const getAll = async () => {
   return response.data
 }
 
+const getOneById = async (id) => {
+  const restaurants = await getAll()
+  const restaurantWithId = restaurants.find((restaurant) => restaurant.id === id)
+  return restaurantWithId
+
+  /*
+  // Varsinainen toteutus
+  const response = await axios.get(`${baseUrl}/${id}`)
+  return response.data
+  */
+}
+
 const add = async ({
   name,
   url
@@ -36,6 +48,7 @@ const getRandom = async (categoryList) => {
 
 export default {
   getAll,
+  getOneById,
   add,
   remove,
   getRandom
