@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import Filter from './Filter'
-import PropTypes from 'prop-types'
 import './Randomizer.css'
 
 import restaurantService from '../services/restaurant'

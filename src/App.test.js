@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, waitForElementToBeRemoved, waitForElement } from '@testing-library/react'
+import { fireEvent, waitForElement } from '@testing-library/react'
 import { actRender } from './test/utilities'
 import App from './App'
 import restaurantService from './services/restaurant'

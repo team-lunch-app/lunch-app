@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, fireEvent, waitForDomChange } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import FilterList from './FilterList'
 
 const testCategories = [{ id: 1, name: 'pizza' }, { id: 2, name: 'burger' }, { id: 3, name: 'salads' }]

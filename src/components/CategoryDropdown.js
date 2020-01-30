@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import categoryService from '../services/categoryServiceStub'
+import PropTypes from 'prop-types'
 
 const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -46,6 +47,15 @@ const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
       </Dropdown.Menu>
     </Dropdown>
   )
+}
+
+CategoryDropdown.propTypes = {
+  selected: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.any.isRequired,
+    name: PropTypes.string.isRequired,
+  })).isRequired,
+  onAdd: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
 }
 
 export default CategoryDropdown

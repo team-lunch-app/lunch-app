@@ -29,7 +29,7 @@ const add = async ({
   return response.data
 }
 
-const update = async({ restaurant }) => {
+const update = async(/*{ restaurant }*/) => {
   console.log('update')
 
   /*

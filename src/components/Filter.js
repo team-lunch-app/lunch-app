@@ -4,7 +4,6 @@ import FilterList from './FilterList'
 import CategoryDropdown from './CategoryDropdown'
 
 const Filter = ({ filterCategories, setFilterCategories }) => {
-
   const handleRemove = (id) => {
     setFilterCategories(filterCategories.filter((category) => category.id !== id))
   }
