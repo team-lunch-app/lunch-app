@@ -1,10 +1,10 @@
 import React from 'react'
-import { render, fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
+import { fireEvent, wait, waitForElementToBeRemoved } from '@testing-library/react'
+import { actRender } from '../test/utilities'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
 import App from '../App'
 import { MemoryRouter } from 'react-router-dom'
-import { act } from 'react-dom/test-utils'
 
 jest.mock('../services/restaurant.js')
 
@@ -13,9 +13,9 @@ beforeEach(() => {
 })
 
 test('invalid input displays an error message', async () => {
-  const { queryByTestId } = render(
+  const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/add']}>
-      <AddForm restaurantService={restaurantService} />
+      <AddForm />
     </MemoryRouter>
   )
 
@@ -26,32 +26,30 @@ test('invalid input displays an error message', async () => {
   expect(error).toBeInTheDocument()
 })
 
-test('add button calls restaurantservice', async () => {
-  await act(async () => {
-    const { queryByTestId } = render(
-      <MemoryRouter initialEntries={['/add']}>
-        <AddForm restaurantService={restaurantService} />
-      </MemoryRouter>
-    )
+test('add button calls restaurant service', async () => {
+  const { queryByTestId } = await actRender(
+    <MemoryRouter initialEntries={['/add']}>
+      <AddForm />
+    </MemoryRouter>
+  )
 
-    // Input test data
-    const nameElement = await queryByTestId('addForm-nameField')
-    fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
-    const urlElement = await queryByTestId('addForm-urlField')
-    fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
+  // Input test data
+  const nameElement = await queryByTestId('addForm-nameField')
+  fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  const urlElement = await queryByTestId('addForm-urlField')
+  fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
 
-    // Test that the restaurant service is called
-    const buttonElement = await queryByTestId('addForm-addButton')
-    fireEvent.click(buttonElement)
+  // Test that the restaurant service is called
+  const buttonElement = await queryByTestId('addForm-addButton')
+  fireEvent.click(buttonElement)
 
-    expect(restaurantService.add).toBeCalled()
-  })
+  await wait(() => expect(restaurantService.add).toBeCalled())
 })
 
 test('form is closed after adding a restaurant', async () => {
-  const { queryByTestId, getByTestId } = render(
+  const { queryByTestId, getByTestId } = await actRender(
     <MemoryRouter initialEntries={['/add']}>
-      <App restaurantService={restaurantService} />
+      <App />
     </MemoryRouter>
   )
 
@@ -64,13 +62,13 @@ test('form is closed after adding a restaurant', async () => {
   const buttonElement = queryByTestId('addForm-addButton')
   fireEvent.click(buttonElement)
 
-  await waitForElementToBeRemoved(() => getByTestId('addForm'), { timeout: 250 })
+  await waitForElementToBeRemoved(() => getByTestId('addForm'))
 })
 
-test('pressing cancel hides the component', () => {
-  const { queryByTestId } = render(
+test('pressing cancel hides the component', async () => {
+  const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/add']}>
-      <App restaurantService={restaurantService} />
+      <App />
     </MemoryRouter>
   )
 
@@ -78,6 +76,37 @@ test('pressing cancel hides the component', () => {
   const buttonElement = queryByTestId('addForm-cancelButton')
   fireEvent.click(buttonElement)
 
-  const form = queryByTestId('addForm')
-  expect(form).not.toBeInTheDocument()
+  const addForm = queryByTestId('addForm')
+  await wait(() => expect(addForm).not.toBeInTheDocument())
+})
+
+test('form is empty if restaurant is not found with the given id parameter', async () => {
+  const { queryByTestId } = await actRender(
+    <MemoryRouter initialEntries={['/edit/1']}>
+      <AddForm restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
+
+  const nameField = queryByTestId('addForm-nameField')
+  expect(nameField.value).toBe('')
+})
+
+test('form is pre-filled if a restaurant is found with the given id parameter', async () => {
+  restaurantService.getOneById.mockResolvedValue(
+    {
+      name: 'Luigi\'s pizza',
+      url: 'www.pizza.fi',
+      id: 1
+    }
+  )
+
+  const { queryByTestId } = await actRender(
+    <MemoryRouter initialEntries={['/edit/1']}>
+      <AddForm restaurantService={restaurantService} />
+    </MemoryRouter>
+  )
+
+  //await waitForDomChange()
+  const nameField = await queryByTestId('addForm-nameField')
+  expect(nameField.value).toBe('Luigi\'s pizza')
 })

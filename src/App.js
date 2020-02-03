@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import { Route, Link, } from 'react-router-dom'
+import { Route, Link } from 'react-router-dom'
 import { Nav, Navbar } from 'react-bootstrap'
 import Randomizer from './components/Randomizer'
 import AddForm from './components/AddForm'
@@ -51,6 +51,7 @@ const App = () => {
       <section className='main-container'>
         <Route exact path="/" render={() => homeView()} />
         <Route path="/add" render={() => addFormView()} />
+        <Route path="/edit/:id" render={() => addFormView()} />
         <Route path="/restaurants" render={() => <RestaurantList restaurantService={restaurantService} />} />
       </section>
     </>

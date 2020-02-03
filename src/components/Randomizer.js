@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
-import PropTypes from 'prop-types'
+import Filter from './Filter'
 import './Randomizer.css'
 
-const Randomizer = ({ restaurantService }) => {
+import restaurantService from '../services/restaurant'
+
+const Randomizer = () => {
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
+  const [filterCategories, setFilterCategories] = useState([])
 
   const changeRestaurantHandler = async (event) => {
     event.preventDefault()
-    const restaurants = await restaurantService.getAll()
-    if (restaurants && restaurants.length > 0) {
-      const newRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)]
+    const newRestaurant = await restaurantService.getRandom(filterCategories)
+    if (newRestaurant) {
       setRestaurant(newRestaurant)
     } else {
       setRestaurant({ name: 'Sorry, No restaurants available :C' })
@@ -30,15 +32,18 @@ const Randomizer = ({ restaurantService }) => {
         ? <p><a data-testid='randomizer-restaurantUrl' href={processUrl(restaurant.url)} target='_blank' rel='noopener noreferrer'>Website</a></p>
         : <></>
       }
-      <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
+      <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>
+        {`I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`}
+      </Button>
+      <Filter
+        emptyMessage={<strong>#NoFilter</strong>}
+        setFilterCategories={setFilterCategories}
+        filterCategories={filterCategories} />
     </div>
   )
 }
 
 Randomizer.propTypes = {
-  restaurantService: PropTypes.shape({
-    getAll: PropTypes.func.isRequired
-  }).isRequired
 }
 
 export default Randomizer

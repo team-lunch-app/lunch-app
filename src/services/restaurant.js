@@ -6,6 +6,18 @@ const getAll = async () => {
   return response.data
 }
 
+const getOneById = async (id) => {
+  const restaurants = await getAll()
+  const restaurantWithId = restaurants.find((restaurant) => restaurant.id === id)
+  return restaurantWithId
+
+  /*
+  // Varsinainen toteutus
+  const response = await axios.get(`${baseUrl}/${id}`)
+  return response.data
+  */
+}
+
 const add = async ({
   name,
   url
@@ -15,6 +27,16 @@ const add = async ({
     url
   })
   return response.data
+}
+
+const update = async(/*{ restaurant }*/) => {
+  console.log('update')
+
+  /*
+  // varsinainen toteutus ??
+  const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant)
+  return response.data
+  */
 }
 
 const remove = async (id) => {
@@ -28,15 +50,17 @@ const getRandom = async (categoryList) => {
   const containsCategory = (category) => categoryList
     .map(listCategory => listCategory.name)
     .includes(category)
-  restaurants = (categoryList.length !== 0) 
-    ? restaurants.filter(rest => rest.categories.some(containsCategory))
+  restaurants = (categoryList.length !== 0)
+    ? restaurants.filter(rest => rest.categories && rest.categories.some(containsCategory))
     : restaurants
   return restaurants[Math.floor(Math.random() * restaurants.length)]
 }
 
 export default {
   getAll,
+  getOneById,
   add,
   remove,
-  getRandom
+  getRandom,
+  update
 }

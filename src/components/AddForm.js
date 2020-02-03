@@ -1,46 +1,75 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import { useHistory, useParams } from 'react-router-dom'
+
+import restaurantService from '../services/restaurant'
 
 import './AddForm.css'
+import Filter from './Filter'
 
-const AddForm = ({ restaurantService }) => {
+const AddForm = () => {
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
+  const [restaurant, setRestaurant] = useState({ name: '', url: '' })
+  const [selected, setSelected] = useState([])
   let history = useHistory()
+  let params = useParams()
 
-  const addRestaurant = async (event) => {
+  useEffect(() => {
+    const findRestaurant = async () => {
+      const fetchedRestaurant = await restaurantService.getOneById(params.id)
+      if (fetchedRestaurant) {
+        setRestaurant(fetchedRestaurant)
+        setName(fetchedRestaurant.name)
+        setUrl(fetchedRestaurant.url)
+      }
+    }
+
+    findRestaurant()
+  }, [params])
+
+  const saveRestaurant = async (event) => {
     event.preventDefault()
 
+    // TODO: CLEANUP
     if (name && url) {
-      try {
-        await restaurantService.add({ name, url })
-
-        setName('')
-        setUrl('')
-        setError('')
-        history.push('/')
-      } catch (e) {
-        setError(e.response.data.error)
+      if (restaurant.id) {
+        try {
+          await restaurantService.update(restaurant)
+          setName('')
+          setUrl('')
+          setError('')
+          history.push('/')
+        } catch (e) {
+          setError(e.response.data.error)
+        }
+      } else {
+        try {
+          await restaurantService.add({ name, url })
+          setName('')
+          setUrl('')
+          setError('')
+          history.push('/')
+        } catch (e) {
+          setError(e.response.data.error)
+        }
       }
     } else {
       setError('Name and/or URL cannot be empty!')
     }
   }
 
-
   return (
-    <div>
+    <div data-testid='addForm'>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
-      <Form data-testid='addForm' onSubmit={(event) => addRestaurant(event)} className='add-form'>
+      <Form onSubmit={(event) => saveRestaurant(event)} className='add-form'>
         <Form.Group>
           <Form.Label>Restaurant Name</Form.Label>
           <Form.Control
             data-testid='addForm-nameField'
             type='text'
-            value={name}
+            value={restaurant.name}
             onChange={(event) => setName(event.target.value)} />
         </Form.Group>
 
@@ -49,10 +78,14 @@ const AddForm = ({ restaurantService }) => {
           <Form.Control
             data-testid='addForm-urlField'
             type='text'
-            value={url}
+            value={restaurant.url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
-
+        <Filter
+          dropdownText='Categories'
+          emptyMessage={<Alert variant='danger'>Select at least one!</Alert>}
+          filterCategories={selected}
+          setFilterCategories={setSelected} />
         <ButtonToolbar>
           <Button
             data-testid='addForm-cancelButton'
@@ -66,7 +99,7 @@ const AddForm = ({ restaurantService }) => {
             type='submit'
             variant='primary'
           >
-            Add
+            {restaurant.name ? 'Update' : 'App'}
           </Button>
         </ButtonToolbar>
       </Form>
@@ -75,9 +108,6 @@ const AddForm = ({ restaurantService }) => {
 }
 
 AddForm.propTypes = {
-  restaurantService: PropTypes.shape({
-    add: PropTypes.func.isRequired
-  }).isRequired
 }
 
 export default AddForm
