@@ -12,12 +12,35 @@ const trimAndUndefineIfEmpty = string => {
     : undefined
 }
 
+// getAll
 restaurantsRouter.get('/', async (request, response) => {
   const restaurants = await Restaurant
     .find({}).populate('categories')
   response.json(restaurants.map(rest => rest.toJSON()))
 })
 
+// getRandom
+restaurantsRouter.post('/random', async (request, response) => {
+  let restaurants = await Restaurant
+    .find({}).populate('categories')
+  const filterCategories = request.body
+
+  const containsCategory = (category) => filterCategories
+    .includes(category.id)
+
+  restaurants = (filterCategories.length !== 0)
+    ? restaurants.filter(rest => rest.categories && rest.categories.some(containsCategory))
+    : restaurants
+  
+  if (!restaurants || restaurants.length < 1) {
+    response.json({ error: 'No restaurants found with the given filter.', name: 'Sorry, No restaurants available :C' })
+  } else {
+    const randomRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)]
+    response.json(randomRestaurant.toJSON())
+  }
+})
+
+// getOne
 restaurantsRouter.get('/:id', async (request, response) => {
   try {
     const restaurant = await Restaurant
