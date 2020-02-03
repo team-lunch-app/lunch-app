@@ -26,7 +26,8 @@ const remove = async (id) => {
 }
 
 const getRandom = async (filterCategories) => {
-  const response = await axios.post(`${baseUrl}/random`, filterCategories)
+  const filterIds = filterCategories.map(category => category.id)
+  const response = await axios.post(`${baseUrl}/random`, filterIds)
   return response.data
 }
 
