@@ -1,0 +1,8 @@
+PUT http://localhost:3001/api/restaurants/5e37e1831296ed1b562980bf HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Torigrilli",
+    "url": "http://www.torigrilli.fi",
+    "categories": ["5e37e1651296ed1b562980be"]
+}

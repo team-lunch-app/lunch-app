@@ -1,28 +1,22 @@
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
-const restaurantSchema = new mongoose.Schema({
+const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     minlength: 3,
     maxlength: 240
   },
-  url: {
-    type: String,
-    required: false,
-    minlength: 1,
-    maxlength: 240
-  },
-  categories: [
+  restaurants: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category'
+      ref: 'Restaurant'
     }
   ]
 })
 
-restaurantSchema.set('toJSON', {
+categorySchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -30,4 +24,4 @@ restaurantSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('Restaurant', restaurantSchema)
+module.exports = mongoose.model('Category', categorySchema)
