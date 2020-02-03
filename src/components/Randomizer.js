@@ -7,13 +7,12 @@ import restaurantService from '../services/restaurant'
 
 const Randomizer = () => {
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
-  const [filterCategories, setFilterCategories] = useState([{ id: 1, name: 'pizza' }, { id: 2, name: 'burger' }, { id: 3, name: 'salads' }])
+  const [filterCategories, setFilterCategories] = useState([])
 
   const changeRestaurantHandler = async (event) => {
     event.preventDefault()
-    const restaurants = await restaurantService.getAll()
-    if (restaurants && restaurants.length > 0) {
-      const newRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)]
+    const newRestaurant = await restaurantService.getRandom(filterCategories)
+    if (newRestaurant) {
       setRestaurant(newRestaurant)
     } else {
       setRestaurant({ name: 'Sorry, No restaurants available :C' })
@@ -33,8 +32,13 @@ const Randomizer = () => {
         ? <p><a data-testid='randomizer-restaurantUrl' href={processUrl(restaurant.url)} target='_blank' rel='noopener noreferrer'>Website</a></p>
         : <></>
       }
-      <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>Go!</Button>
-      <Filter setFilterCategories={setFilterCategories} filterCategories={filterCategories}/>
+      <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>
+        {`I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`}
+      </Button>
+      <Filter
+        emptyMessage={<strong>#NoFilter</strong>}
+        setFilterCategories={setFilterCategories}
+        filterCategories={filterCategories} />
     </div>
   )
 }

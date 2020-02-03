@@ -5,25 +5,11 @@ import Randomizer from './Randomizer'
 import restaurantService from '../services/restaurant'
 
 jest.mock('../services/restaurant.js')
-restaurantService.getAll.mockResolvedValue(
-  [
-    {
-      name: 'Luigi\'s pizza',
-      url: 'www.pizza.fi',
-      id: 1
-    },
-    {
-      name: 'Pizzeria Rax',
-      url: 'www.rax.fi',
-      id: 2
-    },
-    {
-      name: 'Ravintola Artjärvi',
-      url: 'www.bestfood.fi',
-      id: 3
-    }
-  ]
-)
+restaurantService.getRandom.mockResolvedValue({
+  name: 'Luigi\'s pizza',
+  url: 'www.pizza.fi',
+  id: 1
+})
 
 test('new restaurant button exists', async () => {
   const { queryByTestId } = await actRender(<Randomizer />)
@@ -50,12 +36,12 @@ test('restaurant url is not rendered initially (no restaurant is shown)', async 
 })
 
 test('restaurant url is rendered after a restaurant is drawn', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId, getByTestId } = await actRender(<Randomizer />)
 
   fireEvent.click(queryByTestId('randomizer-randomizeButton'))
   await waitForDomChange()
 
-  const url = queryByTestId('randomizer-restaurantUrl')
+  const url = getByTestId('randomizer-restaurantUrl')
   expect(url).toBeInTheDocument()
 })
 
@@ -66,7 +52,7 @@ test('pressing the button calls the restaurant service', async () => {
   fireEvent.click(buttonElement)
   await waitForDomChange()
 
-  expect(restaurantService.getAll).toBeCalled()
+  expect(restaurantService.getRandom).toBeCalled()
 })
 
 test('pressing the button changes the text', async () => {

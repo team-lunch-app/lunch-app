@@ -51,7 +51,7 @@ const getRandom = async (categoryList) => {
     .map(listCategory => listCategory.name)
     .includes(category)
   restaurants = (categoryList.length !== 0)
-    ? restaurants.filter(rest => rest.categories.some(containsCategory))
+    ? restaurants.filter(rest => rest.categories && rest.categories.some(containsCategory))
     : restaurants
   return restaurants[Math.floor(Math.random() * restaurants.length)]
 }

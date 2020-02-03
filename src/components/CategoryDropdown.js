@@ -3,7 +3,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import categoryService from '../services/categoryServiceStub'
 import PropTypes from 'prop-types'
 
-const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
+const CategoryDropdown = ({ text, selected, onAdd, onRemove }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [categories, setCategories] = useState([])
 
@@ -17,9 +17,10 @@ const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
 
   return (
     <Dropdown
+      data-testid='category-dropdown'
       show={dropdownOpen}
-      onSelect = {(eventKey) => {
-        const clicked = categories.find(c => c.id == eventKey)
+      onSelect={(eventKey) => {
+        const clicked = categories.find(c => `${c.id}` === `${eventKey}`)
 
         if (isActive(clicked)) {
           onRemove(clicked.id)
@@ -27,20 +28,24 @@ const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
           onAdd(clicked)
         }
       }}
-      onToggle = {(isOpen, event, { source }) => {
+      onToggle={(isOpen, event, { source }) => {
         setDropdownOpen(source !== 'select' ? isOpen : dropdownOpen)
       }}
     >
-      <Dropdown.Toggle data-testid='category-dropdown' id="dropdown-custom-1">Categories</Dropdown.Toggle>
+      <Dropdown.Toggle data-testid='category-dropdown-toggle' id="dropdown-custom-1">
+        {text || 'Filter by'}
+      </Dropdown.Toggle>
       <Dropdown.Menu >
         {categories
-          ? categories.map(category => 
-            <Dropdown.Item 
-              eventKey={category.id} 
+          ? categories.map(category =>
+            <Dropdown.Item
+              eventKey={category.id}
               key={category.id}
               active={isActive(category)}
             >
-              {category.name}
+              <span data-testid='category-dropdown-entry'>
+                {category.name}
+              </span>
             </Dropdown.Item>)
           : <Dropdown.Item>Loading...</Dropdown.Item>
         }
@@ -50,6 +55,7 @@ const CategoryDropdown = ({ selected, onAdd, onRemove }) => {
 }
 
 CategoryDropdown.propTypes = {
+  text: PropTypes.string,
   selected: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.any.isRequired,
     name: PropTypes.string.isRequired,

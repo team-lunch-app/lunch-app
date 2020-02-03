@@ -1,0 +1,32 @@
+.category-filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75em 0em;
+}
+
+.category-list {
+    padding: 0em 0.75em;
+}
+
+.category-list > span > .alert {
+    margin-bottom: 0;
+    padding: 0.25em 1em;
+}
+
+.category-list .entry {    
+    margin: 0em 0.25em;
+    padding: 0em 1em;
+    padding-right: 0em;
+}
+
+.category-list .entry > * {    
+    vertical-align: middle;
+}
+
+
+.category-list > .entry > button {
+    background-color: transparent;
+    border: transparent;
+    font-size: x-large;
+}

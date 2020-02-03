@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import FilterList from './FilterList'
 import CategoryDropdown from './CategoryDropdown'
+import './Filter.css'
 
-const Filter = ({ filterCategories, setFilterCategories }) => {
+const Filter = ({ filterCategories, setFilterCategories, dropdownText, emptyMessage }) => {
   const handleRemove = (id) => {
     setFilterCategories(filterCategories.filter((category) => category.id !== id))
   }
@@ -13,12 +14,10 @@ const Filter = ({ filterCategories, setFilterCategories }) => {
   }
 
   return (
-    <>
-      <FilterList selected={filterCategories} onRemove={handleRemove} />
-      <div data-testid='filter-dropdown'>
-        <CategoryDropdown selected={filterCategories} onAdd={handleAdd} onRemove={handleRemove} />
-      </div>
-    </>
+    <div className='category-filter' data-testid='filter-dropdown'>
+      <CategoryDropdown text={dropdownText} selected={filterCategories} onAdd={handleAdd} onRemove={handleRemove} />
+      <FilterList selected={filterCategories} onRemove={handleRemove} emptyMessage={emptyMessage} />
+    </div>
   )
 }
 
@@ -27,7 +26,9 @@ Filter.propTypes = {
     id: PropTypes.any.isRequired,
     name: PropTypes.string.isRequired
   })).isRequired,
-  setFilterCategories: PropTypes.func.isRequired
+  setFilterCategories: PropTypes.func.isRequired,
+  emptyMessage: PropTypes.node.isRequired,
+  dropdownText: PropTypes.string,
 }
 
 export default Filter

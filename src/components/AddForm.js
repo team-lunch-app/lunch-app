@@ -27,7 +27,7 @@ const AddForm = () => {
     }
 
     findRestaurant()
-  }, [params, restaurantService])
+  }, [params])
 
   const saveRestaurant = async (event) => {
     event.preventDefault()
@@ -81,11 +81,11 @@ const AddForm = () => {
             value={restaurant.url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
-        {selected.length > 0
-          ? selected.map(category => console.log(category))
-          : <p key="No filters"></p>
-        }
-        <Filter filterCategories={selected} setFilterCategories={setSelected} />
+        <Filter
+          dropdownText='Categories'
+          emptyMessage={<Alert variant='danger'>Select at least one!</Alert>}
+          filterCategories={selected}
+          setFilterCategories={setSelected} />
         <ButtonToolbar>
           <Button
             data-testid='addForm-cancelButton'
