@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const cors = require('cors')
 const restaurantsRouter = require('./controllers/restaurants')
+const categoriesRouter = require('./controllers/categories')
 
 const config = require('./config')
 
@@ -12,6 +13,7 @@ app.use(cors())
 
 app.use(bodyParser.json())
 app.use('/api/restaurants', restaurantsRouter)
+app.use('/api/categories', categoriesRouter)
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(config.staticDir, 'index.html'))

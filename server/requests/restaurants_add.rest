@@ -3,5 +3,6 @@ Content-Type: application/json
 
 {
     "name": "Torigrilli",
-    "url": "http://www.asdasd.fi"
+    "url": "http://www.asdasd.fi",
+    "categories": ["5e37e1651296ed1b562980be"]
 }

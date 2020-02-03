@@ -1,0 +1,1 @@
+GET http://localhost:3001/api/restaurants HTTP/1.1

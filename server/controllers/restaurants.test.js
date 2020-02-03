@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const Restaurant = require('../models/restaurant')
+const Category = require('../models/category')
 const app = require('../app')
 
 const dbUtil = require('../test/dbUtil')
@@ -19,11 +20,26 @@ const restaurantData = [
   },
 ]
 
-let server, restaurants
+const testCategoryData = [
+  {
+    name: 'Krapula',
+  },
+  {
+    name: 'Salad',
+  },
+  {
+    name: 'Burger',
+  }
+]
+
+let server, restaurants, categories
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
+  await dbUtil.createRowsFrom(Category, testCategoryData)
+  const dbCategories = await server.get('/api/categories')
+  categories = dbCategories.body
 })
 
 afterEach(async () => {
@@ -36,23 +52,33 @@ test('get request to /api/restaurants returns correct number of restaurants', as
   expect(contents.length).toBe(3)
 })
 
+test('post request to /api/restaurants fails if no category list is provided', async () => {
+  await server
+    .post('/api/restaurants')
+    .send({ name: 'Ravintola Artjärvi', url: 'N/A', })
+    .expect(400)
+})
+
 test('post request to /api/restaurants with valid data succeeds', async () => {
   await server
     .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
+    .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [] })
     .expect(200)
     .expect('Content-Type', /application\/json/i)
 })
 
 test('post request to /api/restaurants with valid data gets added restaurant as response', async () => {
+  const categoryId = categories[0].id
+
   const response = await server
     .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
+    .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [categoryId] })
 
   const contents = response.body
   expect(contents).toMatchObject({
     name: 'Ravintola Artjärvi',
     url: 'N/A',
+    categories: [categoryId]
   })
 })
 
@@ -69,7 +95,7 @@ test('post request to /api/restaurants with valid data adds the restaurant to DB
 test('post request to /api/restaurants without url succeeds', async () => {
   await server
     .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi' })
+    .send({ name: 'Ravintola Artjärvi', categories: [] })
     .expect(200)
     .expect('Content-Type', /application\/json/i)
 })
@@ -77,7 +103,7 @@ test('post request to /api/restaurants without url succeeds', async () => {
 test('post request to /api/restaurants with url containing only whitespace succeeds', async () => {
   await server
     .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: '   ' })
+    .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
     .expect(200)
     .expect('Content-Type', /application\/json/i)
 })
@@ -85,7 +111,7 @@ test('post request to /api/restaurants with url containing only whitespace succe
 test('after post request to /api/restaurants with url containing only whitespace, the url is undefined', async () => {
   const response = await server
     .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: '   ' })
+    .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
 
   const id = response.body.id
   const restaurant = await Restaurant.findById(id)

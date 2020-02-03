@@ -14,28 +14,36 @@ const trimAndUndefineIfEmpty = string => {
 
 restaurantsRouter.get('/', async (request, response) => {
   const restaurants = await Restaurant
-    .find({})
+    .find({}).populate('categories')
   response.json(restaurants.map(rest => rest.toJSON()))
 })
+
+// getrandom
 
 restaurantsRouter.post('/', async (request, response, next) => {
   const body = request.body
 
-  const restaurant = new Restaurant({
-    name: body.name,
-    url: trimAndUndefineIfEmpty(body.url)
-  })
+  if (body.categories !== undefined) {
 
-  try {
-    const savedRestaurant = await restaurant.save()
-    response.json(savedRestaurant.toJSON())
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      return response.status(400).send({ error: error.message })
+    const restaurant = new Restaurant({
+      name: body.name,
+      url: trimAndUndefineIfEmpty(body.url),
+      categories: body.categories
+    })
+
+    try {
+      const savedRestaurant = await restaurant.save()
+      response.json(savedRestaurant.toJSON())
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        return response.status(400).send({ error: error.message })
+      }
+
+      console.log('unknown error:', error)
+      next(error)
     }
-
-    console.log('unknown error:', error)
-    next(error)
+  } else {
+    return response.status(400).send({ error: 'Server error: list of categories must be included, even if empty.' })
   }
 })
 

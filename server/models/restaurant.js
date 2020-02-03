@@ -13,7 +13,7 @@ const restaurantSchema = new mongoose.Schema({
     required: false,
     minlength: 1,
     maxlength: 240
-  }, 
+  },
   categories: [
     {
       type: mongoose.Schema.Types.ObjectId,
