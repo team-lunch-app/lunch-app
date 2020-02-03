@@ -1,5 +1,6 @@
 const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
+const Category = require('../models/category')
 
 const trimAndUndefineIfEmpty = string => {
   if (string === undefined) {
@@ -82,6 +83,7 @@ restaurantsRouter.put('/:id', async (request, response, next) => {
   const body = request.body
 
   const restaurant = {
+    id: request.params.id,
     name: body.name,
     url: trimAndUndefineIfEmpty(body.url),
     categories: body.categories
@@ -93,6 +95,14 @@ restaurantsRouter.put('/:id', async (request, response, next) => {
       restaurant,
       { new: true }
     )
+  
+    await request.body.categories.forEach(async categoryId => {
+      await Category.findByIdAndUpdate(
+        categoryId,
+        { $push: { restaurants: request.params.id } }
+      )
+    })
+
     response.json(updatedRestaurant.toJSON())
   } catch (error) {
     if (error.name === 'ValidationError') {

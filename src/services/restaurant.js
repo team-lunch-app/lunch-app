@@ -11,18 +11,12 @@ const getOneById = async (id) => {
   return response.data
 }
 
-const add = async ({
-  name,
-  url
-}) => {
-  const response = await axios.post(`${baseUrl}`, {
-    name,
-    url
-  })
+const add = async (restaurant) => {
+  const response = await axios.post(`${baseUrl}`, restaurant)
   return response.data
 }
 
-const update = async({ restaurant }) => {
+const update = async(restaurant) => {
   const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant)
   return response.data
 }

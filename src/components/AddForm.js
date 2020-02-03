@@ -19,7 +19,12 @@ const AddForm = ({ id }) => {
     if (id) {
       restaurantService
         .getOneById(id)
-        .then(fetched => setRestaurant(fetched))
+        .then(fetched => setRestaurant({
+          ...fetched,
+          name: fetched.name || '',
+          url: fetched.url || '',
+          categories: fetched.categories || [],
+        }))
         .catch(() => {
           setError('Could not find restaurant with given ID')
           setRestaurant(createDefaultRestaurant())
@@ -47,11 +52,16 @@ const AddForm = ({ id }) => {
       return
     }
 
+    const addedOrUpdated = {
+      ...restaurant,
+      categories: restaurant.categories.map(category => category.id)
+    }
+
     try {
       if (id) {
-        await restaurantService.update(restaurant)
-      } else {
-        await restaurantService.add(restaurant)
+        await restaurantService.update(addedOrUpdated)
+      } else {        
+        await restaurantService.add(addedOrUpdated)
       }
       setError('')
       history.push('/')
@@ -100,7 +110,7 @@ const AddForm = ({ id }) => {
             type='submit'
             variant='primary'
           >
-            {restaurant ? 'Update' : 'Add'}
+            {id ? 'Update' : 'Add'}
           </Button>
         </ButtonToolbar>
       </Form>
