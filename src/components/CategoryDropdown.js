@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
-import categoryService from '../services/categoryServiceStub'
+import categoryService from '../services/category'
 import PropTypes from 'prop-types'
 
 const CategoryDropdown = ({ text, selected, onAdd, onRemove }) => {
