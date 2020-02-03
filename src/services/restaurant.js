@@ -16,7 +16,7 @@ const add = async (restaurant) => {
   return response.data
 }
 
-const update = async(restaurant) => {
+const update = async (restaurant) => {
   const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant)
   return response.data
 }

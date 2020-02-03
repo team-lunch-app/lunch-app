@@ -29,7 +29,7 @@ test('invalid input displays an error message', async () => {
   expect(error).toBeInTheDocument()
 })
 
-test('add button calls restaurant service', async () => {
+test('add button calls restaurant service with correct arguments', async () => {
   const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/add']}>
       <AddForm />
@@ -46,7 +46,7 @@ test('add button calls restaurant service', async () => {
   const buttonElement = await queryByTestId('addForm-addButton')
   fireEvent.click(buttonElement)
 
-  await wait(() => expect(restaurantService.add).toBeCalled())
+  await wait(() => expect(restaurantService.add).toBeCalledWith({ name: 'Lidl City Center', url: 'https://www.lidl.fi/', categories: [] }))
 })
 
 test('form is closed after adding a restaurant', async () => {
