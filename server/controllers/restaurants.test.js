@@ -66,6 +66,50 @@ test('get request to a specific id returns the correct restaurant', async () => 
   })
 })
 
+test('getRandom request returns a restaurant', async () => {
+  const response = await server.post('/api/restaurants/random')
+    .send([])
+
+  expect(restaurants.map(restaurant => restaurant.name)).toContain(response.body.name)
+})
+
+test('getRandom request with a category id returns a restaurant belonging to the given category', async () => {
+  const testCategoryId = categories[0].id
+  await server.post('/api/restaurants')
+    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId] })
+
+  const response = await server.post('/api/restaurants/random')
+    .send([testCategoryId])
+
+  const contents = response.body
+  expect(contents).toMatchObject({
+    name: 'Kauppatorin Nakkikioski',
+    url: 'N/A'
+  })
+})
+
+test('getRandom returns an error when no restaurants are found with the given filter', async () => {
+  const testCategoryId = categories[0].id
+
+  const response = await server.post('/api/restaurants/random')
+    .send([testCategoryId])
+
+  expect(response.body.error).toBeDefined()
+})
+
+test('getRandom return the correct number of categories when multiple filter options are provided', async () => {
+  await server.post('/api/restaurants')
+    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
+  await server.post('/api/restaurants')
+    .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id] })
+
+  const response = await server.post('/api/restaurants/random')
+    .send([categories[0].id, categories[1].id])
+
+  const name = response.body.name
+  expect(name === 'Kauppatorin Nakkikioski' || name === 'Kalevankadun Salaattibaari').toBeTruthy()
+})
+
 test('get request to an invalid id returns code 404', async () => {
   await server.get('/api/restaurants/1').expect(404)
 })

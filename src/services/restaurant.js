@@ -29,13 +29,13 @@ const add = async ({
   return response.data
 }
 
-const update = async(/*{ restaurant }*/) => {
+const update = async (/*{ restaurant }*/) => {
   console.log('update')
 
   /*
   // varsinainen toteutus ??
   const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant)
-  return response.data
+  return response.data  
   */
 }
 
@@ -43,17 +43,9 @@ const remove = async (id) => {
   return await axios.delete(`${baseUrl}/${id}`)
 }
 
-const getRandom = async (categoryList) => {
-  //STUB
-  // SIIRTYY BACKENDIIN
-  let restaurants = await getAll()
-  const containsCategory = (category) => categoryList
-    .map(listCategory => listCategory.name)
-    .includes(category)
-  restaurants = (categoryList.length !== 0)
-    ? restaurants.filter(rest => rest.categories && rest.categories.some(containsCategory))
-    : restaurants
-  return restaurants[Math.floor(Math.random() * restaurants.length)]
+const getRandom = async (filterCategories) => {
+  const response = await axios.post(`${baseUrl}/random`, filterCategories)
+  return response.data
 }
 
 export default {
