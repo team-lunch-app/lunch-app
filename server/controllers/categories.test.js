@@ -42,9 +42,9 @@ test('post request with valid data returns http code 200', async () => {
     .expect(200)
 })
 
-test('post request with invalid data returns http code 400', async () => {
+test('post request with empty string as name returns http code 400', async () => {
   await server
     .post('/api/categories')
-    .send({ })
+    .send({ name: '                   ' })
     .expect(400)
 })

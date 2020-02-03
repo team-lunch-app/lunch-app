@@ -11,7 +11,7 @@ categoryRouter.post('/', async (request, response, next) => {
   const body = request.body
 
   const category = new Category({
-    name: body.name,
+    name: body.name.trim(),
     restaurants: body.restaurants
   })
 

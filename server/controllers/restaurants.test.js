@@ -52,6 +52,24 @@ test('get request to /api/restaurants returns correct number of restaurants', as
   expect(contents.length).toBe(3)
 })
 
+test('get request to a specific id returns the correct restaurant', async () => {
+  const testRestaurantId = restaurants[0].id
+
+  const response = await server
+    .get(`/api/restaurants/${testRestaurantId}`)
+
+  const contents = response.body
+  expect(contents).toMatchObject({
+    name: 'Torigrilli',
+    url: 'https://www.torigrilli.fi',
+    categories: []
+  })
+})
+
+test('get request to an invalid id returns code 404', async () => {
+  await server.get('/api/restaurants/1').expect(404)
+})
+
 test('post request to /api/restaurants fails if no category list is provided', async () => {
   await server
     .post('/api/restaurants')
@@ -162,4 +180,19 @@ test('post request to /api/restaurants with very long url fails', async () => {
     .post('/api/restaurants')
     .send({ name: 'Ravintola Artjärvi', url: 'abc'.repeat(4242) })
     .expect(400)
+})
+
+test('put request with valid data updates the restaurant', async () => {
+  const testRestaurantId = restaurants[0].id
+
+  const response = await server
+    .put(`/api/restaurants/${testRestaurantId}`)
+    .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+
+  const contents = response.body
+  expect(contents).toMatchObject({
+    name: 'Torigrilli Senaatintori',
+    url: 'https://torigrilli.fi',
+    categories: []
+  })
 })
