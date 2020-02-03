@@ -3,6 +3,7 @@ import { fireEvent, waitForDomChange } from '@testing-library/react'
 import { actRender } from '../test/utilities'
 import Randomizer from './Randomizer'
 import restaurantService from '../services/restaurant'
+import categoryService from '../services/category'
 
 jest.mock('../services/restaurant.js')
 restaurantService.getRandom.mockResolvedValue({
@@ -10,6 +11,10 @@ restaurantService.getRandom.mockResolvedValue({
   url: 'www.pizza.fi',
   id: 1
 })
+
+jest.mock('../services/category.js')
+categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
+
 
 test('new restaurant button exists', async () => {
   const { queryByTestId } = await actRender(<Randomizer />)

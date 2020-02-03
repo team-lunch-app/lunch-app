@@ -3,10 +3,14 @@ import { fireEvent, waitForElement } from '@testing-library/react'
 import { actRender } from './test/utilities'
 import App from './App'
 import restaurantService from './services/restaurant'
+import categoryService from './services/category'
 import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('./services/restaurant.js')
 restaurantService.getAll.mockResolvedValue([])
+
+jest.mock('./services/category.js')
+categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 
 test('randomizer exists initially', async () => {
   const { queryByTestId } = await actRender(

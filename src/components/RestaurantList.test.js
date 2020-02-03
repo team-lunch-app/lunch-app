@@ -1,14 +1,17 @@
 import React from 'react'
 import { render, fireEvent, waitForElement, waitForElementToBeRemoved } from '@testing-library/react'
 import restaurantService from '../services/restaurant'
+import categoryService from '../services/category'
 import App from '../App'
 import RestaurantList from './RestaurantList'
 import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('../services/restaurant.js')
+jest.mock('../services/category.js')
 
 beforeEach(() => {
   jest.clearAllMocks()
+  categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
   restaurantService.getAll.mockResolvedValue(
     [
       {

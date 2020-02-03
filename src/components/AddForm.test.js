@@ -3,10 +3,13 @@ import { fireEvent, wait, waitForElementToBeRemoved } from '@testing-library/rea
 import { actRender } from '../test/utilities'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
+import categoryService from '../services/category'
 import App from '../App'
 import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('../services/restaurant.js')
+jest.mock('../services/category.js')
+categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 
 beforeEach(() => {
   jest.clearAllMocks()
