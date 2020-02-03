@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, wait, waitForElementToBeRemoved } from '@testing-library/react'
+import { fireEvent, wait, waitForElementToBeRemoved, waitForElement } from '@testing-library/react'
 import { actRender } from '../test/utilities'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
@@ -9,10 +9,10 @@ import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('../services/restaurant.js')
 jest.mock('../services/category.js')
-categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 
 beforeEach(() => {
   jest.clearAllMocks()
+  categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 })
 
 test('invalid input displays an error message', async () => {
@@ -84,9 +84,11 @@ test('pressing cancel hides the component', async () => {
 })
 
 test('form is empty if restaurant is not found with the given id parameter', async () => {
+  restaurantService.getOneById.mockRejectedValue({ message: 'Error.' })
+
   const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/edit/1']}>
-      <AddForm restaurantService={restaurantService} />
+      <App />
     </MemoryRouter>
   )
 
@@ -99,17 +101,17 @@ test('form is pre-filled if a restaurant is found with the given id parameter', 
     {
       name: 'Luigi\'s pizza',
       url: 'www.pizza.fi',
-      id: 1
+      id: 1,
+      categories: [],
     }
   )
 
   const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/edit/1']}>
-      <AddForm restaurantService={restaurantService} />
+      <App />
     </MemoryRouter>
   )
 
-  //await waitForDomChange()
-  const nameField = await queryByTestId('addForm-nameField')
+  const nameField = await waitForElement(() => queryByTestId('addForm-nameField'))
   expect(nameField.value).toBe('Luigi\'s pizza')
 })

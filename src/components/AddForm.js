@@ -1,62 +1,63 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 import restaurantService from '../services/restaurant'
 
 import './AddForm.css'
 import Filter from './Filter'
 
-const AddForm = () => {
+const AddForm = ({ id }) => {
+  const createDefaultRestaurant = () => ({ name: '', url: '', categories: [] })
+
   const [error, setError] = useState('')
-  const [name, setName] = useState('')
-  const [url, setUrl] = useState('')
-  const [restaurant, setRestaurant] = useState({ name: '', url: '' })
-  const [selected, setSelected] = useState([])
+  const [restaurant, setRestaurant] = useState(!id ? createDefaultRestaurant() : undefined)
   let history = useHistory()
-  let params = useParams()
 
   useEffect(() => {
-    const findRestaurant = async () => {
-      const fetchedRestaurant = await restaurantService.getOneById(params.id)
-      if (fetchedRestaurant) {
-        setRestaurant(fetchedRestaurant)
-        setName(fetchedRestaurant.name)
-        setUrl(fetchedRestaurant.url)
-      }
+    if (id) {
+      restaurantService
+        .getOneById(id)
+        .then(fetched => setRestaurant(fetched))
+        .catch(() => {
+          setError('Could not find restaurant with given ID')
+          setRestaurant(createDefaultRestaurant())
+        })
     }
+  }, [id])
 
-    findRestaurant()
-  }, [params])
+  if (id && !restaurant) {
+    return (
+      <div>
+        Loading...
+      </div>
+    )
+  }
+
+  const setName = (name) => setRestaurant({ ...restaurant, name })
+  const setUrl = (url) => setRestaurant({ ...restaurant, url })
+  const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
   const saveRestaurant = async (event) => {
     event.preventDefault()
 
-    // TODO: CLEANUP
-    if (name && url) {
-      if (restaurant.id) {
-        try {
-          await restaurantService.update(restaurant)
-          setName('')
-          setUrl('')
-          setError('')
-          history.push('/')
-        } catch (e) {
-          setError(e.response.data.error)
-        }
-      } else {
-        try {
-          await restaurantService.add({ name, url })
-          setName('')
-          setUrl('')
-          setError('')
-          history.push('/')
-        } catch (e) {
-          setError(e.response.data.error)
-        }
-      }
-    } else {
+    if (restaurant.name.trim().length === 0 || restaurant.url.trim().length === 0) {
       setError('Name and/or URL cannot be empty!')
+      return
+    }
+
+    try {
+      if (id) {
+        await restaurantService.update(restaurant)
+      } else {
+        await restaurantService.add(restaurant)
+      }
+      setError('')
+      history.push('/')
+    }
+    catch (e) {
+      setError(e.response.data.error)
     }
   }
 
@@ -84,8 +85,8 @@ const AddForm = () => {
         <Filter
           dropdownText='Categories'
           emptyMessage={<Alert variant='danger'>Select at least one!</Alert>}
-          filterCategories={selected}
-          setFilterCategories={setSelected} />
+          filterCategories={restaurant.categories}
+          setFilterCategories={setCategories} />
         <ButtonToolbar>
           <Button
             data-testid='addForm-cancelButton'
@@ -99,7 +100,7 @@ const AddForm = () => {
             type='submit'
             variant='primary'
           >
-            {restaurant.name ? 'Update' : 'App'}
+            {restaurant ? 'Update' : 'Add'}
           </Button>
         </ButtonToolbar>
       </Form>
@@ -108,6 +109,7 @@ const AddForm = () => {
 }
 
 AddForm.propTypes = {
+  id: PropTypes.any,
 }
 
 export default AddForm

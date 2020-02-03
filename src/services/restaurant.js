@@ -7,15 +7,8 @@ const getAll = async () => {
 }
 
 const getOneById = async (id) => {
-  const restaurants = await getAll()
-  const restaurantWithId = restaurants.find((restaurant) => restaurant.id === id)
-  return restaurantWithId
-
-  /*
-  // Varsinainen toteutus
   const response = await axios.get(`${baseUrl}/${id}`)
   return response.data
-  */
 }
 
 const add = async ({
@@ -29,14 +22,9 @@ const add = async ({
   return response.data
 }
 
-const update = async (/*{ restaurant }*/) => {
-  console.log('update')
-
-  /*
-  // varsinainen toteutus ??
+const update = async({ restaurant }) => {
   const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant)
-  return response.data  
-  */
+  return response.data
 }
 
 const remove = async (id) => {
