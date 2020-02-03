@@ -16,13 +16,11 @@ const testCategoryData = [
   }
 ]
 
-let server, categories
+let server
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   await dbUtil.createRowsFrom(Category, testCategoryData)
-  const dbCategories = await server.get('/api/categories')
-  categories = dbCategories.body
 })
 
 afterEach(async () => {
