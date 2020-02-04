@@ -2,7 +2,7 @@ Endpoints: `/api/restaurants`
 ============================
 
 Unless otherwise stated, the served **restaurant**-resources have the following shape.
-```json
+```js
 {
   id: ObjectId,
   name: string,
@@ -82,7 +82,7 @@ Response body contains a randomly selected *restaurant*.
 
 ### Request
 Accepts a *restaurant* json-object, without ID and with `categories` replaced with an array of category IDs.
-```json
+```js
 {
   name: string,
   url?: string,
@@ -116,7 +116,7 @@ Returns the added *restaurant* as the response body. Received restaurant is guar
 
 ### Request
 Accepts a *restaurant* json-object, without ID and with `categories` replaced with an array of category IDs.
-```json
+```js
 {
   id: ObjectId,
   name: string,
