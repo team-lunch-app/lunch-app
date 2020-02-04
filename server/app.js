@@ -8,16 +8,16 @@ const categoriesRouter = require('./controllers/categories')
 
 const config = require('./config')
 
-app.use(express.static(config.staticDir))
-app.use(cors())
-
 app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] != 'https') {
+  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] === 'http') {
     res.redirect(302, `https://${req.hostname}${req.originalUrl}`)
   } else {
     return next()
   }
 })
+
+app.use(express.static(config.staticDir))
+app.use(cors())
 
 app.use(bodyParser.json())
 app.use('/api/restaurants', restaurantsRouter)
