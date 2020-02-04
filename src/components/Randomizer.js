@@ -29,11 +29,18 @@ const Randomizer = () => {
     return hasPrefix ? url : `//${url}`
   }
 
+  const confirmLeave = (event) => {
+    if (!window.confirm(`This URL is user-submitted content that leads to an external website. 
+    Are you sure you want to leave? URL: ${restaurant.url}`)) {
+      event.preventDefault()
+    }
+  }
+
   return (
     <div data-testid='randomizer' className='randomizer'>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       {restaurant.url
-        ? <p><a data-testid='randomizer-restaurantUrl' href={processUrl(restaurant.url)} target='_blank' rel='noopener noreferrer'>Website</a></p>
+        ? <p><a data-testid='randomizer-restaurantUrl' onClick={(event) => confirmLeave(event)} href={processUrl(restaurant.url)} target='_blank' rel='noopener noreferrer'>Website</a></p>
         : <></>
       }
       <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>
