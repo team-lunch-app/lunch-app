@@ -87,23 +87,7 @@ const AddForm = ({ id, onSubmit }) => {
         </Form.Group>
         <Filter
           dropdownText='Categories'
-          emptyMessage={
-            <div className='empty-message'>
-              <Alert variant='danger'><span>Please select at least one! </span>
-
-              </Alert>
-              <OverlayTrigger
-                placement='right'
-                overlay={
-                  <Tooltip>
-                    Selecting categories will make this restaurant show up in filtered draws.
-                  </Tooltip>
-                }
-              >
-                <FontAwesomeIcon className='question-mark' icon={faQuestionCircle} />
-              </OverlayTrigger>
-            </div>
-          }
+          emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
           filterCategories={!restaurant ? [] : restaurant.categories}
           setFilterCategories={setCategories} />
         <ButtonToolbar>
@@ -123,6 +107,26 @@ const AddForm = ({ id, onSubmit }) => {
           </Button>
         </ButtonToolbar>
       </Form>
+    </div>
+  )
+}
+
+const FilterEmptyMessage = () => {
+  return (
+    <div className='empty-message'>
+      <Alert variant='danger'><span>Please select at least one! </span>
+
+      </Alert>
+      <OverlayTrigger
+        placement='right'
+        overlay={
+          <Tooltip>
+            Selecting categories will make this restaurant show up in filtered draws.
+          </Tooltip>
+        }
+      >
+        <FontAwesomeIcon className='question-mark' icon={faQuestionCircle} />
+      </OverlayTrigger>
     </div>
   )
 }
