@@ -11,11 +11,15 @@ const Randomizer = () => {
 
   const changeRestaurantHandler = async (event) => {
     event.preventDefault()
-    const newRestaurant = await restaurantService.getRandom(filterCategories)
-    if (newRestaurant) {
-      setRestaurant(newRestaurant)
-    } else {
-      setRestaurant({ name: 'Sorry, No restaurants available :C' })
+
+    try {
+      const newRestaurant = await restaurantService.getRandom(filterCategories)
+      if (newRestaurant) {
+        setRestaurant(newRestaurant)
+      }
+    } catch (errorResponse) {
+      const error = errorResponse.response.data
+      setRestaurant({ name: error.error })
     }
   }
 
