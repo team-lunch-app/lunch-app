@@ -9,3 +9,6 @@
     padding: 0.75em;
 }
 
+.restaurant-entry > div > .buttons > button {
+    margin-right: 0.4em;
+}

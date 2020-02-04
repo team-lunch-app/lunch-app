@@ -71,3 +71,17 @@ test('pressing the button changes the text', async () => {
 
   expect(restaurantNameElement.textContent).not.toBe(originalText)
 })
+
+test('user is not redirected to an external website if not confirmed', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+
+  // Generate a restaurant suggestion
+  fireEvent.click(queryByTestId('randomizer-randomizeButton'))
+  await waitForDomChange()
+
+  const url = queryByTestId('randomizer-restaurantUrl')
+  window.confirm = jest.fn(() => false)
+  fireEvent.click(url)
+
+  expect(url).toBeInTheDocument()
+})

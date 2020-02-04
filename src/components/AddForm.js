@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Button, ButtonToolbar, Alert } from 'react-bootstrap'
+import { Form, Button, ButtonToolbar, Alert, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -85,7 +87,7 @@ const AddForm = ({ id, onSubmit }) => {
         </Form.Group>
         <Filter
           dropdownText='Categories'
-          emptyMessage={<Alert variant='danger'>Select at least one!</Alert>}
+          emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
           filterCategories={!restaurant ? [] : restaurant.categories}
           setFilterCategories={setCategories} />
         <ButtonToolbar>
@@ -105,6 +107,26 @@ const AddForm = ({ id, onSubmit }) => {
           </Button>
         </ButtonToolbar>
       </Form>
+    </div>
+  )
+}
+
+const FilterEmptyMessage = () => {
+  return (
+    <div className='empty-message'>
+      <Alert variant='danger'><span>Please select at least one! </span>
+
+      </Alert>
+      <OverlayTrigger
+        placement='right'
+        overlay={
+          <Tooltip>
+            Selecting categories will make this restaurant show up in filtered draws.
+          </Tooltip>
+        }
+      >
+        <FontAwesomeIcon className='question-mark' icon={faQuestionCircle} />
+      </OverlayTrigger>
     </div>
   )
 }

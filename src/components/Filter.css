@@ -9,11 +9,6 @@
     padding: 0em 0.75em;
 }
 
-.category-list > span > .alert {
-    margin-bottom: 0;
-    padding: 0.25em 1em;
-}
-
 .category-list .entry {    
     margin: 0em 0.25em;
     padding: 0em 1em;
@@ -29,4 +24,18 @@
     background-color: transparent;
     border: transparent;
     font-size: x-large;
+}
+
+.category-list > span > .empty-message {
+    display: flex;
+    align-items: center;
+}
+
+.category-list > span > .empty-message > .alert {
+    margin-bottom: 0;
+    padding: 0.25em 1em;
+}
+
+.category-list > span > .empty-message > .question-mark {
+    margin-left: 0.5em;
 }
