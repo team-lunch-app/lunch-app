@@ -22,22 +22,24 @@ const RestaurantEntry = ({ restaurant, onRemove }) => {
     <Card className='restaurant-entry' data-testid='restaurantList-restaurantEntry'>
       <Card.Body>
         <span data-testid='restaurantEntry-name'>{restaurant.name}</span>
-        <Button
-          data-testid='restaurantEntry-editButton'
-          onClick={handleEdit}
-          variant='warning'
-          size='sm'
-        >
-          Edit
-        </Button>
-        <Button
-          data-testid='restaurantEntry-removeButton'
-          onClick={handleRemove}
-          variant='danger'
-          size='sm'
-        >
-          Remove
-        </Button>
+        <div className='buttons'>
+          <Button
+            data-testid='restaurantEntry-editButton'
+            onClick={handleEdit}
+            variant='warning'
+            size='sm'
+          >
+            Edit
+          </Button>
+          <Button
+            data-testid='restaurantEntry-removeButton'
+            onClick={handleRemove}
+            variant='danger'
+            size='sm'
+          >
+            Remove
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   )
