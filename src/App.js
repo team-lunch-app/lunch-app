@@ -27,31 +27,15 @@ const App = () => {
     )
   }
 
-  const homeView = () => {
-    return (
-      <>
-        <Randomizer restaurantService={restaurantService} />
-      </>
-    )
-  }
-
-  const addFormView = () => {
-    return (
-      <>
-        <AddForm restaurantService={restaurantService} />
-      </>
-    )
-  }
-
   return (
     <>
       <header className='main-navbar'>
         {navbar()}
       </header>
       <section className='main-container'>
-        <Route exact path="/" render={() => homeView()} />
-        <Route path="/add" render={() => addFormView()} />
-        <Route path="/edit/:id" render={() => addFormView()} />
+        <Route exact path="/" render={() => <Randomizer />} />
+        <Route path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
+        <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
         <Route path="/restaurants" render={() => <RestaurantList restaurantService={restaurantService} />} />
       </section>
     </>
