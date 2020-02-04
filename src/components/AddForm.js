@@ -13,6 +13,10 @@ const AddForm = ({ id, onSubmit }) => {
 
   const [error, setError] = useState('')
   const [restaurant, setRestaurant] = useState(!id ? createDefaultRestaurant() : undefined)
+  const setName = (name) => setRestaurant({ ...restaurant, name })
+  const setUrl = (url) => setRestaurant({ ...restaurant, url })
+  const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
+
   let history = useHistory()
 
   useEffect(() => {
@@ -31,18 +35,6 @@ const AddForm = ({ id, onSubmit }) => {
         })
     }
   }, [id])
-
-  if (id && !restaurant) {
-    return (
-      <div>
-        Loading...
-      </div>
-    )
-  }
-
-  const setName = (name) => setRestaurant({ ...restaurant, name })
-  const setUrl = (url) => setRestaurant({ ...restaurant, url })
-  const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
   const saveRestaurant = async (event) => {
     event.preventDefault()
@@ -75,24 +67,26 @@ const AddForm = ({ id, onSubmit }) => {
         <Form.Group>
           <Form.Label>Restaurant Name</Form.Label>
           <Form.Control
+            disabled={!restaurant}
             data-testid='addForm-nameField'
             type='text'
-            value={restaurant.name}
+            value={!restaurant ? 'Loading...' : restaurant.name}
             onChange={(event) => setName(event.target.value)} />
         </Form.Group>
 
         <Form.Group>
           <Form.Label>Restaurant Website</Form.Label>
           <Form.Control
+            disabled={!restaurant}
             data-testid='addForm-urlField'
             type='text'
-            value={restaurant.url}
+            value={!restaurant ? 'Loading...' : restaurant.url}
             onChange={(event) => setUrl(event.target.value)} />
         </Form.Group>
         <Filter
           dropdownText='Categories'
           emptyMessage={<Alert variant='danger'>Select at least one!</Alert>}
-          filterCategories={restaurant.categories}
+          filterCategories={!restaurant ? [] : restaurant.categories}
           setFilterCategories={setCategories} />
         <ButtonToolbar>
           <Button
