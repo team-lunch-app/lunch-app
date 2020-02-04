@@ -8,7 +8,7 @@ import restaurantService from '../services/restaurant'
 import './AddForm.css'
 import Filter from './Filter'
 
-const AddForm = ({ id }) => {
+const AddForm = ({ id, onSubmit }) => {
   const createDefaultRestaurant = () => ({ name: '', url: '', categories: [] })
 
   const [error, setError] = useState('')
@@ -52,17 +52,14 @@ const AddForm = ({ id }) => {
       return
     }
 
-    const addedOrUpdated = {
-      ...restaurant,
-      categories: restaurant.categories.map(category => category.id)
-    }
-
     try {
-      if (id) {
-        await restaurantService.update(addedOrUpdated)
-      } else {        
-        await restaurantService.add(addedOrUpdated)
+      if (onSubmit) {
+        await onSubmit({
+          ...restaurant,
+          categories: restaurant.categories.map(category => category.id)
+        })
       }
+
       setError('')
       history.push('/')
     }
@@ -120,6 +117,7 @@ const AddForm = ({ id }) => {
 
 AddForm.propTypes = {
   id: PropTypes.any,
+  onSubmit: PropTypes.func,
 }
 
 export default AddForm

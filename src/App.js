@@ -34,8 +34,8 @@ const App = () => {
       </header>
       <section className='main-container'>
         <Route exact path="/" render={() => <Randomizer />} />
-        <Route path="/add" render={() => <AddForm />} />
-        <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} />} />
+        <Route path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
+        <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
         <Route path="/restaurants" render={() => <RestaurantList restaurantService={restaurantService} />} />
       </section>
     </>
