@@ -88,13 +88,24 @@ test('getRandom request with a category id returns a restaurant belonging to the
   })
 })
 
-test('getRandom returns an error when no restaurants are found with the given filter', async () => {
+test('getRandom responds with status 404 when no restaurants are found with the given filter', async () => {
   const testCategoryId = categories[0].id
 
-  const response = await server.post('/api/restaurants/random')
+  await server
+    .post('/api/restaurants/random')
+    .send([testCategoryId])
+    .expect('Content-Type', /json/)
+    .expect(404)
+})
+
+test('getRandom response has an error when no restaurants are found with the given filter', async () => {
+  const testCategoryId = categories[0].id
+
+  const { body } = await server
+    .post('/api/restaurants/random')
     .send([testCategoryId])
 
-  expect(response.body.error).toBeDefined()
+  expect(body).toHaveProperty('error')
 })
 
 test('getRandom return the correct number of categories when multiple filter options are provided', async () => {
@@ -125,7 +136,7 @@ test('post request to /api/restaurants with valid data succeeds', async () => {
   await server
     .post('/api/restaurants')
     .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [] })
-    .expect(200)
+    .expect(201)
     .expect('Content-Type', /application\/json/i)
 })
 
@@ -158,7 +169,7 @@ test('post request to /api/restaurants without url succeeds', async () => {
   await server
     .post('/api/restaurants')
     .send({ name: 'Ravintola Artjärvi', categories: [] })
-    .expect(200)
+    .expect(201)
     .expect('Content-Type', /application\/json/i)
 })
 
@@ -166,7 +177,7 @@ test('post request to /api/restaurants with url containing only whitespace succe
   await server
     .post('/api/restaurants')
     .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
-    .expect(200)
+    .expect(201)
     .expect('Content-Type', /application\/json/i)
 })
 
@@ -187,12 +198,12 @@ test('post request to /api/restaurants with url but without name fails', async (
     .expect(400)
 })
 
-test('delete request to /api/restaurants/id with proper ID succeeds', async () => {
+test('delete request to /api/restaurants/id with proper ID succeeds with status 204', async () => {
   const id = restaurants[1]._id
 
   await server
     .delete(`/api/restaurants/${id}`)
-    .expect(200)
+    .expect(204)
 })
 
 test('delete request to /api/restaurants/id with proper ID removes the restaurant from DB', async () => {
@@ -204,12 +215,20 @@ test('delete request to /api/restaurants/id with proper ID removes the restauran
   expect(restaurant).toBeNull()
 })
 
-test('delete request to /api/restaurants/id with invalid ID fails', async () => {
+test('delete request to /api/restaurants/id with invalid ID fails 400', async () => {
   const id = 'invalid'
 
   await server
     .delete(`/api/restaurants/${id}`)
     .expect(400)
+})
+
+test('delete request to /api/restaurants/id with unknown ID fails with 404', async () => {
+  const id = '5e259505d106bf0c27e931a1'
+
+  await server
+    .delete(`/api/restaurants/${id}`)
+    .expect(404)
 })
 
 test('post request to /api/restaurants with very long name fails', async () => {
@@ -226,15 +245,26 @@ test('post request to /api/restaurants with very long url fails', async () => {
     .expect(400)
 })
 
+test('put request with valid data responds with 204', async () => {
+  const testRestaurantId = restaurants[0].id
+
+  await server
+    .put(`/api/restaurants/${testRestaurantId}`)
+    .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+    .expect(204)
+})
+
 test('put request with valid data updates the restaurant', async () => {
   const testRestaurantId = restaurants[0].id
 
-  const response = await server
+  await server
     .put(`/api/restaurants/${testRestaurantId}`)
     .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
 
-  const contents = response.body
-  expect(contents).toMatchObject({
+  
+  const restaurant = await Restaurant.findById(testRestaurantId)
+  expect(restaurant.toJSON()).toEqual({
+    id: testRestaurantId,
     name: 'Torigrilli Senaatintori',
     url: 'https://torigrilli.fi',
     categories: []
