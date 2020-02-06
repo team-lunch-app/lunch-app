@@ -12,3 +12,7 @@
         width: 10em;
     }
 }
+
+.add-form > div > .alert {
+    margin-top: 0.5em;
+}

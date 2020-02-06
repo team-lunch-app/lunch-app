@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, wait, waitForElement } from '@testing-library/react'
+import { fireEvent, wait, waitForElement, waitForDomChange } from '@testing-library/react'
 import { actRender } from '../test/utilities'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
@@ -14,7 +14,23 @@ beforeEach(() => {
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 })
 
-test('invalid input displays an error message', async () => {
+test('invalid name input displays an error message', async () => {
+  const { queryByTestId } = await actRender(
+    <MemoryRouter initialEntries={['/add']}>
+      <AddForm onSubmit={jest.fn()} />
+    </MemoryRouter>
+  )
+
+  const buttonElement = await queryByTestId('addForm-addButton')
+  fireEvent.click(buttonElement)
+  
+  await waitForDomChange()
+
+  const error = await queryByTestId('addForm-nameErrorMessage')
+  expect(error).toBeInTheDocument()
+})
+
+test('invalid url input displays an error message', async () => {
   const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/add']}>
       <AddForm onSubmit={jest.fn()} />
@@ -24,7 +40,9 @@ test('invalid input displays an error message', async () => {
   const buttonElement = await queryByTestId('addForm-addButton')
   fireEvent.click(buttonElement)
 
-  const error = await queryByTestId('addForm-errorMessage')
+  await waitForDomChange()
+
+  const error = await queryByTestId('addForm-urlErrorMessage')
   expect(error).toBeInTheDocument()
 })
 
