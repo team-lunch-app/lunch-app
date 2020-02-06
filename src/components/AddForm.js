@@ -3,6 +3,7 @@ import { Form, Button, ButtonToolbar, Alert, OverlayTrigger, Tooltip } from 'rea
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons'
 import { useHistory } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
 
 import restaurantService from '../services/restaurant'
@@ -14,6 +15,7 @@ const AddForm = ({ id, onSubmit }) => {
   const createDefaultRestaurant = () => ({ name: '', url: '', categories: [] })
 
   const [error, setError] = useState('')
+  const { register, handleSubmit, errors } = useForm()
   const [restaurant, setRestaurant] = useState(!id ? createDefaultRestaurant() : undefined)
   const setName = (name) => setRestaurant({ ...restaurant, name })
   const setUrl = (url) => setRestaurant({ ...restaurant, url })
@@ -38,13 +40,8 @@ const AddForm = ({ id, onSubmit }) => {
     }
   }, [id])
 
-  const saveRestaurant = async (event) => {
+  const saveRestaurant = async (data, event) => {
     event.preventDefault()
-
-    if (restaurant.name.trim().length === 0 || restaurant.url.trim().length === 0) {
-      setError('Name and/or URL cannot be empty!')
-      return
-    }
 
     try {
       if (onSubmit) {
@@ -65,48 +62,68 @@ const AddForm = ({ id, onSubmit }) => {
   return (
     <div data-testid='addForm'>
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
-      <Form onSubmit={(event) => saveRestaurant(event)} className='add-form'>
-        <Form.Group>
-          <Form.Label>Restaurant Name</Form.Label>
-          <Form.Control
-            disabled={!restaurant}
-            data-testid='addForm-nameField'
-            type='text'
-            value={!restaurant ? 'Loading...' : restaurant.name}
-            onChange={(event) => setName(event.target.value)} />
-        </Form.Group>
+      {restaurant ?
+        <Form onSubmit={handleSubmit(saveRestaurant)} className='add-form'>
+          <Form.Group>
+            <Form.Label>Restaurant Name</Form.Label>
+            <Form.Control
+              data-testid='addForm-nameField'
+              disabled={!restaurant}
+              type='text'
+              name='name'
+              defaultValue={restaurant.name}
+              onChange={(event) => setName(event.target.value)}
+              ref={register({ required: true, minLength: 3, maxLength: 240 })} />
+            {errors.name &&
+              <Alert data-testid='addForm-nameErrorMessage' variant='danger'>
+                {errors.name.type === 'required' && <li>Name cannot be empty!</li>}
+                {errors.name.type === 'minLength' && <li>Must be at least 3 characters</li>}
+                {errors.name.type === 'maxLength' && <li>Must be shorter than 240 characters</li>}
+              </Alert>
+            }
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Restaurant Website</Form.Label>
-          <Form.Control
-            disabled={!restaurant}
-            data-testid='addForm-urlField'
-            type='text'
-            value={!restaurant ? 'Loading...' : restaurant.url}
-            onChange={(event) => setUrl(event.target.value)} />
-        </Form.Group>
-        <Filter
-          dropdownText='Categories'
-          emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
-          filterCategories={!restaurant ? [] : restaurant.categories}
-          setFilterCategories={setCategories} />
-        <ButtonToolbar>
-          <Button
-            data-testid='addForm-cancelButton'
-            onClick={() => history.push('/')}
-            variant='secondary'
-          >
-            Cancel
-          </Button>
-          <Button
-            data-testid='addForm-addButton'
-            type='submit'
-            variant='primary'
-          >
-            {id ? 'Update' : 'Add'}
-          </Button>
-        </ButtonToolbar>
-      </Form>
+          <Form.Group>
+            <Form.Label>Restaurant Website</Form.Label>
+            <Form.Control
+              disabled={!restaurant}
+              data-testid='addForm-urlField'
+              type='text'
+              name='url'
+              defaultValue={restaurant.url}
+              onChange={(event) => setUrl(event.target.value)}
+              ref={register({ required: true, minLength: 3, maxLength: 240 })} />
+            {errors.url &&
+              <Alert data-testid='addForm-urlErrorMessage' variant='danger'>
+                {errors.url.type === 'required' && <li>URL cannot be empty!</li>}
+                {errors.url.type === 'minLength' && <li>Must be at least 3 characters</li>}
+                {errors.url.type === 'maxLength' && <li>Must be shorter than 240 characters</li>}
+              </Alert>
+            }
+          </Form.Group>
+          <Filter
+            dropdownText='Categories'
+            emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
+            filterCategories={restaurant.categories}
+            setFilterCategories={setCategories} />
+          <ButtonToolbar>
+            <Button
+              data-testid='addForm-cancelButton'
+              onClick={() => history.push('/')}
+              variant='secondary'
+            >
+              Cancel
+            </Button>
+            <Button
+              data-testid='addForm-addButton'
+              type='submit'
+              variant='primary'
+            >
+              {id ? 'Update' : 'Add'}
+            </Button>
+          </ButtonToolbar>
+        </Form>
+        : 'Loading...'}
     </div>
   )
 }
@@ -114,7 +131,7 @@ const AddForm = ({ id, onSubmit }) => {
 const FilterEmptyMessage = () => {
   return (
     <div className='empty-message'>
-      <Alert variant='danger'><span>Please select at least one! </span>
+      <Alert variant='warning'><span>Please select at least one! </span>
 
       </Alert>
       <OverlayTrigger
