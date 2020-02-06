@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import Filter from './Filter'
 import './Randomizer.css'
 
@@ -40,7 +42,17 @@ const Randomizer = () => {
     <div data-testid='randomizer' className='randomizer'>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       {restaurant.url
-        ? <p><a data-testid='randomizer-restaurantUrl' onClick={(event) => confirmLeave(event)} href={processUrl(restaurant.url)} target='_blank' rel='noopener noreferrer'>Website</a></p>
+        ? <p>
+          <a data-testid='randomizer-restaurantUrl'
+            className='restaurant-url'
+            onClick={(event) => confirmLeave(event)}
+            href={processUrl(restaurant.url)}
+            target='_blank'
+            rel='noopener noreferrer'>
+            <span>Website </span>
+            <FontAwesomeIcon icon={faExternalLinkAlt} />
+          </a>
+        </p>
         : <></>
       }
       <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>
