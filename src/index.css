@@ -12,8 +12,85 @@ code {
     monospace;
 }
 
+.btn-primary {
+  background-color: #00cccc;
+  border-color: #00cccc;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: #00aaaa;
+  border-color: #00aaaa;
+}
+
+.btn-success {
+  background-color: #1bbe96;
+  border-color: #1bbe96;
+}
+
+.btn-success:hover {
+  background-color: #16a581;
+  border-color: #16a581;
+}
+
+.btn-danger {
+  background-color: #ff0066;
+  border-color: #ff0066;
+}
+
+.btn-danger:hover {
+  background-color: #cf0053;
+  border-color: #cf0053;
+}
+
+.btn-warning {
+  color: #f2f2f2;
+  background-color: #ff7f33;
+  border-color: #ff7f33;
+}
+
+.btn-warning:hover {
+  background-color: #e66f2b;
+  border-color: #e66f2b;
+}
+
+.show > .btn-primary.dropdown-toggle {
+  background-color: #00aaaa;
+  border-color: #00aaaa;
+}
+
 #root {
   height: 100vh;
-  color: #2f2f2f;
-  background-color: #F1C40F;
+  color: #f2f2f2;
+  /*background-color: #F1C40F;*/
+
+  background: linear-gradient(-45deg, #221c37, #b83c82, #221c37,  #b83c82);
+  background-size: 400%;
+  animation: gradientAnim;
+  animation-duration: 60s;  
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes gradientAnim {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes test {
+  0% {
+    background-color: #221c37;
+  }
+
+  50% {
+    background-color: #b83c82;
+  }
+
+  100% {
+    background-color: #221c37;
+  }
 }

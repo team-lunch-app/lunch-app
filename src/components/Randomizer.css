@@ -9,3 +9,11 @@
 .randomizer > h1 {
     text-align: center;
 }
+
+.restaurant-url {
+    color: #A0E7E3;
+}
+
+.restaurant-url:hover {
+    color: #E7A0E3;
+}
