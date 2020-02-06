@@ -37,9 +37,7 @@ beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
-  await dbUtil.createRowsFrom(Category, testCategoryData)
-  const dbCategories = await server.get('/api/categories')
-  categories = dbCategories.body
+  categories = await dbUtil.createRowsFrom(Category, testCategoryData)
 })
 
 afterEach(async () => {
@@ -261,12 +259,88 @@ test('put request with valid data updates the restaurant', async () => {
     .put(`/api/restaurants/${testRestaurantId}`)
     .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
 
-  
+
   const restaurant = await Restaurant.findById(testRestaurantId)
   expect(restaurant.toJSON()).toEqual({
     id: testRestaurantId,
     name: 'Torigrilli Senaatintori',
     url: 'https://torigrilli.fi',
     categories: []
+  })
+})
+
+describe('queries update backwards references', () => {
+  test('adding a restaurant adds references to the associated categories', async () => {
+    const response = await server
+      .post('/api/restaurants')
+      .send({
+        name: 'Ravintola Artjärvi',
+        url: 'https://www.joku.fi',
+        categories: [
+          categories[0]._id,
+          categories[1]._id,
+        ]
+      })
+
+    const addedId = response.body.id
+
+    const updatedA = await Category.findById(categories[0]._id)
+    const updatedB = await Category.findById(categories[1]._id)
+
+    expect(updatedA.restaurants.map(id => id.toString())).toContain(addedId)
+    expect(updatedB.restaurants.map(id => id.toString())).toContain(addedId)
+  })
+
+  test('removing a restaurant removes references from the associated categories', async () => {
+    const rawRestaurant = new Restaurant({
+      name: 'Ravintola Artjärvi',
+      url: 'https://www.joku.fi',
+      categories: [
+        categories[0]._id,
+        categories[1]._id,
+      ]
+    })
+    const restaurant = await rawRestaurant.save()
+    const id = restaurant._id
+
+    await server.delete(`/api/restaurants/${id}`)
+
+    const updatedA = await Category.findById(categories[0]._id)
+    const updatedB = await Category.findById(categories[1]._id)
+
+    expect(updatedA.restaurants.map(id => id.toString())).not.toContain(id)
+    expect(updatedB.restaurants.map(id => id.toString())).not.toContain(id)
+  })
+
+  test('updating a restaurant removes references from categories no longer referenced', async () => {
+    const rawRestaurant = new Restaurant({
+      name: 'Ravintola Artjärvi',
+      url: 'https://www.joku.fi',
+      categories: [
+        categories[0]._id,
+        categories[1]._id,
+      ]
+    })
+    const restaurant = await rawRestaurant.save()
+    const id = restaurant._id
+
+    await server
+      .put(`/api/restaurants/${id}`)
+      .send({
+        name: 'Torigrilli Senaatintori',
+        url: 'https://torigrilli.fi',
+        categories: [
+          categories[1]._id,
+          categories[2]._id,
+        ]
+      })
+
+    const removed = await Category.findById(categories[0]._id)
+    const notTouched = await Category.findById(categories[1]._id)
+    const added = await Category.findById(categories[2]._id)
+
+    expect(removed.restaurants.map(id => id.toString())).not.toContain(id.toString())
+    expect(notTouched.restaurants.map(id => id.toString())).toContain(id.toString())
+    expect(added.restaurants.map(id => id.toString())).toContain(id.toString())
   })
 })
