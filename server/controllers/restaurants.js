@@ -22,8 +22,7 @@ restaurantsRouter.get('/', async (request, response) => {
 
 // getRandom
 restaurantsRouter.post('/random', async (request, response) => {
-  let restaurants = await Restaurant
-    .find({}).populate('categories')
+  let restaurants = await Restaurant.find({}).populate('categories')
   const filterCategories = request.body
 
   const containsCategory = (category) => filterCategories
@@ -59,19 +58,18 @@ restaurantsRouter.post('/', async (request, response, next) => {
     const restaurant = new Restaurant({
       name: body.name,
       url: trimAndUndefineIfEmpty(body.url),
-      categories: body.categories
+      categories: body.categories || []
     })
 
     try {
       const savedRestaurant = await restaurant.save()
 
       try {
-        await savedRestaurant.categories.forEach(async categoryId => {
-          await Category.findByIdAndUpdate(
-            categoryId,
-            { $addToSet: { restaurants: request.params.id } }
-          )
-        })
+        const newCategoryIds = savedRestaurant.categories
+        await Category.updateMany(
+          { _id: { $in: [...newCategoryIds] } },
+          { $addToSet: { restaurants: savedRestaurant._id } }
+        )
       } catch (error) {
         // FIXME: Restaurant references might be corrupt. Might be better to remove the restaurant here?
         return response.status(400).send({ error: error.message })
@@ -92,29 +90,33 @@ restaurantsRouter.post('/', async (request, response, next) => {
 
 restaurantsRouter.put('/:id', async (request, response, next) => {
   const body = request.body
+  const restaurantId = request.params.id
+  const newCategoryIds = request.body.categories
 
   const restaurant = {
-    id: request.params.id,
+    id: restaurantId,
     name: body.name,
     url: trimAndUndefineIfEmpty(body.url),
     categories: body.categories
   }
 
   try {
-    await Restaurant.findByIdAndUpdate(
-      request.params.id,
-      restaurant,
-      { new: true }
+    const { categories: oldCategoryIds } = await Restaurant.findByIdAndUpdate(
+      restaurantId,
+      restaurant
     )
 
-    await request.body.categories.forEach(async categoryId => {
-      await Category.findByIdAndUpdate(
-        categoryId,
-        { $addToSet: { restaurants: request.params.id } }
-      )
-    })
+    await Category.updateMany(
+      { _id: { $in: [...oldCategoryIds] } },
+      { $pull: { restaurants: { $in: [restaurantId] } } },
+    )
 
-    response.status(204).end()
+    await Category.updateMany(
+      { _id: { $in: [...newCategoryIds] } },
+      { $addToSet: { restaurants: restaurantId } }
+    )
+
+    return response.status(204).end()
   } catch (error) {
     if (error.name === 'ValidationError') {
       return response.status(400).send({ error: error.message })
