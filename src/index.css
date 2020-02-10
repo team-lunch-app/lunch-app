@@ -59,7 +59,8 @@ code {
 }
 
 #root {
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   color: #f2f2f2;
   /*background-color: #F1C40F;*/
 
