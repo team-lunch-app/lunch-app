@@ -12,7 +12,11 @@ const FilterList = ({ selected, onRemove, emptyMessage }) => {
     <span data-testid='filter-list' className='category-list'>
       {selected.length > 0
         ? selected.map((category) =>
-          <Badge className='entry' variant='light' data-testid='filter-listEntry' key={category.id}>
+          <Badge
+            className='entry'
+            variant={category.name === 'Suomi' ? 'primary' : 'light'}
+            data-testid='filter-listEntry'
+            key={category.id}>
             <span>{category.name}</span>
             <button data-testid='filter-listEntry-deleteButton' onClick={removeHandler(category.id)}>×</button>
           </Badge>
