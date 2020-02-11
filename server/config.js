@@ -11,9 +11,14 @@ const dbName = process.env.NODE_ENV === 'test'
   ? global.MONGODB_NAME
   : undefined
 
+const jwtSecret = process.env.NODE_ENV === 'test'
+  ? 'sekret'
+  : process.env.SECRET
+
 module.exports = {
   port,
   staticDir,
   dbUrl,
-  dbName
+  dbName,
+  jwtSecret
 }

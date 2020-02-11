@@ -1,5 +1,6 @@
 const categoryRouter = require('express').Router()
 const Category = require('../models/category')
+const authorization = require('../util/authorization')
 
 categoryRouter.get('/', async (request, response) => {
   const categories = await Category
@@ -8,22 +9,19 @@ categoryRouter.get('/', async (request, response) => {
 })
 
 categoryRouter.post('/', async (request, response, next) => {
-  const body = request.body
-
-  const category = new Category({
-    name: body.name.trim(),
-    restaurants: body.restaurants
-  })
-
   try {
+    authorization.requireAuthorized(request)
+
+    const body = request.body
+
+    const category = new Category({
+      name: body.name.trim(),
+      restaurants: body.restaurants
+    })
+
     const savedCategory = await category.save()
     response.json(savedCategory.toJSON())
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      return response.status(400).send({ error: error.message })
-    }
-
-    console.log('unknown error:', error)
     next(error)
   }
 })

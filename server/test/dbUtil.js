@@ -1,11 +1,13 @@
 const mongoose = require('mongoose')
-
+const bcrypt = require('bcrypt')
 const config = require('../config')
+const User = require('../models/user')
 
 const connect = async () => {
   await mongoose.connect(config.dbUrl, {
     useNewUrlParser: true,
-    dbName: config.dbName
+    dbName: config.dbName,
+    useUnifiedTopology: true
   })
 }
 
@@ -44,6 +46,16 @@ const createRowsFrom = async (model, entries) => {
   return createRows(entries.length, (i) => new model(entries[i]))
 }
 
+const createUser = async (username, password) => {
+  const passwordHash = await bcrypt.hash(password, 8)
+  const user = new User({
+    username: username,
+    password: passwordHash
+  })
+  return await user.save()
+}
+
+
 /**
  * Cleans up all database collections, tries to drop the database and finally closes
  * the DB connection.
@@ -62,5 +74,6 @@ module.exports = {
   connect,
   createRows,
   createRowsFrom,
-  cleanupAndDisconnect
+  cleanupAndDisconnect,
+  createUser
 }
