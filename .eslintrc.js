@@ -47,7 +47,6 @@ module.exports = {
     ],
     'eol-last': [
       'warn'
-    ],
-    'no-console': 1
+    ]
   }
 }
