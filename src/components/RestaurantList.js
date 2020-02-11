@@ -17,7 +17,7 @@ const RestaurantList = ({ restaurantService }) => {
     }
 
     const result = await restaurantService.remove(restaurant.id)
-    if (result && result.status === 200) {
+    if (result && result.status === 204) {
       setRestaurants(restaurants.filter(r => r.id !== restaurant.id))
     }
   }

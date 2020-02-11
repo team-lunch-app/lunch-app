@@ -23,13 +23,39 @@ restaurantsRouter.get('/', async (request, response) => {
 // getRandom
 restaurantsRouter.post('/random', async (request, response) => {
   let restaurants = await Restaurant.find({}).populate('categories')
-  const filterCategories = request.body
 
-  const containsCategory = (category) => filterCategories
-    .includes(category.id)
+  const filter = request.body
+  const filterCategories = filter.categories || []
+  const filterType = filter.type || 'some'
+
+  const containsCategory = (category) => {
+    return filterCategories
+      .includes(category.id)
+  }
+
+  const filterFunc = (categories, filterType) => {
+    switch (filterType) {
+      case 'some': {
+        return categories.some(containsCategory)
+      }
+      case 'all': {
+        return categories.length > 0 && categories.length >= filterCategories.length
+          ? categories.every(containsCategory)
+          : false
+      }
+      case 'none': {
+        return categories.length > 0
+          ? categories.some(c => !containsCategory(c))
+          : true
+      }
+      default: {
+        return false
+      }
+    }
+  }
 
   restaurants = (filterCategories.length !== 0)
-    ? restaurants.filter(rest => rest.categories && rest.categories.some(containsCategory))
+    ? restaurants.filter(restaurant => restaurant.categories && filterFunc(restaurant.categories, filterType))
     : restaurants
 
   if (!restaurants || restaurants.length < 1) {
