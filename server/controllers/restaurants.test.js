@@ -66,7 +66,7 @@ test('get request to a specific id returns the correct restaurant', async () => 
 
 test('getRandom request returns a restaurant', async () => {
   const response = await server.post('/api/restaurants/random')
-    .send([])
+    .send({ categories: [], type: 'some' })
 
   expect(restaurants.map(restaurant => restaurant.name)).toContain(response.body.name)
 })
@@ -77,7 +77,7 @@ test('getRandom request with a category id returns a restaurant belonging to the
     .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId] })
 
   const response = await server.post('/api/restaurants/random')
-    .send([testCategoryId])
+    .send({ categories: [testCategoryId], type: 'some' })
 
   const contents = response.body
   expect(contents).toMatchObject({
@@ -91,7 +91,7 @@ test('getRandom responds with status 404 when no restaurants are found with the 
 
   await server
     .post('/api/restaurants/random')
-    .send([testCategoryId])
+    .send({ categories: [testCategoryId], type: 'some' })
     .expect('Content-Type', /json/)
     .expect(404)
 })
@@ -101,23 +101,51 @@ test('getRandom response has an error when no restaurants are found with the giv
 
   const { body } = await server
     .post('/api/restaurants/random')
-    .send([testCategoryId])
+    .send({ categories: [testCategoryId], type: 'some' })
 
   expect(body).toHaveProperty('error')
 })
 
-test('getRandom return the correct number of categories when multiple filter options are provided', async () => {
+test('getRandom return the correct number of categories when multiple filter options are provided with filter option "some"', async () => {
   await server.post('/api/restaurants')
     .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
   await server.post('/api/restaurants')
     .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id] })
 
   const response = await server.post('/api/restaurants/random')
-    .send([categories[0].id, categories[1].id])
+    .send({ categories: [categories[0].id, categories[1].id], type: 'some' })
 
   const name = response.body.name
   expect(name === 'Kauppatorin Nakkikioski' || name === 'Kalevankadun Salaattibaari').toBeTruthy()
 })
+
+test('getRandom return the correct number of categories when multiple filter options are provided with filter option "every"', async () => {
+  await server.post('/api/restaurants')
+    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
+  await server.post('/api/restaurants')
+    .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id, categories[0].id] })
+
+  const response = await server.post('/api/restaurants/random')
+    .send({ categories: [categories[0].id, categories[1].id], type: 'all' })
+
+  const name = response.body.name
+  expect(name === 'Kalevankadun Salaattibaari').toBeTruthy()
+})
+
+test('getRandom return the correct number of categories when multiple filter options are provided with filter option "none"', async () => {
+  await server.post('/api/restaurants')
+    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
+  await server.post('/api/restaurants')
+    .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id, categories[0].id] })
+
+  const response = await server.post('/api/restaurants/random')
+    .send({ categories: [categories[0].id, categories[1].id], type: 'none' })
+    .expect(200)
+
+  const name = response.body.name
+  expect(name === 'Kauppatorin Nakkikioski' || name === 'Kalevankadun Salaattibaari').toBeFalsy()
+})
+
 
 test('get request to an invalid id returns code 404', async () => {
   await server.get('/api/restaurants/1').expect(404)

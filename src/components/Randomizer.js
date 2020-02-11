@@ -9,13 +9,14 @@ import restaurantService from '../services/restaurant'
 
 const Randomizer = () => {
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
+  const [filterType, setFilterType] = useState('some')
   const [filterCategories, setFilterCategories] = useState([])
 
   const changeRestaurantHandler = async (event) => {
     event.preventDefault()
 
     try {
-      const newRestaurant = await restaurantService.getRandom(filterCategories)
+      const newRestaurant = await restaurantService.getRandom(filterType, filterCategories)
       if (newRestaurant) {
         setRestaurant(newRestaurant)
       }
@@ -61,7 +62,9 @@ const Randomizer = () => {
       <Filter
         emptyMessage={<strong>#NoFilter</strong>}
         setFilterCategories={setFilterCategories}
-        filterCategories={filterCategories} />
+        filterCategories={filterCategories}
+        filterType={filterType}
+        setFilterType={setFilterType} />
     </div>
   )
 }

@@ -15,6 +15,8 @@ test('filter list exists', async () => {
       filterCategories={[...testCategories]}
       setFilterCategories={jest.fn()}
       emptyMessage={<strong>#NoFilter</strong>}
+      filterType={'some'}
+      setFilterType={jest.fn()}
     />
   )
   const listElement = queryByTestId('filter-list')
@@ -27,6 +29,8 @@ test('filter dropdown exists', async () => {
       filterCategories={[...testCategories]}
       setFilterCategories={jest.fn()}
       emptyMessage={<strong>#NoFilter</strong>}
+      filterType={'some'}
+      setFilterType={jest.fn()}
     />
   )
   const dropdownElement = queryByTestId('filter-dropdown')
@@ -40,6 +44,8 @@ test('when deletebutton is pressed, setFilterCategories is called with right val
       filterCategories={[{ id: 3, name: 'salads' }]}
       setFilterCategories={mockSet}
       emptyMessage={<strong>#NoFilter</strong>}
+      filterType={'some'}
+      setFilterType={jest.fn()}
     />
   )
   const removeButton = queryByTestId('filter-listEntry-deleteButton')

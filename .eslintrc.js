@@ -30,7 +30,8 @@ module.exports = {
   'rules': {
     'indent': [
       'warn',
-      2
+      2,
+      { 'SwitchCase': 1 }
     ],
     'linebreak-style': [
       'error',
@@ -46,6 +47,7 @@ module.exports = {
     ],
     'eol-last': [
       'warn'
-    ]
+    ],
+    'no-console': 1
   }
 }
