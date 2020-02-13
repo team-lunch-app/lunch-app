@@ -55,7 +55,7 @@ Response body contains the requested *restaurant*.
 Randomly selects one restaurant.
 
 ### Request
-Optional filter settings can be provided as an object in the request body. The object should contain the properties `type` and `categories`, though, if one of them or neither is provided, their values are defaulted to values described below.
+Optional filter settings can be provided as an object in the request body. The object should contain the properties `type` and `categories`, though, if only one or neither is provided, their values are defaulted to values described below.
 
 In full, the request body should have the following shape:
 ```js
@@ -79,16 +79,16 @@ Currently available filter types are:
 If no filter type is provided in the request, the type will be set to `some` by default.
 
 #### Filter Categories
-Optional array of category ids can be provided in the filter settings object. For example providing
+Optional array of category ids can be provided in the request body. For example providing
 ```json
 categories: [
   "5e3934ee1c9d4400003d99a3",
   "5e3935521c9d4400003d99a4",
 ]
 ```
-in the object body, would cause the request to apply the selected filter type with the categories provided.
+in the request body, would cause the request to apply the selected filter type with the categories provided.
 
-If no categories to filter by are provided in the request, the value will default to an empty array - which, essentially, means that all restaurants are included in the draw.
+If no categories are provided in the request, the value will default to an empty array - which, essentially, means that all restaurants are included in the draw.
 
 ### Response
 | Header         | value              |
