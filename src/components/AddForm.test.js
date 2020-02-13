@@ -1,5 +1,6 @@
 import React from 'react'
-import { fireEvent, wait, waitForElement, waitForDomChange } from '@testing-library/react'
+import { fireEvent, wait, waitForElement } from '@testing-library/react'
+import { within } from '@testing-library/dom'
 import { actRender } from '../test/utilities'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
@@ -14,36 +15,63 @@ beforeEach(() => {
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 })
 
-test('invalid name input displays an error message', async () => {
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/add']}>
-      <AddForm onSubmit={jest.fn()} />
-    </MemoryRouter>
-  )
 
-  const buttonElement = await queryByTestId('addForm-addButton')
-  fireEvent.click(buttonElement)
-  
-  await waitForDomChange()
+describe('form alerts', () => {
+  test('name error message is hidden by default', async () => {
+    const { queryByTestId } = await actRender(
+      <MemoryRouter initialEntries={['/add']}>
+        <AddForm onSubmit={jest.fn()} />
+      </MemoryRouter>
+    )
 
-  const error = await queryByTestId('addForm-nameErrorMessage')
-  expect(error).toBeInTheDocument()
-})
+    const { queryByRole } = within(await queryByTestId('addForm-nameField'))
+    const error = queryByRole(/alert/i)
+    expect(error).not.toBeInTheDocument()
+  })
 
-test('invalid url input displays an error message', async () => {
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/add']}>
-      <AddForm onSubmit={jest.fn()} />
-    </MemoryRouter>
-  )
+  test('invalid name input displays an error message', async () => {
+    const { queryByTestId, getByTestId } = await actRender(
+      <MemoryRouter initialEntries={['/add']}>
+        <AddForm onSubmit={jest.fn()} />
+      </MemoryRouter>
+    )
 
-  const buttonElement = await queryByTestId('addForm-addButton')
-  fireEvent.click(buttonElement)
+    const buttonElement = await queryByTestId('addForm-addButton')
+    fireEvent.click(buttonElement)
 
-  await waitForDomChange()
+    const nameField = await waitForElement(() => getByTestId('addForm-nameField'))
+    const { getByRole } = within(nameField)
+    const error = getByRole(/alert/i)
+    expect(error).toBeInTheDocument()
+  })
 
-  const error = await queryByTestId('addForm-urlErrorMessage')
-  expect(error).toBeInTheDocument()
+  test('url error message is hidden by default', async () => {
+    const { queryByTestId } = await actRender(
+      <MemoryRouter initialEntries={['/add']}>
+        <AddForm onSubmit={jest.fn()} />
+      </MemoryRouter>
+    )
+
+    const { queryByRole } = within(await queryByTestId('addForm-urlField'))
+    const error = queryByRole(/alert/i)
+    expect(error).not.toBeInTheDocument()
+  })
+
+  test('invalid url input displays an error message', async () => {
+    const { queryByTestId, getByTestId } = await actRender(
+      <MemoryRouter initialEntries={['/add']}>
+        <AddForm onSubmit={jest.fn()} />
+      </MemoryRouter>
+    )
+
+    const buttonElement = await queryByTestId('addForm-addButton')
+    fireEvent.click(buttonElement)
+
+    const urlField = await waitForElement(() => getByTestId('addForm-urlField'))
+    const { getByRole } = within(urlField)
+    const error = getByRole(/alert/i)
+    expect(error).toBeInTheDocument()
+  })
 })
 
 test('add button calls restaurant callback with correct arguments', async () => {
@@ -55,9 +83,9 @@ test('add button calls restaurant callback with correct arguments', async () => 
   )
 
   // Input test data
-  const nameElement = await queryByTestId('addForm-nameField')
+  const nameElement = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
-  const urlElement = await queryByTestId('addForm-urlField')
+  const urlElement = within(queryByTestId('addForm-urlField')).getByRole(/textbox/i)
   fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
 
   // Test that the restaurant service is called
@@ -77,9 +105,9 @@ test('form is closed after adding a restaurant', async () => {
   )
 
   // Input test data
-  const nameElement = queryByTestId('addForm-nameField')
+  const nameElement = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
-  const urlElement = queryByTestId('addForm-urlField')
+  const urlElement = within(queryByTestId('addForm-urlField')).getByRole(/textbox/i)
   fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
 
   const buttonElement = queryByTestId('addForm-addButton')
@@ -113,7 +141,7 @@ test('form is empty if restaurant is not found with the given id parameter', asy
     </MemoryRouter>
   )
 
-  const nameField = queryByTestId('addForm-nameField')
+  const nameField = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
   expect(nameField.value).toBe('')
 })
 
@@ -133,6 +161,8 @@ test('form is pre-filled if a restaurant is found with the given id parameter', 
     </MemoryRouter>
   )
 
-  const nameField = await waitForElement(() => queryByTestId('addForm-nameField'))
+  const nameField = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
+  const urlField = within(queryByTestId('addForm-urlField')).getByRole(/textbox/i)
   expect(nameField.value).toBe('Luigi\'s pizza')
+  expect(urlField.value).toBe('www.pizza.fi')
 })

@@ -64,10 +64,9 @@ const AddForm = ({ id, onSubmit }) => {
       {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
       {restaurant ?
         <Form onSubmit={handleSubmit(saveRestaurant)} className='add-form'>
-          <Form.Group>
+          <Form.Group data-testid='addForm-nameField'>
             <Form.Label>Restaurant Name</Form.Label>
             <Form.Control
-              data-testid='addForm-nameField'
               disabled={!restaurant}
               type='text'
               name='name'
@@ -75,7 +74,7 @@ const AddForm = ({ id, onSubmit }) => {
               onChange={(event) => setName(event.target.value)}
               ref={register({ required: true, minLength: 3, maxLength: 240 })} />
             {errors.name &&
-              <Alert data-testid='addForm-nameErrorMessage' variant='danger'>
+              <Alert variant='danger'>
                 {errors.name.type === 'required' && <li>Name cannot be empty!</li>}
                 {errors.name.type === 'minLength' && <li>Must be at least 3 characters</li>}
                 {errors.name.type === 'maxLength' && <li>Must be shorter than 240 characters</li>}
@@ -83,18 +82,17 @@ const AddForm = ({ id, onSubmit }) => {
             }
           </Form.Group>
 
-          <Form.Group>
+          <Form.Group data-testid='addForm-urlField'>
             <Form.Label>Restaurant Website</Form.Label>
             <Form.Control
               disabled={!restaurant}
-              data-testid='addForm-urlField'
               type='text'
               name='url'
               defaultValue={restaurant.url}
               onChange={(event) => setUrl(event.target.value)}
               ref={register({ required: true, minLength: 3, maxLength: 240 })} />
             {errors.url &&
-              <Alert data-testid='addForm-urlErrorMessage' variant='danger'>
+              <Alert variant='danger'>
                 {errors.url.type === 'required' && <li>URL cannot be empty!</li>}
                 {errors.url.type === 'minLength' && <li>Must be at least 3 characters</li>}
                 {errors.url.type === 'maxLength' && <li>Must be shorter than 240 characters</li>}
