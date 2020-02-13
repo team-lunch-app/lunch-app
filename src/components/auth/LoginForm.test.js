@@ -1,10 +1,11 @@
 import React from 'react'
-import { fireEvent, wait, waitForElement, waitForDomChange } from '@testing-library/react'
+import { fireEvent, waitForElement } from '@testing-library/react'
+import { within } from '@testing-library/dom'
 import { actRender } from '../../test/utilities'
 import LoginForm from './LoginForm'
 import authService from '../../services/authentication'
-import { MemoryRouter, Route } from 'react-router-dom'
-import { fail } from 'assert'
+import { MemoryRouter } from 'react-router-dom'
+
 
 jest.mock('../../services/authentication.js')
 
@@ -20,9 +21,9 @@ describe('form is rendered', () => {
       </MemoryRouter>
     )
 
-    const usernameLabel = queryByTestId('loginform-usernameLabel')
+    const usernameLabel = within(queryByTestId(/loginForm-usernameField/i)).getByText(/username/i)
     expect(usernameLabel).toBeInTheDocument()
-    const passwordLabel = queryByTestId('loginform-passwordLabel')
+    const passwordLabel = within(queryByTestId(/loginForm-passwordField/i)).getByText(/password/i)
     expect(passwordLabel).toBeInTheDocument()
   })
 
@@ -33,7 +34,7 @@ describe('form is rendered', () => {
       </MemoryRouter>
     )
 
-    const userNameField = queryByTestId('loginform-usernameField')
+    const userNameField = queryByTestId(/loginForm-usernameField/i)
     expect(userNameField).toBeInTheDocument()
   })
 
@@ -44,7 +45,7 @@ describe('form is rendered', () => {
       </MemoryRouter>
     )
 
-    const passwordField = queryByTestId('loginform-passwordField')
+    const passwordField = queryByTestId(/loginForm-passwordField/i)
     expect(passwordField).toBeInTheDocument()
   })
 
@@ -55,7 +56,7 @@ describe('form is rendered', () => {
       </MemoryRouter>
     )
 
-    const loginButton = queryByTestId('loginform-loginButton')
+    const loginButton = queryByTestId(/loginForm-loginButton/i)
     expect(loginButton).toBeInTheDocument()
   })
 })
@@ -67,25 +68,29 @@ test('clicking the login button calls the authentication service with the inputt
     </MemoryRouter>
   )
 
-  const userNameField = queryByTestId('loginform-usernameField')
+  const userNameField = within(queryByTestId(/loginForm-usernameField/i)).queryByRole(/textbox/i)
   fireEvent.change(userNameField, { target: { value: 'PostItMaster' } })
 
-  const passwordField = queryByTestId('loginform-passwordField')
+  const passwordField = within(queryByTestId(/loginForm-passwordField/i)).queryByRole(/textbox/i)
   fireEvent.change(passwordField, { target: { value: 'TheSecurestPassword' } })
 
-  const loginButton = queryByTestId('loginform-loginButton')
+  const loginButton = queryByTestId(/loginForm-loginButton/i)
   fireEvent.click(loginButton)
-  expect(authService).toBeCalledWith('PostItMaster', 'TheSecurestPassword')
+  expect(authService.login).toBeCalledWith('PostItMaster', 'TheSecurestPassword')
 })
 
 test('error message is shown if login fails', async () => {
-  fail('not implemented')
-})
+  const { queryByTestId, getByTestId } = await actRender(
+    <MemoryRouter initialEntries={['/login']}>
+      <LoginForm onSubmit={jest.fn()} />
+    </MemoryRouter>
+  )
 
-test('token remains undefined if login fails', () => {
-  fail('not implemented')
-})
+  authService.login.mockRejectedValue({ message: 'foobar' })
 
-test('clicking the login button calls the authentication service with the inputted username and password', () => {
-  fail('not implemented')
+  const buttonElement = await queryByTestId(/loginForm-loginButton/i)
+  fireEvent.click(buttonElement)
+
+  const error = await waitForElement(() => getByTestId(/loginForm-error/i))
+  expect(error).toBeInTheDocument()
 })

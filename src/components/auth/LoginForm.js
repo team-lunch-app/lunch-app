@@ -1,37 +1,41 @@
 import React, { useState } from 'react'
-import { Form, Button } from 'react-bootstrap'
+import { Form, Button, Alert } from 'react-bootstrap'
 import authService from '../../services/authentication'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    const response = await authService.login(username, password)
-    
+    try {
+      await authService.login(username, password)
+    } catch (error) {
+      setError(error.message)
+    }
+
     // ERROR HANDLING & MESSAGES
   }
 
   return (
     <>
       <Form onSubmit={handleLogin}>
-        <Form.Group>
-          <Form.Label data-testid='loginform-usernameLabel'>Username</Form.Label>
+        <Form.Group data-testid='loginform-usernameField'>
+          <Form.Label >Username</Form.Label>
           <Form.Control
-            data-testid='loginform-usernameField'
             type='text'
             onChange={(event) => setUsername(event.target.value)}
             placeholder='Your Username' />
         </Form.Group>
-        <Form.Group>
-          <Form.Label data-testid='loginform-passwordLabel'>Password</Form.Label>
+        <Form.Group data-testid='loginform-passwordField'>
+          <Form.Label>Password</Form.Label>
           <Form.Control
-            data-testid='loginform-passwordField'
             type='password'
-            onChange={(event) => {setPassword(event.target.value)}}
+            onChange={(event) => { setPassword(event.target.value) }}
             placeholder='****************' />
         </Form.Group>
+        {error && <Alert data-testid='loginForm-error' variant='danger'>Invalid username or password! </Alert>}
         <Button data-testid='loginform-loginButton' type='submit'>Log In</Button>
       </Form>
     </>

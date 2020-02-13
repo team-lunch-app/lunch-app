@@ -24,13 +24,13 @@ describe('form alerts', () => {
       </MemoryRouter>
     )
 
-    const { queryByRole } = within(await queryByTestId('addForm-nameField'))
+    const { queryByRole } = within(queryByTestId('addForm-nameField'))
     const error = queryByRole(/alert/i)
     expect(error).not.toBeInTheDocument()
   })
 
   test('invalid name input displays an error message', async () => {
-    const { queryByTestId, getByTestId } = await actRender(
+    const { queryByTestId } = await actRender(
       <MemoryRouter initialEntries={['/add']}>
         <AddForm onSubmit={jest.fn()} />
       </MemoryRouter>
@@ -39,9 +39,7 @@ describe('form alerts', () => {
     const buttonElement = await queryByTestId('addForm-addButton')
     fireEvent.click(buttonElement)
 
-    const nameField = await waitForElement(() => getByTestId('addForm-nameField'))
-    const { getByRole } = within(nameField)
-    const error = getByRole(/alert/i)
+    const error = await waitForElement(() => within(queryByTestId('addForm-nameField')).getByRole(/alert/i))
     expect(error).toBeInTheDocument()
   })
 
@@ -52,13 +50,13 @@ describe('form alerts', () => {
       </MemoryRouter>
     )
 
-    const { queryByRole } = within(await queryByTestId('addForm-urlField'))
+    const { queryByRole } = within(queryByTestId('addForm-urlField'))
     const error = queryByRole(/alert/i)
     expect(error).not.toBeInTheDocument()
   })
 
   test('invalid url input displays an error message', async () => {
-    const { queryByTestId, getByTestId } = await actRender(
+    const { queryByTestId } = await actRender(
       <MemoryRouter initialEntries={['/add']}>
         <AddForm onSubmit={jest.fn()} />
       </MemoryRouter>
@@ -67,9 +65,7 @@ describe('form alerts', () => {
     const buttonElement = await queryByTestId('addForm-addButton')
     fireEvent.click(buttonElement)
 
-    const urlField = await waitForElement(() => getByTestId('addForm-urlField'))
-    const { getByRole } = within(urlField)
-    const error = getByRole(/alert/i)
+    const error = await waitForElement(() => within(queryByTestId('addForm-urlField')).getByRole(/alert/i))
     expect(error).toBeInTheDocument()
   })
 })
