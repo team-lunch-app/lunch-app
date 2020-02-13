@@ -1,5 +1,5 @@
 Endpoints: `/api/restaurants`
-============================
+=============================
 
 Unless otherwise stated, the served **restaurant**-resources have the following shape.
 ```js
@@ -104,7 +104,7 @@ Response body contains a randomly selected *restaurant*.
 
 `POST /api/restaurants/`
 ------------------------
-*add*-endpoint. Creates a new restaurant from data provided.
+*add*-endpoint. Creates a new restaurant from data provided. Requires authentication.
 
 ### Request
 Accepts a *restaurant* json-object, without ID and with `categories` replaced with an array of category IDs.
@@ -124,7 +124,7 @@ Accepts a *restaurant* json-object, without ID and with `categories` replaced wi
 | Header         | value              |
 | -------------- | ------------------ |
 | `Content-Type` | `application/json` |
-| `Status Code`  | `201 OK`           |
+| `Status Code`  | `201 Created`      |
 
 Returns the added *restaurant* as the response body. Received restaurant is guaranteed to have an ID. Note that the category list is not populated. Fetch using `GET /api/restaurants/:id` if concrete categories are needed.
 
@@ -133,12 +133,12 @@ Returns the added *restaurant* as the response body. Received restaurant is guar
  - `Status: 400 Bad Request` - if any of the properties fail to validate
     - `name`: required, must be string and within 3 to 240 characters long.
     - `url`: must be undefined or a string within 3 to 240 characters long.
-    - `categories`: required, must be an array containing zero or more category IDs. IDs must be valid ObjectIDs.
+    - `categories`: optional, must be an array containing zero or more category IDs. IDs must be valid ObjectIDs.
 
 
 `PUT /api/restaurants/:id`
 --------------------------
-*Update*-endpoint; Provided a *restaurant* with an ID, updates the information for that restaurant. Partial updates are not supported. Validation for `PUT` behaves exactly the same as `POST`-request validation.
+*Update*-endpoint; Provided a *restaurant* with an ID, updates the information for that restaurant. Partial updates are not supported. Validation for `PUT` behaves exactly the same as `POST`-request validation. Requires authentication.
 
 ### Request
 Accepts a *restaurant* json-object, without ID and with `categories` replaced with an array of category IDs.
@@ -166,7 +166,7 @@ See `POST /api/restaurants/` for validation errors
 
 `DELETE /api/restaurants/:id`
 -----------------------------
-*Delete*-endpoint, removes the *restaurant*-resource with corresponding ID.
+*Delete*-endpoint, removes the *restaurant*-resource with corresponding ID. Requires authentication.
 
 ### Response
 | Header         | value              |

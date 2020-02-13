@@ -5,6 +5,7 @@ const app = express()
 const cors = require('cors')
 const restaurantsRouter = require('./controllers/restaurants')
 const categoriesRouter = require('./controllers/categories')
+const authRouter = require('./controllers/auth')
 
 const config = require('./config')
 
@@ -22,9 +23,22 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use('/api/restaurants', restaurantsRouter)
 app.use('/api/categories', categoriesRouter)
+app.use('/api/auth', authRouter)
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(config.staticDir, 'index.html'))
+})
+
+app.use((error, request, response, next) => {
+  if (error.name === 'NotAuthorized') {
+    return response.status(403).send({ error: error.message })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
+  } else if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return response.status(400).send({ error: error.message })
+  }
+
+  next(error)
 })
 
 module.exports = app
