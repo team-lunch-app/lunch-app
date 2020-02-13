@@ -1,7 +1,28 @@
 const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
+const authorization = require('../util/authorization')
+const features = require('../features')
 
+const addRestaurantToCategories = async (restaurantId, categoryIds) => {
+  return await Category.updateMany(
+    { _id: { $in: [...categoryIds] } },
+    { $addToSet: { restaurants: restaurantId } }
+  )
+}
+
+const removeRestaurantFromCategories = async (restaurantId, categoryIds) => {
+  await Category.updateMany(
+    { _id: { $in: [...categoryIds] } },
+    { $pull: { restaurants: { $in: [restaurantId] } } },
+  )
+}
+
+/**
+ * Trims the string and returns undefined if the string is empty afterwards. This is useful
+ * to avoid passing <code>null</code> to DB queries where no entry is desired.
+ * @param {string} string - string to sanitize
+ */
 const trimAndUndefineIfEmpty = string => {
   if (string === undefined) {
     return undefined
@@ -11,6 +32,18 @@ const trimAndUndefineIfEmpty = string => {
   return trimmedUrl.length > 0
     ? trimmedUrl
     : undefined
+}
+
+/**
+ * Parses restaurant from given request body and id
+ * @param {any} body - request body, containing the restaurant name, url and categories
+ * @param {any} [id] - optional ID to assign to the restaurant
+ */
+const parseRestaurant = (body, id) => {
+  const name = body.name
+  const url = trimAndUndefineIfEmpty(body.url)
+  const categories = body.categories || []
+  return { id, name, url, categories }
 }
 
 // getAll
@@ -77,96 +110,54 @@ restaurantsRouter.get('/:id', async (request, response) => {
   }
 })
 
+// add
 restaurantsRouter.post('/', async (request, response, next) => {
-  const body = request.body
-
-  if (body.categories !== undefined) {
-    const restaurant = new Restaurant({
-      name: body.name,
-      url: trimAndUndefineIfEmpty(body.url),
-      categories: body.categories || []
-    })
-
-    try {
-      const savedRestaurant = await restaurant.save()
-
-      try {
-        const newCategoryIds = savedRestaurant.categories
-        await Category.updateMany(
-          { _id: { $in: [...newCategoryIds] } },
-          { $addToSet: { restaurants: savedRestaurant._id } }
-        )
-      } catch (error) {
-        // FIXME: Restaurant references might be corrupt. Might be better to remove the restaurant here?
-        return response.status(400).send({ error: error.message })
-      }
-
-      response.status(201).json(savedRestaurant.toJSON())
-    } catch (error) {
-      if (error.name === 'ValidationError') {
-        return response.status(400).send({ error: error.message })
-      }
-
-      next(error)
-    }
-  } else {
-    return response.status(400).send({ error: 'Server error: list of categories must be included, even if empty.' })
-  }
-})
-
-restaurantsRouter.put('/:id', async (request, response, next) => {
-  const body = request.body
-  const restaurantId = request.params.id
-  const newCategoryIds = request.body.categories
-
-  const restaurant = {
-    id: restaurantId,
-    name: body.name,
-    url: trimAndUndefineIfEmpty(body.url),
-    categories: body.categories
-  }
-
   try {
-    const { categories: oldCategoryIds } = await Restaurant.findByIdAndUpdate(
-      restaurantId,
-      restaurant
-    )
-
-    await Category.updateMany(
-      { _id: { $in: [...oldCategoryIds] } },
-      { $pull: { restaurants: { $in: [restaurantId] } } },
-    )
-
-    await Category.updateMany(
-      { _id: { $in: [...newCategoryIds] } },
-      { $addToSet: { restaurants: restaurantId } }
-    )
-
-    return response.status(204).end()
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      return response.status(400).send({ error: error.message })
+    if (features.endpointAuth) {
+      authorization.requireAuthorized(request)
     }
+    const restaurant = await new Restaurant(parseRestaurant(request.body)).save()
 
-    console.log('unknown error:', error)
+    // FIXME: If this throws, restaurant references might be corrupt. Might be better to immediately catch here
+    //        and remove the restaurant?
+    await addRestaurantToCategories(restaurant._id, restaurant.categories)
+    return response.status(201).json(restaurant.toJSON())
+  }
+  catch (error) {
     next(error)
   }
 })
 
-restaurantsRouter.delete('/:id', async (request, response, next) => {
-  const id = request.params.id
-
+// update
+restaurantsRouter.put('/:id', async (request, response, next) => {
   try {
-    const result = await Restaurant.findByIdAndRemove(id)
-    if (result === null) {
-      return response.status(404).send({ error: 'unknown id' })
+    if (features.endpointAuth) {
+      authorization.requireAuthorized(request)
     }
+
+    const restaurant = parseRestaurant(request.body, request.params.id)
+    const { categories: oldCategories } = await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+    await removeRestaurantFromCategories(restaurant.id, oldCategories)
+    await addRestaurantToCategories(restaurant.id, restaurant.categories)
 
     return response.status(204).end()
   } catch (error) {
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return response.status(400).send({ error: error.message })
+    next(error)
+  }
+})
+
+// delete
+restaurantsRouter.delete('/:id', async (request, response, next) => {
+  try {
+    if (features.endpointAuth) {
+      authorization.requireAuthorized(request)
     }
+    const id = request.params.id
+
+    return await Restaurant.findByIdAndRemove(id) === null
+      ? response.status(404).send({ error: 'unknown id' })
+      : response.status(204).end()
+  } catch (error) {
     next(error)
   }
 })

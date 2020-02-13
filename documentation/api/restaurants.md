@@ -107,7 +107,7 @@ Returns the added *restaurant* as the response body. Received restaurant is guar
  - `Status: 400 Bad Request` - if any of the properties fail to validate
     - `name`: required, must be string and within 3 to 240 characters long.
     - `url`: must be undefined or a string within 3 to 240 characters long.
-    - `categories`: required, must be an array containing zero or more category IDs. IDs must be valid ObjectIDs.
+    - `categories`: optional, must be an array containing zero or more category IDs. IDs must be valid ObjectIDs.
 
 
 `PUT /api/restaurants/:id`

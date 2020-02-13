@@ -151,11 +151,11 @@ test('get request to an invalid id returns code 404', async () => {
   await server.get('/api/restaurants/1').expect(404)
 })
 
-test('post request to /api/restaurants fails if no category list is provided', async () => {
+test('post request to /api/restaurants succeeds (with 201) even if no category list is provided', async () => {
   await server
     .post('/api/restaurants')
     .send({ name: 'Ravintola Artjärvi', url: 'N/A', })
-    .expect(400)
+    .expect(201)
 })
 
 test('post request to /api/restaurants with valid data succeeds', async () => {
