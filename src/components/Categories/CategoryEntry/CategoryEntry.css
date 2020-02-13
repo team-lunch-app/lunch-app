@@ -1,9 +1,9 @@
-.restaurant-entry{
+.category-entry{
     margin-bottom: 0.5em;
     color: #2b2b2b;
 }
 
-.restaurant-entry > div {
+.category-entry > div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -11,6 +11,6 @@
     padding: 0.75em;
 }
 
-.restaurant-entry > div > .buttons > button {
+.category-entry > div > .buttons > button {
     margin-right: 0.4em;
 }

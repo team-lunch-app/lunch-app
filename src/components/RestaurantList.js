@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Alert } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
 import RestaurantEntry from './RestaurantEntry'
+import restaurantService from '../services/restaurant'
 
-const RestaurantList = ({ restaurantService }) => {
+const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
 
   useEffect(() => {
     restaurantService.getAll().then(setRestaurants)
-  }, [restaurantService])
+  }, [])
 
   const removeRestaurant = async (restaurant) => {
     if (!window.confirm(`Are you sure you want to remove "${restaurant.name}"?`)) {
@@ -37,13 +37,6 @@ const RestaurantList = ({ restaurantService }) => {
       }
     </div>
   )
-}
-
-RestaurantList.propTypes = {
-  restaurantService: PropTypes.shape({
-    getAll: PropTypes.func.isRequired,
-    remove: PropTypes.func.isRequired,
-  }).isRequired
 }
 
 export default RestaurantList

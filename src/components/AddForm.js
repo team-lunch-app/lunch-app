@@ -34,7 +34,7 @@ const AddForm = ({ id, onSubmit }) => {
           categories: fetched.categories || [],
         }))
         .catch(() => {
-          setError('Could not find restaurant with given ID')
+          setError('Could not find restaurant with the given ID')
           setRestaurant(createDefaultRestaurant())
         })
     }
