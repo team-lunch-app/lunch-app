@@ -1,6 +1,7 @@
 const categoryRouter = require('express').Router()
 const Category = require('../models/category')
 const authorization = require('../util/authorization')
+const features = require('../../util/features')
 
 categoryRouter.get('/', async (request, response) => {
   const categories = await Category
@@ -10,7 +11,9 @@ categoryRouter.get('/', async (request, response) => {
 
 categoryRouter.post('/', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    if (features.endpointAuth) {
+      authorization.requireAuthorized(request)
+    }
 
     const body = request.body
 

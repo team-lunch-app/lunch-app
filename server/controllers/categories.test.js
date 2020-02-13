@@ -1,8 +1,8 @@
 const supertest = require('supertest')
 const Category = require('../models/category')
 const app = require('../app')
-const config = require('../config')
-const jwt = require('jsonwebtoken')
+const authorization = require('../util/authorization')
+const features = require('../../util/features')
 
 const dbUtil = require('../test/dbUtil')
 
@@ -24,7 +24,7 @@ beforeEach(async () => {
   server = supertest(app)
   await dbUtil.createRowsFrom(Category, testCategoryData)
   user = await dbUtil.createUser('jaskajoku', 'kissa')
-  token = jwt.sign({id: user._id, username: user.username}, config.jwtSecret)
+  token = authorization.createToken(user._id, user.username)
 })
 
 afterEach(async () => {
@@ -44,12 +44,6 @@ test('post request with valid data returns http code 200', async () => {
     .send({ name: 'Italian', restaurants: [] })
     .expect(200)
 })
-test('post request with valid data and invalid token returns http code 403', async () => {
-  await server
-    .post('/api/categories')
-    .send({ name: 'Italian', restaurants: [] })
-    .expect(403)
-})
 
 test('post request with empty string as name returns http code 400', async () => {
   await server
@@ -57,4 +51,13 @@ test('post request with empty string as name returns http code 400', async () =>
     .set('authorization', `bearer ${token}`)
     .send({ name: '                   ' })
     .expect(400)
+})
+
+features.describeIf(features.endpointAuth, 'when not logged in', () => {
+  test('post request with valid data and invalid token returns http code 403', async () => {
+    await server
+      .post('/api/categories')
+      .send({ name: 'Italian', restaurants: [] })
+      .expect(403)
+  })
 })

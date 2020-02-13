@@ -24,7 +24,12 @@ const requireAuthorized = (request) => {
   }
 }
 
+const createToken = (id, username) => {
+  return jwt.sign({ id, username }, config.jwtSecret)
+}
+
 module.exports = {
   getTokenFromRequest,
-  requireAuthorized
+  requireAuthorized,
+  createToken
 }

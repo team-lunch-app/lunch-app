@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
-const config = require('../config')
+const authorization = require('../util/authorization')
 
 const authRouter = require('express').Router()
 
@@ -20,16 +19,11 @@ authRouter.post('/login', async (request, response) => {
       error: 'invalid username or password'
     })
   }
-  const userForToken = {
-    username: user.username,
-    id: user._id,
-  }
 
-  const token = jwt.sign(userForToken, config.jwtSecret)
-
+  const token = authorization.createToken(user._id, user.username)
   response
     .status(200)
-    .send({ token, username: user.username, name: user.name })
+    .send({ token })
 })
 
 module.exports = authRouter

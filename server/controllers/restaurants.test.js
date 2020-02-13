@@ -2,6 +2,8 @@ const supertest = require('supertest')
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
 const app = require('../app')
+const authorization = require('../util/authorization')
+const features = require('../../util/features')
 
 const dbUtil = require('../test/dbUtil')
 
@@ -32,12 +34,14 @@ const testCategoryData = [
   }
 ]
 
-let server, restaurants, categories
+let server, restaurants, categories, user, token
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
   categories = await dbUtil.createRowsFrom(Category, testCategoryData)
+  user = await dbUtil.createUser('jaskajoku', 'kissa')
+  token = authorization.createToken(user._id, user.username)
 })
 
 afterEach(async () => {
@@ -73,10 +77,12 @@ test('getRandom request returns a restaurant', async () => {
 
 test('getRandom request with a category id returns a restaurant belonging to the given category', async () => {
   const testCategoryId = categories[0].id
-  await server.post('/api/restaurants')
-    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId] })
+  await dbUtil.createRowsFrom(Restaurant, [
+    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId] }
+  ])
 
-  const response = await server.post('/api/restaurants/random')
+  const response = await server
+    .post('/api/restaurants/random')
     .send({ categories: [testCategoryId], type: 'some' })
 
   const contents = response.body
@@ -107,10 +113,10 @@ test('getRandom response has an error when no restaurants are found with the giv
 })
 
 test('getRandom return the correct number of categories when multiple filter options are provided with filter option "some"', async () => {
-  await server.post('/api/restaurants')
-    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
-  await server.post('/api/restaurants')
-    .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id] })
+  await dbUtil.createRowsFrom(Restaurant, [
+    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] },
+    { name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id] }
+  ])
 
   const response = await server.post('/api/restaurants/random')
     .send({ categories: [categories[0].id, categories[1].id], type: 'some' })
@@ -151,157 +157,195 @@ test('get request to an invalid id returns code 404', async () => {
   await server.get('/api/restaurants/1').expect(404)
 })
 
-test('post request to /api/restaurants succeeds (with 201) even if no category list is provided', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'N/A', })
-    .expect(201)
-})
-
-test('post request to /api/restaurants with valid data succeeds', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [] })
-    .expect(201)
-    .expect('Content-Type', /application\/json/i)
-})
-
-test('post request to /api/restaurants with valid data gets added restaurant as response', async () => {
-  const categoryId = categories[0].id
-
-  const response = await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [categoryId] })
-
-  const contents = response.body
-  expect(contents).toMatchObject({
-    name: 'Ravintola Artjärvi',
-    url: 'N/A',
-    categories: [categoryId]
+describe('when logged in', () => {
+  test('post request to /api/restaurants succeeds (with 201) even if no category list is provided', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: 'N/A', })
+      .expect(201)
   })
-})
 
-test('post request to /api/restaurants with valid data adds the restaurant to DB', async () => {
-  const response = await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
-
-  const id = response.body.id
-  const restaurant = await Restaurant.findById(id)
-  expect(restaurant).toBeDefined()
-})
-
-test('post request to /api/restaurants without url succeeds', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', categories: [] })
-    .expect(201)
-    .expect('Content-Type', /application\/json/i)
-})
-
-test('post request to /api/restaurants with url containing only whitespace succeeds', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
-    .expect(201)
-    .expect('Content-Type', /application\/json/i)
-})
-
-test('after post request to /api/restaurants with url containing only whitespace, the url is undefined', async () => {
-  const response = await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
-
-  const id = response.body.id
-  const restaurant = await Restaurant.findById(id)
-  expect(restaurant.url).not.toBeDefined()
-})
-
-test('post request to /api/restaurants with url but without name fails', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ url: 'http://some-url.com' })
-    .expect(400)
-})
-
-test('delete request to /api/restaurants/id with proper ID succeeds with status 204', async () => {
-  const id = restaurants[1]._id
-
-  await server
-    .delete(`/api/restaurants/${id}`)
-    .expect(204)
-})
-
-test('delete request to /api/restaurants/id with proper ID removes the restaurant from DB', async () => {
-  const id = restaurants[1]._id
-
-  await server.delete(`/api/restaurants/${id}`)
-
-  const restaurant = await Restaurant.findById(id)
-  expect(restaurant).toBeNull()
-})
-
-test('delete request to /api/restaurants/id with invalid ID fails 400', async () => {
-  const id = 'invalid'
-
-  await server
-    .delete(`/api/restaurants/${id}`)
-    .expect(400)
-})
-
-test('delete request to /api/restaurants/id with unknown ID fails with 404', async () => {
-  const id = '5e259505d106bf0c27e931a1'
-
-  await server
-    .delete(`/api/restaurants/${id}`)
-    .expect(404)
-})
-
-test('post request to /api/restaurants with very long name fails', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ name: 'abc'.repeat(1337) })
-    .expect(400)
-})
-
-test('post request to /api/restaurants with very long url fails', async () => {
-  await server
-    .post('/api/restaurants')
-    .send({ name: 'Ravintola Artjärvi', url: 'abc'.repeat(4242) })
-    .expect(400)
-})
-
-test('put request with valid data responds with 204', async () => {
-  const testRestaurantId = restaurants[0].id
-
-  await server
-    .put(`/api/restaurants/${testRestaurantId}`)
-    .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
-    .expect(204)
-})
-
-test('put request with valid data updates the restaurant', async () => {
-  const testRestaurantId = restaurants[0].id
-
-  await server
-    .put(`/api/restaurants/${testRestaurantId}`)
-    .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
-
-
-  const restaurant = await Restaurant.findById(testRestaurantId)
-  expect(restaurant.toJSON()).toEqual({
-    id: testRestaurantId,
-    name: 'Torigrilli Senaatintori',
-    url: 'https://torigrilli.fi',
-    categories: []
+  test('post request to /api/restaurants with valid data succeeds', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [] })
+      .expect(201)
+      .expect('Content-Type', /application\/json/i)
   })
-})
 
-describe('queries update backwards references', () => {
-  test('adding a restaurant adds references to the associated categories', async () => {
+  test('post request to /api/restaurants with valid data gets added restaurant as response', async () => {
+    const categoryId = categories[0].id
+
     const response = await server
       .post('/api/restaurants')
-      .send({
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [categoryId] })
+
+    const contents = response.body
+    expect(contents).toMatchObject({
+      name: 'Ravintola Artjärvi',
+      url: 'N/A',
+      categories: [categoryId]
+    })
+  })
+
+  test('post request to /api/restaurants with valid data adds the restaurant to DB', async () => {
+    const response = await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
+
+    const id = response.body.id
+    const restaurant = await Restaurant.findById(id)
+    expect(restaurant).toBeDefined()
+  })
+
+  test('post request to /api/restaurants without url succeeds', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', categories: [] })
+      .expect(201)
+      .expect('Content-Type', /application\/json/i)
+  })
+
+  test('post request to /api/restaurants with url containing only whitespace succeeds', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
+      .expect(201)
+      .expect('Content-Type', /application\/json/i)
+  })
+
+  test('after post request to /api/restaurants with url containing only whitespace, the url is undefined', async () => {
+    const response = await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
+
+    const id = response.body.id
+    const restaurant = await Restaurant.findById(id)
+    expect(restaurant.url).not.toBeDefined()
+  })
+
+  test('post request to /api/restaurants with url but without name fails', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ url: 'http://some-url.com' })
+      .expect(400)
+  })
+
+  test('delete request to /api/restaurants/id with proper ID succeeds with status 204', async () => {
+    const id = restaurants[1]._id
+
+    await server
+      .delete(`/api/restaurants/${id}`)
+      .set('authorization', `bearer ${token}`)
+      .expect(204)
+  })
+
+  test('delete request to /api/restaurants/id with proper ID removes the restaurant from DB', async () => {
+    const id = restaurants[1]._id
+
+    await server
+      .delete(`/api/restaurants/${id}`)
+      .set('authorization', `bearer ${token}`)
+
+    const restaurant = await Restaurant.findById(id)
+    expect(restaurant).toBeNull()
+  })
+
+  test('delete request to /api/restaurants/id with invalid ID fails 400', async () => {
+    const id = 'invalid'
+
+    await server
+      .delete(`/api/restaurants/${id}`)
+      .set('authorization', `bearer ${token}`)
+      .expect(400)
+  })
+
+  test('delete request to /api/restaurants/id with unknown ID fails with 404', async () => {
+    const id = '5e259505d106bf0c27e931a1'
+
+    await server
+      .delete(`/api/restaurants/${id}`)
+      .set('authorization', `bearer ${token}`)
+      .expect(404)
+  })
+
+  test('post request to /api/restaurants with very long name fails', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'abc'.repeat(1337) })
+      .expect(400)
+  })
+
+  test('post request to /api/restaurants with very long url fails', async () => {
+    await server
+      .post('/api/restaurants')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Ravintola Artjärvi', url: 'abc'.repeat(4242) })
+      .expect(400)
+  })
+
+  test('put request with valid data responds with 204', async () => {
+    const testRestaurantId = restaurants[0].id
+
+    await server
+      .put(`/api/restaurants/${testRestaurantId}`)
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+      .expect(204)
+  })
+
+  test('put request with valid data updates the restaurant', async () => {
+    const testRestaurantId = restaurants[0].id
+
+    await server
+      .put(`/api/restaurants/${testRestaurantId}`)
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+
+
+    const restaurant = await Restaurant.findById(testRestaurantId)
+    expect(restaurant.toJSON()).toEqual({
+      id: testRestaurantId,
+      name: 'Torigrilli Senaatintori',
+      url: 'https://torigrilli.fi',
+      categories: []
+    })
+  })
+
+  describe('queries update backwards references', () => {
+    test('adding a restaurant adds references to the associated categories', async () => {
+      const response = await server
+        .post('/api/restaurants')
+        .set('authorization', `bearer ${token}`)
+        .send({
+          name: 'Ravintola Artjärvi',
+          url: 'https://www.joku.fi',
+          categories: [
+            categories[0]._id,
+            categories[1]._id,
+          ]
+        })
+
+      const addedId = response.body.id
+
+      const updatedA = await Category.findById(categories[0]._id)
+      const updatedB = await Category.findById(categories[1]._id)
+
+      expect(updatedA.restaurants.map(id => id.toString())).toContain(addedId)
+      expect(updatedB.restaurants.map(id => id.toString())).toContain(addedId)
+    })
+
+    test('removing a restaurant removes references from the associated categories', async () => {
+      const rawRestaurant = new Restaurant({
         name: 'Ravintola Artjärvi',
         url: 'https://www.joku.fi',
         categories: [
@@ -309,66 +353,73 @@ describe('queries update backwards references', () => {
           categories[1]._id,
         ]
       })
+      const restaurant = await rawRestaurant.save()
+      const id = restaurant._id
 
-    const addedId = response.body.id
+      await server
+        .delete(`/api/restaurants/${id}`)
+        .set('authorization', `bearer ${token}`)
 
-    const updatedA = await Category.findById(categories[0]._id)
-    const updatedB = await Category.findById(categories[1]._id)
+      const updatedA = await Category.findById(categories[0]._id)
+      const updatedB = await Category.findById(categories[1]._id)
 
-    expect(updatedA.restaurants.map(id => id.toString())).toContain(addedId)
-    expect(updatedB.restaurants.map(id => id.toString())).toContain(addedId)
-  })
-
-  test('removing a restaurant removes references from the associated categories', async () => {
-    const rawRestaurant = new Restaurant({
-      name: 'Ravintola Artjärvi',
-      url: 'https://www.joku.fi',
-      categories: [
-        categories[0]._id,
-        categories[1]._id,
-      ]
+      expect(updatedA.restaurants.map(id => id.toString())).not.toContain(id)
+      expect(updatedB.restaurants.map(id => id.toString())).not.toContain(id)
     })
-    const restaurant = await rawRestaurant.save()
-    const id = restaurant._id
 
-    await server.delete(`/api/restaurants/${id}`)
-
-    const updatedA = await Category.findById(categories[0]._id)
-    const updatedB = await Category.findById(categories[1]._id)
-
-    expect(updatedA.restaurants.map(id => id.toString())).not.toContain(id)
-    expect(updatedB.restaurants.map(id => id.toString())).not.toContain(id)
-  })
-
-  test('updating a restaurant removes references from categories no longer referenced', async () => {
-    const rawRestaurant = new Restaurant({
-      name: 'Ravintola Artjärvi',
-      url: 'https://www.joku.fi',
-      categories: [
-        categories[0]._id,
-        categories[1]._id,
-      ]
-    })
-    const restaurant = await rawRestaurant.save()
-    const id = restaurant._id
-
-    await server
-      .put(`/api/restaurants/${id}`)
-      .send({
-        name: 'Torigrilli Senaatintori',
-        url: 'https://torigrilli.fi',
+    test('updating a restaurant removes references from categories no longer referenced', async () => {
+      const rawRestaurant = new Restaurant({
+        name: 'Ravintola Artjärvi',
+        url: 'https://www.joku.fi',
         categories: [
+          categories[0]._id,
           categories[1]._id,
-          categories[2]._id,
         ]
       })
+      const restaurant = await rawRestaurant.save()
+      const id = restaurant._id
 
-    const removed = await Category.findById(categories[0]._id)
-    const notTouched = await Category.findById(categories[1]._id)
-    const added = await Category.findById(categories[2]._id)
+      await server
+        .put(`/api/restaurants/${id}`)
+        .set('authorization', `bearer ${token}`)
+        .send({
+          name: 'Torigrilli Senaatintori',
+          url: 'https://torigrilli.fi',
+          categories: [
+            categories[1]._id,
+            categories[2]._id,
+          ]
+        })
 
-    expect(removed.restaurants.map(id => id.toString())).not.toContain(id.toString())
-    expect(notTouched.restaurants.map(id => id.toString())).toContain(id.toString())
-    expect(added.restaurants.map(id => id.toString())).toContain(id.toString())
+      const removed = await Category.findById(categories[0]._id)
+      const notTouched = await Category.findById(categories[1]._id)
+      const added = await Category.findById(categories[2]._id)
+
+      expect(removed.restaurants.map(id => id.toString())).not.toContain(id.toString())
+      expect(notTouched.restaurants.map(id => id.toString())).toContain(id.toString())
+      expect(added.restaurants.map(id => id.toString())).toContain(id.toString())
+    })
+  })
+})
+
+features.describeIf(features.endpointAuth, 'when not logged in', () => {
+  test('post fails with status 403', async () => {
+    await server
+      .post('/api/restaurants')
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+      .expect(403)
+  })
+
+  test('put fails with status 403', async () => {
+    await server
+      .put(`/api/restaurants/${restaurants[0].id}`)
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+      .expect(403)
+  })
+
+  test('delete fails with status 403', async () => {
+    await server
+      .delete(`/api/restaurants/${restaurants[0].id}`)
+      .expect(403)
   })
 })

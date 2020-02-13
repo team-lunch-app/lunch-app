@@ -2,7 +2,7 @@ const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
 const authorization = require('../util/authorization')
-const features = require('../features')
+const features = require('../../util/features')
 
 const addRestaurantToCategories = async (restaurantId, categoryIds) => {
   return await Category.updateMany(
