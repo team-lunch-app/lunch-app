@@ -6,6 +6,7 @@ import Randomizer from './components/Randomizer'
 import AddForm from './components/AddForm'
 import restaurantService from './services/restaurant'
 import RestaurantList from './components/RestaurantList'
+import LoginForm from './components/auth/LoginForm'
 
 const App = () => {
   const navbar = () => {
@@ -37,6 +38,7 @@ const App = () => {
         <Route path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
         <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
         <Route path="/restaurants" render={() => <RestaurantList restaurantService={restaurantService} />} />
+        <Route path="/login" render={() => <LoginForm />} />
       </section>
     </>
   )
