@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
 import { Form, Button, Alert } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
 import authService from '../../services/authentication'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const history = useHistory()
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       await authService.login(username, password)
+      history.push('/admin')
     } catch (error) {
       setError(error.message)
     }
-
-    // ERROR HANDLING & MESSAGES
   }
 
   return (

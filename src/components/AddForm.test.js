@@ -113,19 +113,13 @@ test('form is closed after adding a restaurant', async () => {
 })
 
 test('pressing cancel hides the component', async () => {
-  let path
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/add']}>
-      <AddForm onSubmit={jest.fn()} />
-      <Route path='*' render={({ location }) => { path = location; return null }} />
-    </MemoryRouter>
-  )
+  const { queryByTestId, getPath } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
 
   // Hide the form
   const buttonElement = queryByTestId('addForm-cancelButton')
   fireEvent.click(buttonElement)
 
-  await wait(() => expect(path.pathname).toBe('/'))
+  await wait(() => expect(getPath().pathname).toBe('/'))
 })
 
 test('form is empty if restaurant is not found with the given id parameter', async () => {

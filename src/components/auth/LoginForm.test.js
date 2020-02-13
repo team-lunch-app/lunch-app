@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, waitForElement } from '@testing-library/react'
+import { fireEvent, wait, waitForElement } from '@testing-library/react'
 import { within } from '@testing-library/dom'
 import { actRender } from '../../test/utilities'
 import LoginForm from './LoginForm'
@@ -80,11 +80,7 @@ test('clicking the login button calls the authentication service with the inputt
 })
 
 test('error message is shown if login fails', async () => {
-  const { queryByTestId, getByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/login']}>
-      <LoginForm onSubmit={jest.fn()} />
-    </MemoryRouter>
-  )
+  const { queryByTestId, getByTestId } = await actRender(<LoginForm onSubmit={jest.fn()} />, ['/login'])
 
   authService.login.mockRejectedValue({ message: 'foobar' })
 
@@ -93,4 +89,15 @@ test('error message is shown if login fails', async () => {
 
   const error = await waitForElement(() => getByTestId(/loginForm-error/i))
   expect(error).toBeInTheDocument()
+})
+
+test('user is redirected to /admin on succesfull login', async () => {
+  const { queryByTestId, getPath } = await actRender(<LoginForm onSubmit={jest.fn()} />, ['/login'])
+
+  authService.login.mockResolvedValue()
+
+  const buttonElement = await queryByTestId(/loginForm-loginButton/i)
+  fireEvent.click(buttonElement)
+
+  await wait(() => expect(getPath().pathname).toBe('/admin'))
 })
