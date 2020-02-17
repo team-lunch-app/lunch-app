@@ -12,6 +12,7 @@ import LoginForm from './components/auth/LoginForm'
 import authService from './services/authentication'
 import CategoryForm from './components/Categories/CategoryForm/CategoryForm'
 import CategoryList from './components/Categories/CategoryList/CategoryList'
+import SuggestionList from './components/suggestionlist/SuggestionList'
 
 const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components
@@ -62,6 +63,10 @@ const App = () => {
         <Route path="/admin/categories/add" render={() => <CategoryForm onSubmit={categoryService.add} />} />
         <Route path="/admin/categories/edit/:id" render={({ match }) => <CategoryForm id={match.params.id}  onSubmit={categoryService.update} />} />
         <Route exact path="/admin/categories" render={() => <CategoryList /> } />
+        <Route path="/admin/suggestions" render={() => isLoggedIn
+          ? <SuggestionList/>
+          : <Redirect to={'/login'} />} />
+
       </section>
     </>
   )
