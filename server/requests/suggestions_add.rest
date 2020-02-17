@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/suggestions/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "type" : "ADD",
+    "data" : {
+        "name": "Torigrilli",
+        "url": "http://www.asdasd.fi",
+        "categories": ["5e37e1651296ed1b562980be"]
+    }
+}

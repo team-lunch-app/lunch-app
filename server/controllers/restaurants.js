@@ -4,6 +4,27 @@ const Category = require('../models/category')
 const authorization = require('../util/authorization')
 const features = require('../../util/features')
 
+const tryCreateRestaurant = async (restaurant) => {
+  const created = await new Restaurant(restaurant).save()
+
+  // FIXME: If this throws, restaurant references might be corrupt. Might be better to immediately catch here
+  //        and remove the restaurant?
+  await addRestaurantToCategories(created._id, created.categories)
+
+  return created
+}
+
+const tryRemoveRestaurant = async (id) => {
+  const removedRestaurant = await Restaurant.findByIdAndRemove(id)
+  if (!removedRestaurant) {
+    return null
+  }
+  await removeRestaurantFromCategories(removedRestaurant.id, removedRestaurant.categories)
+  return removedRestaurant
+}
+
+
+
 const addRestaurantToCategories = async (restaurantId, categoryIds) => {
   return await Category.updateMany(
     { _id: { $in: [...categoryIds] } },
@@ -116,11 +137,7 @@ restaurantsRouter.post('/', async (request, response, next) => {
     if (features.endpointAuth) {
       authorization.requireAuthorized(request)
     }
-    const restaurant = await new Restaurant(parseRestaurant(request.body)).save()
-
-    // FIXME: If this throws, restaurant references might be corrupt. Might be better to immediately catch here
-    //        and remove the restaurant?
-    await addRestaurantToCategories(restaurant._id, restaurant.categories)
+    const restaurant = await tryCreateRestaurant(parseRestaurant(request.body))
     return response.status(201).json(restaurant.toJSON())
   }
   catch (error) {
@@ -153,13 +170,16 @@ restaurantsRouter.delete('/:id', async (request, response, next) => {
       authorization.requireAuthorized(request)
     }
     const id = request.params.id
-
-    return await Restaurant.findByIdAndRemove(id) === null
-      ? response.status(404).send({ error: 'unknown id' })
-      : response.status(204).end()
+    return await tryRemoveRestaurant(id)
+      ? response.status(204).end()
+      : response.status(404).send({ error: 'unknown id' })
   } catch (error) {
     next(error)
   }
 })
 
-module.exports = restaurantsRouter
+module.exports = {
+  restaurantsRouter,
+  tryRemoveRestaurant,
+  tryCreateRestaurant
+}
