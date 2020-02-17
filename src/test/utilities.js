@@ -1,9 +1,17 @@
+import React from 'react'
 import { act, render } from '@testing-library/react'
+import { Route, MemoryRouter } from 'react-router-dom'
 
-export const actRender = async (element) => {
+export const actRender = async (element, initialEntries) => {
   let queryByTestId, getByTestId, queryAllByTestId, getAllByTestId, getByText, queryByText, getAllByText
+  let path
   await act(async () => {
-    const renderResult = render(element)
+    const renderResult = render(
+      <MemoryRouter initialEntries={initialEntries}>
+        {element}
+        <Route path='*' render={({ location }) => { path = location; return null }} />
+      </MemoryRouter>
+    )
     queryByTestId = renderResult.queryByTestId
     queryByTestId = renderResult.queryByTestId
     getByTestId = renderResult.getByTestId
@@ -14,5 +22,5 @@ export const actRender = async (element) => {
     getAllByText = renderResult.getAllByText
   })
 
-  return { queryByTestId, getByTestId, queryAllByTestId, getAllByTestId, getByText, queryByText, getAllByText }
+  return { queryByTestId, getByTestId, queryAllByTestId, getAllByTestId, getByText, queryByText, getAllByText, getPath: () => path }
 }
