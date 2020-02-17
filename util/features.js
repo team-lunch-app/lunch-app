@@ -8,5 +8,5 @@ const describeIf = (condition, description, fn) => {
 
 module.exports = {
   describeIf,
-  endpointAuth: false,
+  endpointAuth: true,
 }
