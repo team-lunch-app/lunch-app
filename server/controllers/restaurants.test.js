@@ -126,10 +126,10 @@ test('getRandom return the correct number of categories when multiple filter opt
 })
 
 test('getRandom return the correct number of categories when multiple filter options are provided with filter option "every"', async () => {
-  await server.post('/api/restaurants')
-    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
-  await server.post('/api/restaurants')
-    .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id, categories[0].id] })
+  await dbUtil.createRowsFrom(Restaurant, [
+    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] },
+    { name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id, categories[0].id] }
+  ])
 
   const response = await server.post('/api/restaurants/random')
     .send({ categories: [categories[0].id, categories[1].id], type: 'all' })
@@ -139,10 +139,10 @@ test('getRandom return the correct number of categories when multiple filter opt
 })
 
 test('getRandom return the correct number of categories when multiple filter options are provided with filter option "none"', async () => {
-  await server.post('/api/restaurants')
-    .send({ name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] })
-  await server.post('/api/restaurants')
-    .send({ name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id, categories[0].id] })
+  await dbUtil.createRowsFrom(Restaurant, [
+    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [categories[0].id] },
+    { name: 'Kalevankadun Salaattibaari', url: 'N/A', categories: [categories[1].id, categories[0].id] }
+  ])
 
   const response = await server.post('/api/restaurants/random')
     .send({ categories: [categories[0].id, categories[1].id], type: 'none' })
