@@ -37,12 +37,12 @@ test('get returns a list of categories', async () => {
   expect(contents.length).toBe(3)
 })
 
-test('post request with valid data returns http code 200', async () => {
+test('post request with valid data returns http code 201', async () => {
   await server
     .post('/api/categories')
     .set('authorization', `bearer ${token}`)
     .send({ name: 'Italian', restaurants: [] })
-    .expect(200)
+    .expect(201)
 })
 
 test('post request with empty string as name returns http code 400', async () => {

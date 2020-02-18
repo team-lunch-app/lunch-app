@@ -23,7 +23,7 @@ categoryRouter.post('/', async (request, response, next) => {
     })
 
     const savedCategory = await category.save()
-    response.json(savedCategory.toJSON())
+    response.status(201).json(savedCategory.toJSON())
   } catch (error) {
     next(error)
   }
@@ -65,7 +65,7 @@ categoryRouter.delete('/:id', async (request, response, next) => {
     const id = request.params.id
 
     return await Category.findByIdAndRemove(id) === null
-      ? response.status(400).send({ error: 'unknown id' })
+      ? response.status(404).send({ error: 'unknown id' })
       : response.status(204).end()
   } catch (error) {
     next(error)
