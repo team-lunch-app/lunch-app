@@ -1,7 +1,8 @@
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import CategoryEntry from './CategoryEntry'
-import { MemoryRouter } from 'react-router-dom'
+
+import { actRender } from '../../../test/utilities'
 
 jest.mock('../../../services/category.js')
 
@@ -11,22 +12,14 @@ const testcategory = {
 }
 
 test('renders category name', async () => {
-  const { getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryEntry category={testcategory} />
-    </MemoryRouter>
-  )
+  const { getByTestId } = await actRender(<CategoryEntry category={testcategory} />, ['/admin/categories'])
 
   const categoryName = getByTestId('categoryEntry-name')
   expect(categoryName).toBeInTheDocument()
 })
 
 test('renders delete button', async () => {
-  const { getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryEntry category={testcategory} />
-    </MemoryRouter>
-  )
+  const { getByTestId } = await actRender(<CategoryEntry category={testcategory} />, ['/admin/categories'])
 
   const removeButton = getByTestId('categoryEntry-removeButton')
   expect(removeButton).toBeInTheDocument()
@@ -34,10 +27,9 @@ test('renders delete button', async () => {
 
 test('pressing the delete button calls the provided callback', async () => {
   const mockOnRemove = jest.fn()
-  const { getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryEntry category={testcategory} onRemove={mockOnRemove} />
-    </MemoryRouter>
+  const { getByTestId } = await actRender(
+    <CategoryEntry category={testcategory} onRemove={mockOnRemove} />,
+    ['/admin/categories']
   )
 
   const removeButton = getByTestId('categoryEntry-removeButton')
@@ -46,11 +38,7 @@ test('pressing the delete button calls the provided callback', async () => {
 })
 
 test('renders edit button', async () => {
-  const { getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryEntry category={testcategory} />
-    </MemoryRouter>
-  )
+  const { getByTestId } = await actRender(<CategoryEntry category={testcategory} />, ['/admin/categories'])
 
   const editButton = getByTestId('categoryEntry-editButton')
   expect(editButton).toBeInTheDocument()

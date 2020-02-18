@@ -4,22 +4,18 @@ import { within } from '@testing-library/dom'
 import { actRender } from '../../test/utilities'
 import LoginForm from './LoginForm'
 import authService from '../../services/authentication'
-import { MemoryRouter } from 'react-router-dom'
-
+import { act } from 'react-dom/test-utils'
 
 jest.mock('../../services/authentication.js')
 
 beforeEach(() => {
   jest.clearAllMocks()
+  authService.login.mockRejectedValue({ message: 'foobar' })
 })
 
 describe('form is rendered', () => {
   test('labels for username and password are rendered', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/login']}>
-        <LoginForm />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<LoginForm />, ['/login'])
 
     const usernameLabel = within(queryByTestId(/loginForm-usernameField/i)).getByText(/username/i)
     expect(usernameLabel).toBeInTheDocument()
@@ -28,33 +24,21 @@ describe('form is rendered', () => {
   })
 
   test('field for username is rendered', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/login']}>
-        <LoginForm />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<LoginForm />, ['/login'])
 
     const userNameField = queryByTestId(/loginForm-usernameField/i)
     expect(userNameField).toBeInTheDocument()
   })
 
   test('field for password is rendered', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/login']}>
-        <LoginForm />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<LoginForm />, ['/login'])
 
     const passwordField = queryByTestId(/loginForm-passwordField/i)
     expect(passwordField).toBeInTheDocument()
   })
 
   test('login button is rendered', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/login']}>
-        <LoginForm />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<LoginForm />, ['/login'])
 
     const loginButton = queryByTestId(/loginForm-loginButton/i)
     expect(loginButton).toBeInTheDocument()
@@ -62,11 +46,7 @@ describe('form is rendered', () => {
 })
 
 test('clicking the login button calls the authentication service with the inputted username and password', async () => {
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/login']}>
-      <LoginForm />
-    </MemoryRouter>
-  )
+  const { queryByTestId } = await actRender(<LoginForm />, ['/login'])
 
   const userNameField = within(queryByTestId(/loginForm-usernameField/i)).queryByRole(/textbox/i)
   fireEvent.change(userNameField, { target: { value: 'PostItMaster' } })
@@ -74,9 +54,11 @@ test('clicking the login button calls the authentication service with the inputt
   const passwordField = within(queryByTestId(/loginForm-passwordField/i)).queryByRole(/textbox/i)
   fireEvent.change(passwordField, { target: { value: 'TheSecurestPassword' } })
 
-  const loginButton = queryByTestId(/loginForm-loginButton/i)
-  fireEvent.click(loginButton)
-  expect(authService.login).toBeCalledWith('PostItMaster', 'TheSecurestPassword')
+  await act(async () => {
+    const loginButton = queryByTestId(/loginForm-loginButton/i)
+    fireEvent.click(loginButton)
+    expect(authService.login).toBeCalledWith('PostItMaster', 'TheSecurestPassword')
+  })
 })
 
 test('error message is shown if login fails', async () => {

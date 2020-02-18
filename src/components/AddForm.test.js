@@ -1,11 +1,11 @@
 import React from 'react'
 import { fireEvent, wait, waitForElement } from '@testing-library/react'
 import { within } from '@testing-library/dom'
-import { actRender } from '../test/utilities'
 import AddForm from './AddForm'
 import restaurantService from '../services/restaurant'
 import categoryService from '../services/category'
-import { MemoryRouter, Route } from 'react-router-dom'
+
+import { actRender } from '../test/utilities'
 
 jest.mock('../services/restaurant.js')
 jest.mock('../services/category.js')
@@ -18,11 +18,7 @@ beforeEach(() => {
 
 describe('form alerts', () => {
   test('name error message is hidden by default', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/add']}>
-        <AddForm onSubmit={jest.fn()} />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
 
     const { queryByRole } = within(queryByTestId('addForm-nameField'))
     const error = queryByRole(/alert/i)
@@ -30,11 +26,7 @@ describe('form alerts', () => {
   })
 
   test('invalid name input displays an error message', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/add']}>
-        <AddForm onSubmit={jest.fn()} />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
 
     const buttonElement = await queryByTestId('addForm-addButton')
     fireEvent.click(buttonElement)
@@ -44,11 +36,7 @@ describe('form alerts', () => {
   })
 
   test('url error message is hidden by default', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/add']}>
-        <AddForm onSubmit={jest.fn()} />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
 
     const { queryByRole } = within(queryByTestId('addForm-urlField'))
     const error = queryByRole(/alert/i)
@@ -56,11 +44,7 @@ describe('form alerts', () => {
   })
 
   test('invalid url input displays an error message', async () => {
-    const { queryByTestId } = await actRender(
-      <MemoryRouter initialEntries={['/add']}>
-        <AddForm onSubmit={jest.fn()} />
-      </MemoryRouter>
-    )
+    const { queryByTestId } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
 
     const buttonElement = await queryByTestId('addForm-addButton')
     fireEvent.click(buttonElement)
@@ -72,11 +56,7 @@ describe('form alerts', () => {
 
 test('add button calls restaurant callback with correct arguments', async () => {
   const mockSubmit = jest.fn()
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/add']}>
-      <AddForm onSubmit={mockSubmit} />
-    </MemoryRouter>
-  )
+  const { queryByTestId } = await actRender(<AddForm onSubmit={mockSubmit} />, ['/add'])
 
   // Input test data
   const nameElement = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
@@ -92,13 +72,7 @@ test('add button calls restaurant callback with correct arguments', async () => 
 })
 
 test('form is closed after adding a restaurant', async () => {
-  let path
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/add']}>
-      <AddForm onSubmit={jest.fn()} />
-      <Route path='*' render={({ location }) => { path = location; return null }} />
-    </MemoryRouter>
-  )
+  const { queryByTestId, getPath } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
 
   // Input test data
   const nameElement = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
@@ -109,7 +83,7 @@ test('form is closed after adding a restaurant', async () => {
   const buttonElement = queryByTestId('addForm-addButton')
   fireEvent.click(buttonElement)
 
-  await wait(() => expect(path.pathname).toBe('/'))
+  await wait(() => expect(getPath().pathname).toBe('/'))
 })
 
 test('pressing cancel hides the component', async () => {
@@ -126,9 +100,8 @@ test('form is empty if restaurant is not found with the given id parameter', asy
   restaurantService.getOneById.mockRejectedValue({ message: 'Error.' })
 
   const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/edit/1']}>
-      <AddForm id={1} />
-    </MemoryRouter>
+    <AddForm id={1} />,
+    ['/edit/1']
   )
 
   const nameField = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
@@ -146,9 +119,8 @@ test('form is pre-filled if a restaurant is found with the given id parameter', 
   )
 
   const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/edit/1']}>
-      <AddForm id={1} />
-    </MemoryRouter>
+    <AddForm id={1} />,
+    ['/edit/1']
   )
 
   const nameField = within(queryByTestId('addForm-nameField')).getByRole(/textbox/i)
