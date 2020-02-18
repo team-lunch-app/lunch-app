@@ -3,6 +3,7 @@ import { Button, Alert } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import CategoryEntry from '../CategoryEntry/CategoryEntry'
 import categoryService from '../../../services/category'
+import './CategoryList.css'
 
 const CategoryList = () => {
   const [categories, setCategories] = useState()
@@ -30,7 +31,7 @@ const CategoryList = () => {
   return (
     <div data-testid='categoryList'>
       <Link to='/admin'><Button data-testid='categoryList-backButton'>Back</Button></Link>
-      <Link to='/admin/categories/add'><Button data-testid='categoryList-addButton'>Add a new category</Button></Link>
+      <Link to='/admin/categories/add'><Button className="add-category-button" data-testid='categoryList-addButton'>Add a new category</Button></Link>
       <h1 data-testid='categoryList-title'>Categories</h1>
       {categories.length === 0
         ? <Alert data-testid='categoryList-alertMessage' variant='warning'>Sorry, No categories available :C</Alert>
