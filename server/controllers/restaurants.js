@@ -76,47 +76,43 @@ restaurantsRouter.get('/', async (request, response) => {
 
 // getRandom
 restaurantsRouter.post('/random', async (request, response) => {
-  let restaurants = await Restaurant.find({}).populate('categories')
+  const filterType = request.body.type || 'some'
+  const filterCategories = request.body.categories || []
 
-  const filter = request.body
-  const filterCategories = filter.categories || []
-  const filterType = filter.type || 'some'
-
-  const containsCategory = (category) => {
-    return filterCategories
-      .includes(category.id)
-  }
-
-  const filterFunc = (categories, filterType) => {
+  let restaurants
+  if (filterCategories.length > 0) {
     switch (filterType) {
       case 'some': {
-        return categories.some(containsCategory)
+        restaurants = await Restaurant.find({
+          'categories' : { '$in': filterCategories  }
+        })
+        break
       }
+  
       case 'all': {
-        return categories.length > 0 && categories.length >= filterCategories.length
-          ? categories.every(containsCategory)
-          : false
+        restaurants = await Restaurant.find({
+          'categories' : { '$all': filterCategories  }
+        })
+        break
       }
+  
       case 'none': {
-        return categories.length > 0
-          ? categories.some(c => !containsCategory(c))
-          : true
-      }
-      default: {
-        return false
+        restaurants = await Restaurant.find({
+          'categories' : { '$nin': filterCategories  }
+        })
+        break
       }
     }
+  } else {
+    restaurants = await Restaurant
+      .find({}).populate('categories')
   }
 
-  restaurants = (filterCategories.length !== 0)
-    ? restaurants.filter(restaurant => restaurant.categories && filterFunc(restaurant.categories, filterType))
-    : restaurants
-
-  if (!restaurants || restaurants.length < 1) {
-    response.status(404).json({ error: 'No restaurants found with the given filter.' })
+  if (restaurants.length > 0) {
+    const restaurant = restaurants[Math.floor(Math.random() * restaurants.length)]
+    response.json(restaurant.toJSON())
   } else {
-    const randomRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)]
-    response.json(randomRestaurant.toJSON())
+    response.status(404).json({ error: 'No restaurants found with the given filter.' })
   }
 })
 

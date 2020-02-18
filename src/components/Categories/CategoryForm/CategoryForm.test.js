@@ -83,7 +83,7 @@ test('pressing cancel hides the component', async () => {
 })
 
 test('form is empty if category is not found with the given id parameter', async () => {
-  categoryService.getOneById.mockRejectedValue({ message: 'Error.' })
+  categoryService.getOneById.mockRejectedValue({ response : {status: 404}, message: 'Error.' })
 
   const { queryByTestId } = await actRender(
     <MemoryRouter initialEntries={['/admin/categories/edit/1']}>

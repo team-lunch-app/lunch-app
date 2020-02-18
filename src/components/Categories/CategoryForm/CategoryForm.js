@@ -23,8 +23,10 @@ const CategoryForm = ({ onSubmit, id }) => {
           ...fetched,
           name: fetched.name || '',
         }))
-        .catch(() => {
-          setError('Could not find category with the given ID')
+        .catch((e) => {
+          e.response.status === 403 
+            ? setError('You need to be logged in to edit categories')
+            : setError('Could not find category with the given ID')
           setCategory(createDefaultCategory())
         })
     }

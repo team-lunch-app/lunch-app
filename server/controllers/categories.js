@@ -5,7 +5,7 @@ const features = require('../../util/features')
 
 categoryRouter.get('/', async (request, response) => {
   const categories = await Category
-    .find({}) // populate
+    .find({}).populate('restaurants')
   response.json(categories.map(rest => rest.toJSON()))
 })
 
@@ -35,7 +35,9 @@ categoryRouter.get('/:id', async (request, response, next) => {
       authorization.requireAuthorized(request)
     }
     const category = await Category.findById(request.params.id)
-    response.json(category.toJSON())
+    return category 
+      ? response.json(category.toJSON())
+      : response.status(404).send({ error: 'unknown id' })
   } catch (error) {
     next(error)
   }
@@ -63,7 +65,7 @@ categoryRouter.delete('/:id', async (request, response, next) => {
     const id = request.params.id
 
     return await Category.findByIdAndRemove(id) === null
-      ? response.status(404).send({ error: 'unknown id' })
+      ? response.status(400).send({ error: 'unknown id' })
       : response.status(204).end()
   } catch (error) {
     next(error)

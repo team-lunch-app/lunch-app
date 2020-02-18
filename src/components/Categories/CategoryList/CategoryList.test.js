@@ -1,7 +1,7 @@
 import React from 'react'
-import { render, fireEvent, waitForElement, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, fireEvent, waitForElementToBeRemoved, wait } from '@testing-library/react'
 import categoryService from '../../../services/category'
-import App from '../../../App'
+import { actRender } from '../../../test/utilities'
 import CategoryList from './CategoryList'
 import { MemoryRouter } from 'react-router-dom'
 
@@ -40,22 +40,18 @@ test('back button is rendered', async () => {
 })
 
 test('back button returns to the home page', async () => {
-  const { queryByTestId, getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <App categoryService={categoryService} />
-    </MemoryRouter>
+  const { queryByTestId, getPath } = await actRender(
+    <CategoryList categoryService={categoryService} />,
+    ['/admin/categories']
   )
 
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
+  //await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
 
   // Press the back button
   const buttonElement = queryByTestId('categoryList-backButton')
   fireEvent.click(buttonElement)
 
-  await waitForElement(() => getByTestId('randomizer'), { timeout: 250 })
-
-  const categoryList = queryByTestId('categoryList')
-  expect(categoryList).not.toBeInTheDocument()
+  await wait(() => expect(getPath().pathname).toBe('/admin'))
 })
 
 test('informative message is rendered if no categorys exist', async () => {

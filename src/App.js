@@ -17,6 +17,8 @@ const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
+  const token = authService.getToken()
+  const isLoggedIn = token !== undefined
 
   const navbar = () => {
     return (
@@ -31,14 +33,18 @@ const App = () => {
             <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
               List Restaurants
             </Nav.Link>
+            {isLoggedIn && 
+             <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
+             List Categories
+             </Nav.Link>
+          
+            }
           </Nav>
         </Navbar.Collapse>
       </Navbar>
     )
   }
 
-  const token = authService.getToken()
-  const isLoggedIn = token !== undefined
   return (
     <>
       <header className='main-navbar'>

@@ -29,7 +29,7 @@ const CategoryList = () => {
 
   return (
     <div data-testid='categoryList'>
-      <Link to='/'><Button data-testid='categoryList-backButton'>Back</Button></Link>
+      <Link to='/admin'><Button data-testid='categoryList-backButton'>Back</Button></Link>
       <Link to='/admin/categories/add'><Button data-testid='categoryList-addButton'>Add a new category</Button></Link>
       <h1 data-testid='categoryList-title'>Categories</h1>
       {categories.length === 0
