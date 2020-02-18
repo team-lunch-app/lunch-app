@@ -1,10 +1,11 @@
 import React from 'react'
-import { fireEvent, waitForElement } from '@testing-library/react'
+import { fireEvent, waitForElement, wait } from '@testing-library/react'
 import { actRender } from './test/utilities'
 import App from './App'
 import restaurantService from './services/restaurant'
 import categoryService from './services/category'
 import authService from './services/authentication'
+import suggestionService from './services/suggestion'
 import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('./services/restaurant.js')
@@ -13,11 +14,14 @@ jest.mock('./services/authentication.js')
 
 jest.mock('./services/category.js')
 
+jest.mock('./services/suggestion.js')
+
 beforeEach(() => {
   jest.clearAllMocks()
   authService.getToken.mockReturnValue(undefined)
   restaurantService.getAll.mockResolvedValue([])
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
+  suggestionService.getAll.mockResolvedValue([])
 })
 
 test('randomizer exists initially', async () => {
@@ -87,6 +91,13 @@ describe('when not logged in', () => {
     const { getPath } = await actRender(<App />, ['/admin'])
     expect(getPath().pathname).toBe('/login')
   })
+  test('logout button will not be rendered', async () => {
+    authService.getToken.mockReturnValue(undefined)
+
+    const { queryByTestId } = await actRender(<App />, ['/admin/suggestions'])
+    const button = queryByTestId('logout-button')
+    expect(button).not.toBeInTheDocument()
+  })
 })
 
 describe('when logged in as an administrator', () => {
@@ -95,5 +106,24 @@ describe('when logged in as an administrator', () => {
 
     const { getPath } = await actRender(<App />, ['/login'])
     expect(getPath().pathname).toBe('/admin/suggestions')
+  })
+
+  test('logout button will be rendered', async () => {
+    authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
+  
+    const { queryByTestId } = await actRender(<App />, ['/admin/suggestions'])
+    const button = queryByTestId('logout-button')
+    expect(button).toBeInTheDocument()
+  })
+
+  test('logout button will call logout', async () => {
+    authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
+
+    const { queryByTestId, getPath } = await actRender(<App />, ['/admin/suggestions'])
+    const button = queryByTestId('logout-button')
+    fireEvent.click(button)
+
+    await wait(() => expect(authService.logout).toHaveBeenCalled())
+    await wait(() => expect(getPath().pathname).toBe('/'))
   })
 })

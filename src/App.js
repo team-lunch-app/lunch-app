@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { Route, Link, Redirect, useHistory } from 'react-router-dom'
-import { Nav, Navbar } from 'react-bootstrap'
+import { Nav, Navbar, Button } from 'react-bootstrap'
 import Randomizer from './components/Randomizer'
 import AddForm from './components/AddForm'
 import restaurantService from './services/restaurant'
@@ -20,6 +20,11 @@ const App = () => {
   const history = useHistory()
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
+
+  const logout = () => {
+    authService.logout()
+    history.push('/')
+  }
 
   const navbar = () => {
     return (
@@ -46,6 +51,11 @@ const App = () => {
             }
           </Nav>
         </Navbar.Collapse>
+        {isLoggedIn &&
+            <Nav className="ml-auto">
+              <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
+            </Nav> 
+        }
       </Navbar>
     )
   }
