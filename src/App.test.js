@@ -90,10 +90,10 @@ describe('when not logged in', () => {
 })
 
 describe('when logged in as an administrator', () => {
-  test('navigating to /login redirects to /admin', async () => {
+  test('navigating to /login redirects to /admin/suggestions', async () => {
     authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
 
     const { getPath } = await actRender(<App />, ['/login'])
-    expect(getPath().pathname).toBe('/admin')
+    expect(getPath().pathname).toBe('/admin/suggestions')
   })
 })

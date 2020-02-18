@@ -34,11 +34,15 @@ const App = () => {
             <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
               List Restaurants
             </Nav.Link>
-            {isLoggedIn && 
-             <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
-             List Categories
-             </Nav.Link>
-          
+            {isLoggedIn &&
+              <>
+                <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
+                  List Categories
+                </Nav.Link>
+                <Nav.Link as={Link} href='#' data-testid='suggestionList-link' to='/admin/suggestions'>
+                  Pending Suggestions
+                </Nav.Link>
+              </>
             }
           </Nav>
         </Navbar.Collapse>
@@ -54,17 +58,19 @@ const App = () => {
       <section className='main-container'>
         <Route exact path="/" render={() => <Randomizer />} />
         <Route path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
-        <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />      
+        <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
         <Route path="/restaurants" render={() => <RestaurantList />} />
         <Route path="/login" render={() => isLoggedIn
           ? <Redirect to={'/admin'} />
           : <LoginForm />} />
-        <Route path="/admin" render={() => !isLoggedIn && <Redirect to={'/login'} />} />
+        <Route path="/admin" render={() => isLoggedIn
+          ? <Redirect to={'/admin/suggestions'} />
+          : <Redirect to={'/login'} />} />
         <Route path="/admin/categories/add" render={() => <CategoryForm onSubmit={categoryService.add} />} />
-        <Route path="/admin/categories/edit/:id" render={({ match }) => <CategoryForm id={match.params.id}  onSubmit={categoryService.update} />} />
-        <Route exact path="/admin/categories" render={() => <CategoryList /> } />
+        <Route path="/admin/categories/edit/:id" render={({ match }) => <CategoryForm id={match.params.id} onSubmit={categoryService.update} />} />
+        <Route exact path="/admin/categories" render={() => <CategoryList />} />
         <Route path="/admin/suggestions" render={() => isLoggedIn
-          ? <SuggestionList/>
+          ? <SuggestionList />
           : <Redirect to={'/login'} />} />
 
       </section>
