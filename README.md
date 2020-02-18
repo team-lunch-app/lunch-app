@@ -22,8 +22,14 @@ Installation
 ### Running locally
 For running the development version:
  1. `git clone` the repo
- 2. `yarn start`
- 3. Browser window should start with address [localhost:3000](http://localhost:3000)
+ 2. Set up environment variables via `.env`
+ 3. `yarn start`
+ 4. Browser window should start with address [localhost:3000](http://localhost:3000)
+
+#### Setting environment variables
+Project uses `dotenv` for development-time environment variable management. Create a file named `.env` to the project root and add any desired environment variables there using syntax `VAR_NAME=VALUE`. For running the development environment you need at least:
+ - Set `MONGODB_URI` to a valid database URL
+ - Set `SECRET` to any string. This is used as Json Web Token generation secret.
 
 For running the production version locally:
  1. `git clone` the repo
@@ -41,6 +47,13 @@ Ensure that `yarn install --production` has been called on the cloud to install 
 
 After all dependencies are installed and `build/` exists, configure the service to start the server using `node ./server/index.js`.
 
+#### Setting environment variables
+For running the app in production environment you need at least following environment variables set:
+ - `MONGODB_URI` should represent a valid database URL
+ - `SECRET` should be any *(preferably lengthy)* string. This is used as Json Web Token generation secret, thus using a weak secret might result in compromised token security.
+
+**Note: Failing to set up the required environment variables triggers a failsafe, preventing the server from starting**
+
 ### Setting up to deploy through CI
 General CI configuration is out of scope for this guide. For example *CircleCI* configuration see our default [configuration](.circleci/config.yml).
 
@@ -54,13 +67,21 @@ Contributing
 ------------
 See [Running Locally](#Installation) for development setup.
 
-Using TDD for new and updated features is the favored workflow.
+In brief:
+ - All changes should go through PRs and PR must be reviewed and accepted by at least one person not participating in the PR
+ - Using TDD for new and updated features is the favored workflow
+ - Untested code should never be pushed/merged to master. PRs should not be accepted unless code is tested properly
 
-`TODO: Link to code style guide etc.`
+`TODO: Link to code style guide etc. (?)`
 
 Credits
 -------
-`TODO: Names and stuff`
+Developed as part of the *Software Development Project Course* by
+ - [@aLahdekorpi](https://github.com/aLahdekorpi)
+ - [@Kailari](https://github.com/Kailari)
+ - [@otsha](https://github.com/otsha)
+ - [@skoskipaa](https://github.com/skoskipaa)
+ - [@RoniNiklas](https://github.com/RoniNiklas)
 
 Licensing
 ---------
