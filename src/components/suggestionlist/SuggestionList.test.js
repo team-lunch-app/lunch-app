@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, fireEvent, waitForElement, waitForElementToBeRemoved } from '@testing-library/react'
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
 import { SuggestionList, SuggestionEntry } from './SuggestionList'
 import suggestionService from '../../services/suggestion'
 import { actRender } from '../../test/utilities'
