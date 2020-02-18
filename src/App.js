@@ -12,7 +12,7 @@ import LoginForm from './components/auth/LoginForm'
 import authService from './services/authentication'
 import CategoryForm from './components/Categories/CategoryForm/CategoryForm'
 import CategoryList from './components/Categories/CategoryList/CategoryList'
-import SuggestionList from './components/suggestionlist/SuggestionList'
+import { SuggestionList } from './components/suggestionlist/SuggestionList'
 
 const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components

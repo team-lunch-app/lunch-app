@@ -3,6 +3,8 @@ import { Button, Alert, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import suggestionService from '../../services/suggestion'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 
 import './SuggestionList.css'
 
@@ -20,7 +22,7 @@ export const SuggestionList = () => {
   const handleReject = async (id) => {
     await suggestionService.reject(id)
     setSuggestions(suggestions.filter(s => s.id !== id))
-  } 
+  }
   const handleApprove = async (id) => {
     await suggestionService.approve(id)
     setSuggestions(suggestions.filter(s => s.id !== id))
@@ -41,26 +43,32 @@ export const SuggestionList = () => {
 export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => {
   return (
     <Card className='suggestion-entry' data-testid='suggestionList-entry'>
+      <Card.Header className = {suggestion.type} >{suggestion.type}</Card.Header>
       <Card.Body>
-        <span data-testid='suggestionEntry-name'>{suggestion.type} restaurant, name: {suggestion.data.name}, url: {suggestion.data.url}</span>
-        <div className='buttons'>
-          <Button
-            data-testid='suggestionEntry-approveButton'
-            variant='warning'
-            onClick={() => handleApprove(suggestion.id)}
-            size='sm'
-          >
-            Approve
-          </Button>
-          <Button
-            data-testid='suggestionEntry-rejectButton'
-            variant='danger'
-            onClick={() => handleReject(suggestion.id)}
-            size='sm'
-          >
-            Reject
-          </Button>
-        </div>
+        <Card.Title>{suggestion.data.name}</Card.Title>
+        <Card.Subtitle>
+          <a href={suggestion.data.url}>
+            <span>{suggestion.data.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span>
+          </a>
+        </Card.Subtitle>
+      </Card.Body>
+      <Card.Body className='buttons'>
+        <Button
+          data-testid='suggestionEntry-approveButton'
+          variant='warning'
+          onClick={() => handleApprove(suggestion.id)}
+          size='sm'
+        >
+          Approve
+        </Button>
+        <Button
+          data-testid='suggestionEntry-rejectButton'
+          variant='danger'
+          onClick={() => handleReject(suggestion.id)}
+          size='sm'
+        >
+          Reject
+        </Button>
       </Card.Body>
     </Card>
   )
@@ -72,11 +80,13 @@ SuggestionList.propTypes = {
 
 SuggestionEntry.propTypes = {
   suggestion: PropTypes.shape({
+    id: PropTypes.any.isRequired,
     type: PropTypes.string.isRequired,
     data: PropTypes.shape({
       name: PropTypes.string.isRequired,
-      url: PropTypes.string      
+      url: PropTypes.string
     }).isRequired
-    // approve & reject functions
-  })
+  }),
+  handleApprove: PropTypes.any.isRequired,
+  handleReject: PropTypes.any.isRequired,
 }
