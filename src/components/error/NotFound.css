@@ -1,0 +1,5 @@
+.main-container > .error-404-container {
+    justify-content: center;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.9);
+}
