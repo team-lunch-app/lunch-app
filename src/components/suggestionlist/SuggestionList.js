@@ -13,7 +13,7 @@ export const SuggestionList = () => {
 
   useEffect(() => {
     suggestionService.getAll().then(setSuggestions)
-  }, [suggestionService])
+  }, [])
 
   if (suggestions === undefined || suggestions === null) {
     return <div data-testid='suggestionList-loading'>Loading...</div>
@@ -75,7 +75,6 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
 }
 
 SuggestionList.propTypes = {
-
 }
 
 SuggestionEntry.propTypes = {

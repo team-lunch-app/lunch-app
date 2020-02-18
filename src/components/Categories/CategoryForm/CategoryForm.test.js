@@ -2,7 +2,6 @@ import React from 'react'
 import { fireEvent, wait, waitForElement, waitForDomChange } from '@testing-library/react'
 import CategoryForm from './CategoryForm'
 import categoryService from '../../../services/category'
-import { Route } from 'react-router-dom'
 
 import { actRender } from '../../../test/utilities'
 
