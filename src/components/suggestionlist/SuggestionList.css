@@ -1,0 +1,15 @@
+.suggestion-entry{
+    margin-bottom: 0.5em;
+    color: #2b2b2b;
+}
+
+.suggestion-entry > .buttons > button {
+    margin-right: 0.4em;
+}
+
+.suggestion-entry > .card-header.ADD {
+    background-color: #19e3b1;
+}
+.suggestion-entry > .card-header.REMOVE {
+    background-color: #ff0066;
+}

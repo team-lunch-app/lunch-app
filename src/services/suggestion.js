@@ -8,12 +8,12 @@ const getAll = async () => {
 }
 
 const approve = async (id) => {
-  const response = await axios.post(`${baseUrl}/approve/${id}`, { headers: { authorization: `bearer ${authService.getToken()}` } })
+  const response = await axios.post(`${baseUrl}/approve/${id}`, undefined, { headers: { authorization: `bearer ${authService.getToken()}` } })
   return response.data
 }
 
 const reject = async (id) => {
-  const response = await axios.post(`${baseUrl}/reject/${id}`, { headers: { authorization: `bearer ${authService.getToken()}` } })
+  const response = await axios.post(`${baseUrl}/reject/${id}`, undefined,  { headers: { authorization: `bearer ${authService.getToken()}` } })
   return response.data
 }
 

@@ -1,6 +1,7 @@
 const Suggestion = require('../models/suggestion')
 const authorization = require('../util/authorization')
 const features = require('../../util/features')
+const Restaurant = require('../models/restaurant')
 const { tryCreateRestaurant, tryRemoveRestaurant } = require('./restaurants')
 
 const suggestionsRouter = require('express').Router()
@@ -42,10 +43,15 @@ suggestionsRouter.post('/add', async (request, response, next) => {
 
 // remove restaurant
 suggestionsRouter.post('/remove', async (request, response, next) => {
-  try {
-    const suggestion = await new Suggestion(parseSuggestion(request.body, 'REMOVE')).save()
 
-    return response.status(201).json(suggestion.toJSON())
+  try {
+    if (request.body.id) {
+      await Restaurant.findById(request.body.id)
+      const suggestion = await new Suggestion(parseSuggestion(request.body, 'REMOVE')).save()
+      return response.status(201).json(suggestion.toJSON())
+    } else {
+      return response.status(400).end()
+    }
   } catch (error) {
     next(error)
   }

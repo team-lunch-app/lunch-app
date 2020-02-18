@@ -1,8 +1,9 @@
 POST http://localhost:3001/api/restaurants HTTP/1.1
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MjAyMzE3OX0.g4SSvWjzWFgNQT66e0PZ3ZkmXQDnOM1Obw_odwsrj6w
 
 {
-    "name": "Torigrilli",
-    "url": "http://www.asdasd.fi",
-    "categories": ["5e37e1651296ed1b562980be"]
+    "name": "Kalevankadun Salaattibaari",
+    "url": "http://www.k-salaatti.fi",
+    "categories": []
 }

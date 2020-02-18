@@ -26,12 +26,25 @@ const suggestionData = [
   }
 ]
 
-let server, suggestions, user, token
+const restaurantData = [
+  {
+    name: 'McDonalds',
+    url: 'www.mcd.fi',
+    categories: [],
+  },
+  {
+    name: 'Steissin BK',
+    url: 'https://www.steissin-bk.fi',
+  },
+]
+
+let server, suggestions, user, token, restaurants
 
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   suggestions = await dbUtil.createRowsFrom(Suggestion, suggestionData)
+  restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
   user = await dbUtil.createUser('jaskajoku', 'kissa')
   token = authorization.createToken(user._id, user.username)
 })
@@ -73,9 +86,11 @@ test('creating an ADD suggestion creates a database entry', async () => {
 })
 
 test('creating an REMOVE suggestion responds with 201', async () => {
+  const id = restaurants[0].id
   await server
     .post('/api/suggestions/remove')
     .send({
+      id: id,
       name: 'McDonalds',
       url: 'www.mcd.fi',
       categories: [],
@@ -86,9 +101,11 @@ test('creating an REMOVE suggestion responds with 201', async () => {
 })
 
 test('creating an REMOVE suggestion creates a database entry', async () => {
+  const id = restaurants[0].id
   const response = await server
     .post('/api/suggestions/remove')
     .send({
+      id: id,
       name: 'McDonalds',
       url: 'www.mcd.fi',
       categories: [],
@@ -105,6 +122,16 @@ test('creating an REMOVE suggestion creates a database entry', async () => {
   })
 })
 
+test('creating an REMOVE suggestion without an id fails with status 400', async () => {
+  await server
+    .post('/api/suggestions/remove')
+    .send({
+      name: 'McDonalds',
+      url: 'www.mcd.fi',
+      categories: [],
+    })
+    .expect(400)
+})
 
 test('approving an ADD request with a valid id returns with status 201', async () => {
   const suggestion = suggestions[0]

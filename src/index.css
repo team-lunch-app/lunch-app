@@ -81,17 +81,3 @@ code {
     background-position: 100% 100%;
   }
 }
-
-@keyframes test {
-  0% {
-    background-color: #221c37;
-  }
-
-  50% {
-    background-color: #b83c82;
-  }
-
-  100% {
-    background-color: #221c37;
-  }
-}
