@@ -1,64 +1,64 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Alert, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-//import SuggestionEntry from './SuggestionEntry'
+import PropTypes from 'prop-types'
 import suggestionService from '../../services/suggestion'
 
-const SuggestionList = () => {
+import './SuggestionList.css'
+
+export const SuggestionList = () => {
   const [suggestions, setSuggestions] = useState()
 
   useEffect(() => {
     suggestionService.getAll().then(setSuggestions)
   }, [suggestionService])
 
-  const removeRestaurant = async () => {
-    /*
-    if (!window.confirm(`Are you sure you want to remove "${suggestion.name}"?`)) {
-      return
-    }
- 
-    const result = await suggestionService.remove(suggestion.id)
-    if (result && result.status === 204) {
-      setRestaurants(suggestions.filter(r => r.id !== suggestion.id))
-    }
-    */
-  }
-
   if (suggestions === undefined || suggestions === null) {
     return <div data-testid='suggestionList-loading'>Loading...</div>
+  }
+
+  const handleReject = async (id) => {
+    await suggestionService.reject(id)
+    setSuggestions(suggestions.filter(s => s.id !== id))
+  } 
+  const handleApprove = async (id) => {
+    await suggestionService.approve(id)
+    setSuggestions(suggestions.filter(s => s.id !== id))
   }
 
   return (
     <div data-testid='suggestionList'>
       <Link to='/'><Button data-testid='suggestionList-backButton'>Back</Button></Link>
-      <h1 data-testid='suggestionList-title'>Restaurants</h1>
+      <h1 data-testid='suggestionList-title'>Pending Suggestions</h1>
       {suggestions.length === 0
         ? <Alert data-testid='suggestionList-alertMessage' variant='warning'>Sorry, No suggestions available :C</Alert>
-        : suggestions.map((suggestion) => <SuggestionEntry key={suggestion.id} suggestion={suggestion} onRemove={removeRestaurant} />)
+        : suggestions.map((suggestion) => <SuggestionEntry key={suggestion.id} suggestion={suggestion} handleApprove={handleApprove} handleReject={handleReject} />)
       }
     </div>
   )
 }
 
-const SuggestionEntry = ({ suggestion }) => {
+export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => {
   return (
     <Card className='suggestion-entry' data-testid='suggestionList-entry'>
       <Card.Body>
-        <span data-testid='suggestionEntry-name'>{suggestion.data.name}</span>
+        <span data-testid='suggestionEntry-name'>{suggestion.type} restaurant, name: {suggestion.data.name}, url: {suggestion.data.url}</span>
         <div className='buttons'>
           <Button
-            data-testid='suggestionEntry-editButton'
+            data-testid='suggestionEntry-approveButton'
             variant='warning'
+            onClick={() => handleApprove(suggestion.id)}
             size='sm'
           >
-            Edit
+            Approve
           </Button>
           <Button
-            data-testid='suggestionEntry-removeButton'
+            data-testid='suggestionEntry-rejectButton'
             variant='danger'
+            onClick={() => handleReject(suggestion.id)}
             size='sm'
           >
-            Remove
+            Reject
           </Button>
         </div>
       </Card.Body>
@@ -70,4 +70,13 @@ SuggestionList.propTypes = {
 
 }
 
-export default SuggestionList
+SuggestionEntry.propTypes = {
+  suggestion: PropTypes.shape({
+    type: PropTypes.string.isRequired,
+    data: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      url: PropTypes.string      
+    }).isRequired
+    // approve & reject functions
+  })
+}
