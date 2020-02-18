@@ -1,9 +1,10 @@
 import React from 'react'
 import './App.css'
-import { Route, Link, Redirect, useHistory } from 'react-router-dom'
 import { Nav, Navbar, Button } from 'react-bootstrap'
+import { Route, Switch, Link, Redirect, useHistory } from 'react-router-dom'
 import Randomizer from './components/Randomizer'
 import AddForm from './components/AddForm'
+import NotFound from './components/error/NotFound'
 import restaurantService from './services/restaurant'
 import categoryService from './services/category'
 
@@ -60,29 +61,38 @@ const App = () => {
     )
   }
 
+  const adminRoutes =
+    <Route path="/admin" render={() =>
+      <Switch>
+        {!isLoggedIn && <Redirect to='/login' />}
+        <Route exact path="/admin/categories/add" render={() => <CategoryForm onSubmit={categoryService.add} />} />
+        <Route exact path="/admin/categories/edit/:id" render={({ match }) => <CategoryForm id={match.params.id} onSubmit={categoryService.update} />} />
+        <Route exact path="/admin/categories" render={() => <CategoryList />} />
+        <Route exact path="/admin/suggestions" render={() => <SuggestionList />} />
+        <Redirect to={'/admin/suggestions'} />
+      </Switch>
+    } />
+
   return (
     <>
       <header className='main-navbar'>
         {navbar()}
       </header>
       <section className='main-container'>
-        <Route exact path="/" render={() => <Randomizer />} />
-        <Route path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
-        <Route path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
-        <Route path="/restaurants" render={() => <RestaurantList />} />
-        <Route path="/login" render={() => isLoggedIn
-          ? <Redirect to={'/admin'} />
-          : <LoginForm />} />
-        <Route path="/admin" render={() => isLoggedIn
-          ? <Redirect to={'/admin/suggestions'} />
-          : <Redirect to={'/login'} />} />
-        <Route path="/admin/categories/add" render={() => <CategoryForm onSubmit={categoryService.add} />} />
-        <Route path="/admin/categories/edit/:id" render={({ match }) => <CategoryForm id={match.params.id} onSubmit={categoryService.update} />} />
-        <Route exact path="/admin/categories" render={() => <CategoryList />} />
-        <Route path="/admin/suggestions" render={() => isLoggedIn
-          ? <SuggestionList />
-          : <Redirect to={'/login'} />} />
+        <Switch>
+          <Route exact path="/error/404" render={() => <NotFound />} />
 
+          <Route exact path="/" render={() => <Randomizer />} />
+          <Route exact path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
+          <Route exact path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
+          <Route exact path="/restaurants" render={() => <RestaurantList />} />
+          <Route exact path="/login" render={() => isLoggedIn
+            ? <Redirect to={'/admin/suggestions'} />
+            : <LoginForm />} />
+          {adminRoutes}
+
+          <Route path="*" render={() => <Redirect to='/error/404' />} />
+        </Switch>
       </section>
     </>
   )

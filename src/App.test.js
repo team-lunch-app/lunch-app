@@ -6,12 +6,9 @@ import restaurantService from './services/restaurant'
 import categoryService from './services/category'
 import authService from './services/authentication'
 import suggestionService from './services/suggestion'
-import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('./services/restaurant.js')
-
 jest.mock('./services/authentication.js')
-
 jest.mock('./services/category.js')
 
 jest.mock('./services/suggestion.js')
@@ -25,33 +22,19 @@ beforeEach(() => {
 })
 
 test('randomizer exists initially', async () => {
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>
-  )
-
+  const { queryByTestId } = await actRender(<App />, ['/'])
   const randomizer = queryByTestId('randomizer')
   expect(randomizer).toBeInTheDocument()
 })
 
 test('add form is hidden initially', async () => {
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>
-  )
-
+  const { queryByTestId } = await actRender(<App />, ['/'])
   const form = queryByTestId('addForm')
   expect(form).not.toBeInTheDocument()
 })
 
 test('addForm component is rendered when button is pressed', async () => {
-  const { queryByTestId, getByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>
-  )
+  const { queryByTestId, getByTestId } = await actRender(<App />, ['/'])
 
   const button = queryByTestId('addForm-link')
   fireEvent.click(button)
@@ -60,22 +43,13 @@ test('addForm component is rendered when button is pressed', async () => {
 })
 
 test('listing is hidden initially', async () => {
-  const { queryByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>
-  )
-
+  const { queryByTestId } = await actRender(<App />, ['/'])
   const list = queryByTestId('restaurantList')
   expect(list).not.toBeInTheDocument()
 })
 
 test('restaurantList component is rendered when list button is pressed', async () => {
-  const { queryByTestId, getByTestId } = await actRender(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>
-  )
+  const { queryByTestId, getByTestId } = await actRender(<App />, ['/'])
 
   const button = queryByTestId('restaurantList-link')
   fireEvent.click(button)

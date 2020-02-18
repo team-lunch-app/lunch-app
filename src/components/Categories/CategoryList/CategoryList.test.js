@@ -1,70 +1,40 @@
 import React from 'react'
-import { render, fireEvent, waitForElementToBeRemoved, wait } from '@testing-library/react'
+import { fireEvent, wait } from '@testing-library/react'
 import categoryService from '../../../services/category'
 import { actRender } from '../../../test/utilities'
 import CategoryList from './CategoryList'
-import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('../../../services/category.js')
 
 beforeEach(() => {
   jest.clearAllMocks()
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'Salads' }, { id: 15, name: 'Burger' }])
-  
 })
 
 test('page title is rendered', async () => {
-  const { queryByTestId, getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
+  const { queryByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
   const title = await queryByTestId('categoryList-title')
   expect(title).toBeInTheDocument()
 })
 
 test('back button is rendered', async () => {
-  const { queryByTestId, getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
+  const { queryByTestId} = await actRender(<CategoryList />, ['/admin/categories'])
   const backButton = await queryByTestId('categoryList-backButton')
   expect(backButton).toBeInTheDocument()
 })
 
 test('back button returns to the home page', async () => {
-  const { queryByTestId, getPath } = await actRender(
-    <CategoryList categoryService={categoryService} />,
-    ['/admin/categories']
-  )
+  const { queryByTestId, getPath } = await actRender(<CategoryList />, ['/admin/categories'])
 
-  //await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
-  // Press the back button
   const buttonElement = queryByTestId('categoryList-backButton')
   fireEvent.click(buttonElement)
-
   await wait(() => expect(getPath().pathname).toBe('/admin'))
 })
 
 test('informative message is rendered if no categorys exist', async () => {
   categoryService.getAll.mockResolvedValue([])
 
-  const { queryByTestId, getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
+  const { queryByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
   const message = await queryByTestId('categoryList-alertMessage')
   expect(message).toBeInTheDocument()
 })
@@ -75,27 +45,13 @@ test('a category is rendered if one exists', async () => {
     id: 1
   }])
 
-  const { queryByTestId, getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
+  const { queryByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
   const category = await queryByTestId('categoryList-categoryEntry')
   expect(category).toBeInTheDocument()
 })
 
 test('multiple categories are rendered if more than one exist', async () => {
-  const { queryAllByTestId, getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
+  const { queryAllByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
   const categories = await queryAllByTestId('categoryList-categoryEntry')
   expect(categories.length).toBeGreaterThan(1)
 })
@@ -108,13 +64,7 @@ test('pressing the delete button calls the service to remove the category if OK 
 
   window.confirm = jest.fn(() => true)
 
-  const { getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
+  const { getByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
 
   const removeButton = getByTestId('categoryEntry-removeButton')
   fireEvent.click(removeButton)
@@ -129,14 +79,7 @@ test('pressing the delete button does not attempt to remove the category if canc
 
   window.confirm = jest.fn(() => false)
 
-  const { getByTestId } = render(
-    <MemoryRouter initialEntries={['/admin/categories']}>
-      <CategoryList categoryService={categoryService} />
-    </MemoryRouter>
-  )
-
-  await waitForElementToBeRemoved(() => getByTestId('categoryList-loading'))
-
+  const { getByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
   const removeButton = getByTestId('categoryEntry-removeButton')
   fireEvent.click(removeButton)
   expect(categoryService.remove).not.toBeCalled()

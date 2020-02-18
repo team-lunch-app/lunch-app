@@ -15,6 +15,14 @@ const jwtSecret = process.env.NODE_ENV === 'test'
   ? 'sekret'
   : process.env.SECRET
 
+if (dbUrl === null || dbUrl === undefined) {
+  throw new Error('Database URL is not defined! Environment variable MONGODB_URI was empty. Either define it manually or add it to your .env')
+}
+
+if (jwtSecret === null || jwtSecret === undefined) {
+  throw new Error('JWT Secret is not defined! Environment variable SECRET was empty. Either define it manually or add it to your .env')
+}
+
 module.exports = {
   port,
   staticDir,
