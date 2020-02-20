@@ -35,7 +35,6 @@ const RestaurantList = () => {
         await suggestionService.removeRestaurant(restaurant)
       }
     }
-
   }
 
   const editRestaurant = (restaurant) => {
@@ -54,7 +53,7 @@ const RestaurantList = () => {
             key={restaurant.id}
             item={restaurant}
             onClickRemove={removeRestaurant}
-            onClickEdit={editRestaurant}
+            onClickEdit={isLoggedIn ? editRestaurant : undefined}
           />
         }
       />
