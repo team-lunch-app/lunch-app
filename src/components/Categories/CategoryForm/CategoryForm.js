@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import categoryService from '../../../services/category'
+import './CategoryForm.css'
 
 
 const CategoryForm = ({ onSubmit, id }) => {

@@ -29,10 +29,12 @@ const CategoryList = () => {
   }
 
   return (
-    <div data-testid='categoryList'>
-      <Link to='/admin'><Button data-testid='categoryList-backButton'>Back</Button></Link>
-      <Link to='/admin/categories/add'><Button className="add-category-button" data-testid='categoryList-addButton'>Add a new category</Button></Link>
-      <h1 data-testid='categoryList-title'>Categories</h1>
+    <div data-testid='categoryList' className='categoryList'>
+      <div className='categoryList-buttonGroup'>
+        <Link to='/admin' className='categoryList-backButton'><Button data-testid='categoryList-backButton'>Back</Button></Link>
+        <Link to='/admin/categories/add' className='categoryList-addButton'><Button className="add-category-button" data-testid='categoryList-addButton' variant='success'>Add a new category</Button></Link>
+      </div>
+      <h1 data-testid='categoryList-title' className='categoryList-title'>Categories</h1>
       {categories.length === 0
         ? <Alert data-testid='categoryList-alertMessage' variant='warning'>Sorry, No categories available :C</Alert>
         : categories.map((category) => <CategoryEntry key={category.id} category={category} onRemove={removeCategory} />)

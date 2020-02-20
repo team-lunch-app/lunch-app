@@ -5,10 +5,17 @@
 
 .restaurant-entry > div {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 0.75em;
+    width: 100vw;
+    max-width: 360px;
+}
+
+.restaurantEntry-name {
+    font-size:21px;
+    margin-bottom: 0.5em;
 }
 
 .restaurant-entry > div > .buttons > button {
