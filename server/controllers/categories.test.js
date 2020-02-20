@@ -2,7 +2,6 @@ const supertest = require('supertest')
 const Category = require('../models/category')
 const app = require('../app')
 const authorization = require('../util/authorization')
-const features = require('../../util/features')
 
 const dbUtil = require('../test/dbUtil')
 
@@ -87,7 +86,7 @@ test('delete removes the correct category', async () => {
     .expect(404)
 })
 
-features.describeIf(features.endpointAuth, 'when not logged in', () => {
+describe('when not logged in', () => {
   test('post request with valid data and invalid token returns http code 403', async () => {
     await server
       .post('/api/categories')

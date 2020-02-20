@@ -2,7 +2,6 @@ const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
 const authorization = require('../util/authorization')
-const features = require('../../util/features')
 
 const tryCreateRestaurant = async (restaurant) => {
   const created = await new Restaurant(restaurant).save()
@@ -84,21 +83,21 @@ restaurantsRouter.post('/random', async (request, response) => {
     switch (filterType) {
       case 'some': {
         restaurants = await Restaurant.find({
-          'categories' : { '$in': filterCategories  }
+          'categories': { '$in': filterCategories }
         })
         break
       }
-  
+
       case 'all': {
         restaurants = await Restaurant.find({
-          'categories' : { '$all': filterCategories  }
+          'categories': { '$all': filterCategories }
         })
         break
       }
-  
+
       case 'none': {
         restaurants = await Restaurant.find({
-          'categories' : { '$nin': filterCategories  }
+          'categories': { '$nin': filterCategories }
         })
         break
       }
@@ -130,9 +129,8 @@ restaurantsRouter.get('/:id', async (request, response) => {
 // add
 restaurantsRouter.post('/', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const restaurant = await tryCreateRestaurant(parseRestaurant(request.body))
     return response.status(201).json(restaurant.toJSON())
   }
@@ -144,9 +142,7 @@ restaurantsRouter.post('/', async (request, response, next) => {
 // update
 restaurantsRouter.put('/:id', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
 
     const restaurant = parseRestaurant(request.body, request.params.id)
     const { categories: oldCategories } = await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
@@ -162,9 +158,8 @@ restaurantsRouter.put('/:id', async (request, response, next) => {
 // delete
 restaurantsRouter.delete('/:id', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const id = request.params.id
     return await tryRemoveRestaurant(id)
       ? response.status(204).end()

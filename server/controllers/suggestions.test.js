@@ -5,7 +5,6 @@ const app = require('../app')
 
 const dbUtil = require('../test/dbUtil')
 const authorization = require('../util/authorization')
-const features = require('../../util/features')
 
 const suggestionData = [
   {
@@ -215,7 +214,7 @@ test('attempting to reject a request with a VALID id returns with 204', async ()
     .expect(204)
 })
 
-features.describeIf(features.endpointAuth, 'when not logged in', () => {
+describe('when not logged in', () => {
   test('trying to approve request fails with 403', async () => {
     await server
       .post(`/api/suggestions/approve/${suggestions[0].id}`)

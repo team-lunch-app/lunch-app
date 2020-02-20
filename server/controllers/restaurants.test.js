@@ -3,7 +3,6 @@ const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
 const app = require('../app')
 const authorization = require('../util/authorization')
-const features = require('../../util/features')
 
 const dbUtil = require('../test/dbUtil')
 
@@ -402,7 +401,7 @@ describe('when logged in', () => {
   })
 })
 
-features.describeIf(features.endpointAuth, 'when not logged in', () => {
+describe('when not logged in', () => {
   test('post fails with status 403', async () => {
     await server
       .post('/api/restaurants')
