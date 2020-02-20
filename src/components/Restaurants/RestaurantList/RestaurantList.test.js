@@ -2,12 +2,15 @@ import React from 'react'
 import { fireEvent } from '@testing-library/react'
 import restaurantService from '../../../services/restaurant'
 import categoryService from '../../../services/category'
+import authService from '../../../services/authentication'
+
 import RestaurantList from './RestaurantList'
 
 import { actRender } from '../../../test/utilities'
 
 jest.mock('../../../services/restaurant.js')
 jest.mock('../../../services/category.js')
+jest.mock('../../../services/authentication.js')
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -82,6 +85,8 @@ test('multiple restaurants are rendered if more than one exist', async () => {
 })
 
 test('pressing the delete button calls the service to remove the restaurant if OK is pressed', async () => {
+  authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
+
   restaurantService.getAll.mockResolvedValue([{
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',

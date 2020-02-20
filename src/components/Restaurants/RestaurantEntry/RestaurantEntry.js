@@ -2,14 +2,17 @@ import React from 'react'
 import { Button, Card } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import authService from '../../../services/authentication'
+
 import './RestaurantEntry.css'
 
 const RestaurantEntry = ({ restaurant, onRemove }) => {
   let history = useHistory()
+  const token = authService.getToken()
+  const isLoggedIn = token !== undefined
 
   const handleRemove = async (event) => {
     event.preventDefault()
-
     await onRemove(restaurant)
   }
 
@@ -23,14 +26,16 @@ const RestaurantEntry = ({ restaurant, onRemove }) => {
       <Card.Body>
         <span data-testid='restaurantEntry-name'>{restaurant.name}</span>
         <div className='buttons'>
-          <Button
-            data-testid='restaurantEntry-editButton'
-            onClick={handleEdit}
-            variant='warning'
-            size='sm'
-          >
-            Edit
-          </Button>
+          {isLoggedIn &&
+            <Button
+              data-testid='restaurantEntry-editButton'
+              onClick={handleEdit}
+              variant='warning'
+              size='sm'
+            >
+              Edit
+            </Button>
+          }
           <Button
             data-testid='restaurantEntry-removeButton'
             onClick={handleRemove}

@@ -15,14 +15,6 @@ const suggestionData = [
       url: 'www.url.fi',
       categories: [],
     }
-  },
-  {
-    type: 'REMOVE',
-    data: {
-      name: 'Kauppatorin Nakkikioski',
-      url: 'www.k-nakki.fi',
-      categories: [],
-    }
   }
 ]
 
@@ -38,13 +30,21 @@ const restaurantData = [
   },
 ]
 
-let server, suggestions, user, token, restaurants
+let server, suggestions, user, token, restaurants, removeSuggestions
 
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   suggestions = await dbUtil.createRowsFrom(Suggestion, suggestionData)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
+
+  const testRemoveSuggestion = {
+    type: 'REMOVE',
+    data: restaurants[0]
+  }
+
+  removeSuggestions = await dbUtil.createRowsFrom(Suggestion, [testRemoveSuggestion])
+
   user = await dbUtil.createUser('jaskajoku', 'kissa')
   token = authorization.createToken(user._id, user.username)
 })
@@ -163,7 +163,7 @@ test('attempting to approve a request with an INVALID id returns with 404', asyn
 })
 
 test('approving a REMOVE request with a valid id returns with status 204', async () => {
-  const suggestion = suggestions[1]
+  const suggestion = removeSuggestions[0]
   await server
     .post(`/api/suggestions/approve/${suggestion.id}`)
     .set('authorization', `bearer ${token}`)
@@ -171,17 +171,17 @@ test('approving a REMOVE request with a valid id returns with status 204', async
 })
 
 test('approving a REMOVE request with a valid id removes database entry for restaurant', async () => {
-  const suggestion = suggestions[1]
-  const response = await server
+  const suggestion = removeSuggestions[0]
+  await server
     .post(`/api/suggestions/approve/${suggestion.id}`)
     .set('authorization', `bearer ${token}`)
 
-  const restaurant = await Restaurant.findById(response.body.id)
+  const restaurant = await Restaurant.findById(suggestion.data.id)
   expect(restaurant).toBeFalsy()
 })
 
 test('approving a request with a valid id removes database entry for suggestion', async () => {
-  const suggestion = suggestions[1]
+  const suggestion = removeSuggestions[0]
   await server
     .post(`/api/suggestions/approve/${suggestion.id}`)
     .set('authorization', `bearer ${token}`)
@@ -198,7 +198,7 @@ test('attempting to reject a request with an INVALID id returns with 404', async
 })
 
 test('rejecting a request with a valid id removes database entry for suggestion', async () => {
-  const suggestion = suggestions[1]
+  const suggestion = removeSuggestions[0]
   await server
     .post(`/api/suggestions/reject/${suggestion.id}`)
     .set('authorization', `bearer ${token}`)
@@ -208,7 +208,7 @@ test('rejecting a request with a valid id removes database entry for suggestion'
 })
 
 test('attempting to reject a request with a VALID id returns with 204', async () => {
-  const suggestion = suggestions[1]
+  const suggestion = removeSuggestions[0]
   await server
     .post(`/api/suggestions/reject/${suggestion.id}`)
     .set('authorization', `bearer ${token}`)
