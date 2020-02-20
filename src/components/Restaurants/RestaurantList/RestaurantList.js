@@ -3,23 +3,34 @@ import { Button, Alert } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import restaurantService from '../../../services/restaurant'
+import authService from '../../../services/authentication'
+import suggestionService from '../../../services/suggestion'
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
+  const token = authService.getToken()
+  const isLoggedIn = token !== undefined
 
   useEffect(() => {
     restaurantService.getAll().then(setRestaurants)
   }, [])
 
   const removeRestaurant = async (restaurant) => {
-    if (!window.confirm(`Are you sure you want to remove "${restaurant.name}"?`)) {
-      return
+    if (isLoggedIn) {
+      if (!window.confirm(`Are you sure you want to remove "${restaurant.name}"?`)) {
+        return
+      }
+
+      const result = await restaurantService.remove(restaurant.id)
+      if (result && result.status === 204) {
+        setRestaurants(restaurants.filter(r => r.id !== restaurant.id))
+      }
+    } else {
+      if (window.confirm(`Suggest the removal of ${restaurant.name}?`)) {
+        await suggestionService.removeRestaurant(restaurant)
+      }
     }
 
-    const result = await restaurantService.remove(restaurant.id)
-    if (result && result.status === 204) {
-      setRestaurants(restaurants.filter(r => r.id !== restaurant.id))
-    }
   }
 
   // Show loading text when restaurants haven't yet been fetched

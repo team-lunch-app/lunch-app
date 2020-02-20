@@ -11,6 +11,7 @@ import categoryService from './services/category'
 import RestaurantList from './components/Restaurants/RestaurantList/RestaurantList'
 import LoginForm from './components/auth/LoginForm'
 import authService from './services/authentication'
+import suggestionService from './services/suggestion'
 import CategoryForm from './components/Categories/CategoryForm/CategoryForm'
 import CategoryList from './components/Categories/CategoryList/CategoryList'
 import { SuggestionList } from './components/suggestionlist/SuggestionList'
@@ -19,6 +20,10 @@ const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
+
+  // Grab the token from authservice
+  // components also using this independently: AddForm, RestaurantEntry
+  // If caching the token is implemented, fix them too
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
@@ -53,9 +58,9 @@ const App = () => {
           </Nav>
         </Navbar.Collapse>
         {isLoggedIn &&
-            <Nav className="ml-auto">
-              <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
-            </Nav> 
+          <Nav className="ml-auto">
+            <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
+          </Nav>
         }
       </Navbar>
     )
@@ -83,8 +88,10 @@ const App = () => {
           <Route exact path="/error/404" render={() => <NotFound />} />
 
           <Route exact path="/" render={() => <Randomizer />} />
-          <Route exact path="/add" render={() => <AddForm onSubmit={restaurantService.add} />} />
-          <Route exact path="/edit/:id" render={({ match }) => <AddForm id={match.params.id} onSubmit={restaurantService.update} />} />
+          <Route exact path="/add" render={() => <AddForm onSubmit={isLoggedIn ? restaurantService.add : suggestionService.addRestaurant} />} />
+          <Route exact path="/edit/:id" render={({ match }) => isLoggedIn
+            ? <AddForm id={match.params.id} onSubmit={restaurantService.update} />
+            : <Redirect to={'/login'} />} />
           <Route exact path="/restaurants" render={() => <RestaurantList />} />
           <Route exact path="/login" render={() => isLoggedIn
             ? <Redirect to={'/admin/suggestions'} />

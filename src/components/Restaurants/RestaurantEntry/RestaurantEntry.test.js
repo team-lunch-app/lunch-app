@@ -1,10 +1,13 @@
 import React from 'react'
 import { fireEvent } from '@testing-library/react'
 import RestaurantEntry from './RestaurantEntry'
+import authService from '../../../services/authentication'
 
 import { actRender } from '../../../test/utilities'
 
 jest.mock('../../../services/restaurant.js')
+jest.mock('../../../services/suggestion.js')
+jest.mock('../../../services/authentication.js')
 
 const testRestaurant = {
   name: 'Luigi\'s pizza',
@@ -32,11 +35,14 @@ test('pressing the delete button calls the provided callback', async () => {
   )
 
   const removeButton = getByTestId('restaurantEntry-removeButton')
+  window.confirm = jest.fn(() => true)
   fireEvent.click(removeButton)
   expect(mockOnRemove).toBeCalledWith(testRestaurant)
 })
 
-test('renders edit button', async () => {
+test('renders edit button if logged in', async () => {
+  authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
+
   const { getByTestId } = await actRender(<RestaurantEntry restaurant={testRestaurant} />, ['/restaurants'])
 
   const editButton = getByTestId('restaurantEntry-editButton')
@@ -44,6 +50,8 @@ test('renders edit button', async () => {
 })
 
 test('clicking the edit button navigates to the edit page', async () => {
+  authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
+
   const { getByTestId, getPath } = await actRender(<RestaurantEntry restaurant={testRestaurant} />, ['/restaurants'])
 
   const editButton = getByTestId('restaurantEntry-editButton')

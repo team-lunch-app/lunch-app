@@ -26,8 +26,9 @@ const parseSuggestion = (body, type) => {
   const name = body.name
   const url = trimAndUndefineIfEmpty(body.url)
   const categories = body.categories || []
-  const id = body.id
-  return { type, data: { id, name, url, categories } }
+  const _id = body._id
+  const parsed = { type, data: { _id, name, url, categories } }
+  return parsed
 }
 
 // add restaurant
@@ -43,11 +44,10 @@ suggestionsRouter.post('/add', async (request, response, next) => {
 
 // remove restaurant
 suggestionsRouter.post('/remove', async (request, response, next) => {
-
   try {
     if (request.body.id) {
-      await Restaurant.findById(request.body.id)
-      const suggestion = await new Suggestion(parseSuggestion(request.body, 'REMOVE')).save()
+      const found = await Restaurant.findById(request.body.id)
+      const suggestion = await new Suggestion(parseSuggestion(found, 'REMOVE')).save()
       return response.status(201).json(suggestion.toJSON())
     } else {
       return response.status(400).end()
@@ -66,6 +66,7 @@ suggestionsRouter.post('/approve/:id', async (request, response, next) => {
 
     const id = request.params.id
     const suggestion = await Suggestion.findById(id)
+    
     if (!suggestion) {
       return response.status(404).json({ error: 'invalid suggestion id' })
     }
@@ -79,7 +80,6 @@ suggestionsRouter.post('/approve/:id', async (request, response, next) => {
       return response.status(201).json(created.toJSON())
     } else if (suggestion.type === 'REMOVE') {
       const restaurant = suggestion.data.toJSON()
-
       await tryRemoveRestaurant(restaurant.id)
       await Suggestion.findByIdAndRemove(id)
 

@@ -66,6 +66,8 @@ test('add button calls restaurant callback with correct arguments', async () => 
 
   // Test that the restaurant service is called
   const buttonElement = await queryByTestId('addForm-addButton')
+  window.alert = jest.fn(() => true)
+
   fireEvent.click(buttonElement)
 
   await wait(() => expect(mockSubmit).toBeCalledWith({ name: 'Lidl City Center', url: 'https://www.lidl.fi/', categories: [] }))
@@ -81,6 +83,8 @@ test('form is closed after adding a restaurant', async () => {
   fireEvent.change(urlElement, { target: { value: 'https://www.lidl.fi/' } })
 
   const buttonElement = queryByTestId('addForm-addButton')
+  window.alert = jest.fn(() => true)
+
   fireEvent.click(buttonElement)
 
   await wait(() => expect(getPath().pathname).toBe('/'))

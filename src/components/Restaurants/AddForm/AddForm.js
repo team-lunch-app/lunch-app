@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
 
 import restaurantService from '../../../services/restaurant'
+import authService from '../../../services/authentication'
 
 import './AddForm.css'
 import Filter from '../../Filter/Filter/Filter'
@@ -21,6 +22,8 @@ const AddForm = ({ id, onSubmit }) => {
   const setUrl = (url) => setRestaurant({ ...restaurant, url })
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
+  const token = authService.getToken()
+  const isLoggedIn = token !== undefined
   let history = useHistory()
 
   useEffect(() => {
@@ -50,7 +53,7 @@ const AddForm = ({ id, onSubmit }) => {
           categories: restaurant.categories.map(category => category.id)
         })
       }
-
+      window.alert('Your suggestion has been received. An admin will have to approve it.')
       setError('')
       history.push('/')
     }
@@ -117,7 +120,7 @@ const AddForm = ({ id, onSubmit }) => {
               type='submit'
               variant='primary'
             >
-              {id ? 'Update' : 'Add'}
+              {!isLoggedIn ? 'Suggest' : (id ? 'Update' : 'Add')}
             </Button>
           </ButtonToolbar>
         </Form>
