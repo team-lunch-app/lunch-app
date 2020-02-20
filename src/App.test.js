@@ -99,5 +99,6 @@ describe('when logged in as an administrator', () => {
 
     await wait(() => expect(authService.logout).toHaveBeenCalled())
     await wait(() => expect(getPath().pathname).toBe('/'))
+    
   })
 })

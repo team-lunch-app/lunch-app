@@ -6,10 +6,10 @@ import { useHistory } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
 
-import restaurantService from '../services/restaurant'
+import restaurantService from '../../../services/restaurant'
 
 import './AddForm.css'
-import Filter from './Filter'
+import Filter from '../../Filter/Filter/Filter'
 
 const AddForm = ({ id, onSubmit }) => {
   const createDefaultRestaurant = () => ({ name: '', url: '', categories: [] })

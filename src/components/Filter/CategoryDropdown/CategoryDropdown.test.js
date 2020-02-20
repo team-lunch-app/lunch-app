@@ -1,10 +1,10 @@
 import React from 'react'
 import { fireEvent, waitForElement } from '@testing-library/react'
 import CategoryDropdown from './CategoryDropdown'
-import { actRender } from '../test/utilities'
-import categoryService from '../services/category'
+import { actRender } from '../../../test/utilities'
+import categoryService from '../../../services/category'
 
-jest.mock('../services/category.js')
+jest.mock('../../../services/category.js')
 const testCategories = [{ id: 1, name: 'pizza' }, { id: 2, name: 'burger' }, { id: 3, name: 'salads' }]
 
 beforeEach(() => {

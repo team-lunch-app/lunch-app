@@ -1,18 +1,18 @@
 import React from 'react'
 import { fireEvent, waitForDomChange } from '@testing-library/react'
-import { actRender } from '../test/utilities'
+import { actRender } from '../../test/utilities'
 import Randomizer from './Randomizer'
-import restaurantService from '../services/restaurant'
-import categoryService from '../services/category'
+import restaurantService from '../../services/restaurant'
+import categoryService from '../../services/category'
 
-jest.mock('../services/restaurant.js')
+jest.mock('../../services/restaurant.js')
 restaurantService.getRandom.mockResolvedValue({
   name: 'Luigi\'s pizza',
   url: 'www.pizza.fi',
   id: 1
 })
 
-jest.mock('../services/category.js')
+jest.mock('../../services/category.js')
 categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
 
 

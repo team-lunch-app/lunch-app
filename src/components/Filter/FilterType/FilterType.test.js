@@ -1,7 +1,7 @@
 import React from 'react'
 import { fireEvent, waitForElement } from '@testing-library/react'
-import FilterType from '../filter/FilterType'
-import { actRender } from '../../test/utilities'
+import FilterType from './FilterType'
+import { actRender } from '../../../test/utilities'
 
 beforeEach(() => {
   jest.clearAllMocks()
