@@ -1,6 +1,5 @@
 const Suggestion = require('../models/suggestion')
 const authorization = require('../util/authorization')
-const features = require('../../util/features')
 const Restaurant = require('../models/restaurant')
 const { tryCreateRestaurant, tryRemoveRestaurant } = require('./restaurants')
 
@@ -60,13 +59,11 @@ suggestionsRouter.post('/remove', async (request, response, next) => {
 // approve
 suggestionsRouter.post('/approve/:id', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
 
     const id = request.params.id
     const suggestion = await Suggestion.findById(id)
-    
+
     if (!suggestion) {
       return response.status(404).json({ error: 'invalid suggestion id' })
     }
@@ -96,9 +93,8 @@ suggestionsRouter.post('/approve/:id', async (request, response, next) => {
 // reject
 suggestionsRouter.post('/reject/:id', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const id = request.params.id
     const removed = await Suggestion.findByIdAndRemove(id)
     return removed
@@ -113,9 +109,8 @@ suggestionsRouter.post('/reject/:id', async (request, response, next) => {
 // getAll
 suggestionsRouter.get('/', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const suggestions = await Suggestion
       .find({})
     return response.json(suggestions.map(rest => rest.toJSON()))

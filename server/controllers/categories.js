@@ -1,7 +1,6 @@
 const categoryRouter = require('express').Router()
 const Category = require('../models/category')
 const authorization = require('../util/authorization')
-const features = require('../../util/features')
 
 categoryRouter.get('/', async (request, response) => {
   const categories = await Category
@@ -11,9 +10,7 @@ categoryRouter.get('/', async (request, response) => {
 
 categoryRouter.post('/', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
 
     const body = request.body
 
@@ -31,11 +28,10 @@ categoryRouter.post('/', async (request, response, next) => {
 
 categoryRouter.get('/:id', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const category = await Category.findById(request.params.id)
-    return category 
+    return category
       ? response.json(category.toJSON())
       : response.status(404).send({ error: 'unknown id' })
   } catch (error) {
@@ -44,11 +40,9 @@ categoryRouter.get('/:id', async (request, response, next) => {
 })
 
 categoryRouter.put('/:id', async (request, response, next) => {
-
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const category = request.body
     const updatedCategory = await Category.findByIdAndUpdate(category.id, category)
     response.json(updatedCategory.toJSON()).status(204).end()
@@ -59,9 +53,8 @@ categoryRouter.put('/:id', async (request, response, next) => {
 
 categoryRouter.delete('/:id', async (request, response, next) => {
   try {
-    if (features.endpointAuth) {
-      authorization.requireAuthorized(request)
-    }
+    authorization.requireAuthorized(request)
+
     const id = request.params.id
 
     return await Category.findByIdAndRemove(id) === null
