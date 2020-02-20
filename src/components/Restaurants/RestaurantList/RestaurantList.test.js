@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent } from '@testing-library/react'
+import { fireEvent, within, wait } from '@testing-library/react'
 import restaurantService from '../../../services/restaurant'
 import categoryService from '../../../services/category'
 import authService from '../../../services/authentication'
@@ -10,6 +10,7 @@ import { actRender } from '../../../test/utilities'
 
 jest.mock('../../../services/restaurant.js')
 jest.mock('../../../services/category.js')
+jest.mock('../../../services/suggestion.js')
 jest.mock('../../../services/authentication.js')
 
 beforeEach(() => {
@@ -58,32 +59,6 @@ test('back button returns to the home page', async () => {
   expect(getPath().pathname).toBe('/')
 })
 
-test('informative message is rendered if no restaurants exist', async () => {
-  restaurantService.getAll.mockResolvedValue([])
-
-  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
-  const message = await queryByTestId('restaurantList-alertMessage')
-  expect(message).toBeInTheDocument()
-})
-
-test('a restaurant is rendered if one exists', async () => {
-  restaurantService.getAll.mockResolvedValue([{
-    name: 'Luigi\'s pizza',
-    url: 'www.pizza.fi',
-    id: 1
-  }])
-
-  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
-  const restaurant = await queryByTestId('restaurantList-restaurantEntry')
-  expect(restaurant).toBeInTheDocument()
-})
-
-test('multiple restaurants are rendered if more than one exist', async () => {
-  const { queryAllByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
-  const restaurants = await queryAllByTestId('restaurantList-restaurantEntry')
-  expect(restaurants.length).toBeGreaterThan(1)
-})
-
 test('pressing the delete button calls the service to remove the restaurant if OK is pressed', async () => {
   authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
 
@@ -95,13 +70,17 @@ test('pressing the delete button calls the service to remove the restaurant if O
 
   window.confirm = jest.fn(() => true)
 
-  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
-  const removeButton = queryByTestId('restaurantEntry-removeButton')
+  const { getByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
+
+  const entry = within(getByTestId('list')).getByTestId('list-entry')
+  const removeButton = within(entry).getByRole('remove-button')
   fireEvent.click(removeButton)
   expect(restaurantService.remove).toBeCalledWith(13)
 })
 
 test('pressing the delete button does not attempt to remove the restaurant if cancel is pressed', async () => {
+  authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
+
   restaurantService.getAll.mockResolvedValue([{
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',
@@ -110,8 +89,25 @@ test('pressing the delete button does not attempt to remove the restaurant if ca
 
   window.confirm = jest.fn(() => false)
 
-  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
-  const removeButton = queryByTestId('restaurantEntry-removeButton')
+  const { getByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
+
+  const entry = within(getByTestId('list')).getByTestId('list-entry')
+  const removeButton = within(entry).getByRole('remove-button')
   fireEvent.click(removeButton)
   expect(restaurantService.remove).not.toBeCalled()
+})
+
+test('pressing the edit button redirects to edit page', async () => {
+  restaurantService.getAll.mockResolvedValue([{
+    name: 'Luigi\'s pizza',
+    url: 'www.pizza.fi',
+    id: 13
+  }])
+
+  const { getByTestId, getPath } = await actRender(<RestaurantList />, ['/restaurants'])
+
+  const entry = within(getByTestId('list')).getByTestId('list-entry')
+  const removeButton = within(entry).getByRole('edit-button')
+  fireEvent.click(removeButton)
+  await wait(() => expect(getPath().pathname).toBe('/edit/13'), { timeout: 500 })
 })

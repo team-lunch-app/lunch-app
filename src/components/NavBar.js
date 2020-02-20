@@ -33,6 +33,9 @@ const NavBar = ({ loggedIn }) => {
               <Nav.Link as={Link} href='#' data-testid='suggestionList-link' to='/admin/suggestions'>
                 Pending Suggestions
               </Nav.Link>
+              <Nav.Link as={Link} href='#' data-testid='userList-link' to='/admin/users'>
+                Users
+              </Nav.Link>
             </>
           }
         </Nav>
