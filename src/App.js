@@ -1,7 +1,6 @@
 import React from 'react'
 import './App.css'
-import { Nav, Navbar, Button } from 'react-bootstrap'
-import { Route, Switch, Link, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom'
 import Randomizer from './components/Randomizer/Randomizer'
 import AddForm from './components/Restaurants/AddForm/AddForm'
 import NotFound from './components/error/NotFound'
@@ -15,6 +14,7 @@ import suggestionService from './services/suggestion'
 import CategoryForm from './components/Categories/CategoryForm/CategoryForm'
 import CategoryList from './components/Categories/CategoryList/CategoryList'
 import { SuggestionList } from './components/suggestionlist/SuggestionList'
+import NavBar from './components/NavBar'
 
 const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components
@@ -26,45 +26,6 @@ const App = () => {
   // If caching the token is implemented, fix them too
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
-
-  const logout = () => {
-    authService.logout()
-    history.push('/')
-  }
-
-  const navbar = () => {
-    return (
-      <Navbar collapseOnSelect bg="light" expand="lg">
-        <Navbar.Brand as={Link} href='#' to='/'>Lunch Application</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link as={Link} href='#' data-testid='addForm-link' to='/add'>
-              Add a Restaurant
-            </Nav.Link>
-            <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
-              List Restaurants
-            </Nav.Link>
-            {isLoggedIn &&
-              <>
-                <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
-                  List Categories
-                </Nav.Link>
-                <Nav.Link as={Link} href='#' data-testid='suggestionList-link' to='/admin/suggestions'>
-                  Pending Suggestions
-                </Nav.Link>
-              </>
-            }
-          </Nav>
-        </Navbar.Collapse>
-        {isLoggedIn &&
-          <Nav className="ml-auto">
-            <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
-          </Nav>
-        }
-      </Navbar>
-    )
-  }
 
   const adminRoutes =
     <Route path="/admin" render={() =>
@@ -81,7 +42,7 @@ const App = () => {
   return (
     <>
       <header className='main-navbar'>
-        {navbar()}
+        <NavBar loggedIn={isLoggedIn} />
       </header>
       <section className='main-container'>
         <Switch>
