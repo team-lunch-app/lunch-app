@@ -53,7 +53,7 @@ const AddForm = ({ id, onSubmit }) => {
           categories: restaurant.categories.map(category => category.id)
         })
       }
-      window.alert('Your suggestion has been received. An admin will have to approve it.')
+      !isLoggedIn && window.alert('Your suggestion has been received. An admin will have to approve it.')
       setError('')
       history.push('/')
     }
