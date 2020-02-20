@@ -7,11 +7,13 @@ const List = ({ entries, renderNoEntries, renderEntry }) => {
     ? <Alert variant='warning' role='alert'>The list is empty :c</Alert>
     : renderNoEntries()
 
-  // FIXME: Render "loading" when entries is undefined
+  if (entries === undefined) {
+    return <div data-testid='list-loading'>Loading...</div>
+  }
 
   return (
     <div data-testid='list'>
-      {(!entries || entries.length === 0)
+      {(entries.length === 0)
         ? noEntries()
         : entries.map((entry) => renderEntry(entry))
       }
@@ -21,7 +23,6 @@ const List = ({ entries, renderNoEntries, renderEntry }) => {
 
 List.propTypes = {
   entries: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
     id: PropTypes.any.isRequired,
   })),
   renderNoEntries: PropTypes.any,
