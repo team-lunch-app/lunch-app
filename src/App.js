@@ -88,9 +88,9 @@ const App = () => {
           <Route exact path="/error/404" render={() => <NotFound />} />
 
           <Route exact path="/" render={() => <Randomizer />} />
-          <Route exact path="/add" render={() => <AddForm onSubmit={isLoggedIn ? restaurantService.add : suggestionService.addRestaurant} />} />
+          <Route exact path="/add" render={() => <AddForm key={window.location} onSubmit={isLoggedIn ? restaurantService.add : suggestionService.addRestaurant} />} />
           <Route exact path="/edit/:id" render={({ match }) => isLoggedIn
-            ? <AddForm id={match.params.id} onSubmit={restaurantService.update} />
+            ? <AddForm key={window.location} id={match.params.id} onSubmit={restaurantService.update} />
             : <Redirect to={'/login'} />} />
           <Route exact path="/restaurants" render={() => <RestaurantList />} />
           <Route exact path="/login" render={() => isLoggedIn
