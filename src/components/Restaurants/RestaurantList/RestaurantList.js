@@ -5,6 +5,7 @@ import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import restaurantService from '../../../services/restaurant'
 import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
+import './RestaurantList.css'
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
@@ -39,9 +40,9 @@ const RestaurantList = () => {
   }
 
   return (
-    <div data-testid='restaurantList'>
-      <Link to='/'><Button data-testid='restaurantList-backButton'>Back</Button></Link>
-      <h1 data-testid='restaurantList-title'>Restaurants</h1>
+    <div data-testid='restaurantList' className="restaurantList">
+      <Link to='/' className="restaurantList-backButton"><Button data-testid='restaurantList-backButton'>Back</Button></Link>
+      <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
       {restaurants.length === 0
         ? <Alert data-testid='restaurantList-alertMessage' variant='warning'>Sorry, No restaurants available :C</Alert>
         : restaurants.map((restaurant) => <RestaurantEntry key={restaurant.id} restaurant={restaurant} onRemove={removeRestaurant} />)

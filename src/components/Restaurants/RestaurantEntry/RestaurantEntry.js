@@ -24,7 +24,7 @@ const RestaurantEntry = ({ restaurant, onRemove }) => {
   return (
     <Card className='restaurant-entry' data-testid='restaurantList-restaurantEntry'>
       <Card.Body>
-        <span data-testid='restaurantEntry-name'>{restaurant.name}</span>
+        <span data-testid='restaurantEntry-name' className='restaurantEntry-name'>{restaurant.name}</span>
         <div className='buttons'>
           {isLoggedIn &&
             <Button

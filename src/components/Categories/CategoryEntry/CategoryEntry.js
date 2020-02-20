@@ -21,7 +21,7 @@ const CategoryEntry = ({ category, onRemove }) => {
   return (
     <Card className='category-entry' data-testid='categoryList-categoryEntry'>
       <Card.Body>
-        <span data-testid='categoryEntry-name'>{category.name}</span>
+        <span data-testid='categoryEntry-name' className='categoryEntry-name'>{category.name}</span>
         <div className='buttons'>
           <Button
             data-testid='categoryEntry-editButton'

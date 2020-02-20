@@ -3,7 +3,6 @@
         margin-bottom: 5px;
         padding: 0.5em 50px;
         width: 100%;
-        flex-grow:1;
     }
 }
 
@@ -11,14 +10,9 @@
     .add-form>*>button {
         margin-right: 5px;
         width: 10em;
-        flex-grow:1;
     }
 }
 
 .add-form > div > .alert {
     margin-top: 0.5em;
-}
-
-.btn-toolbar {
-    justify-content: space-between;
 }

@@ -1,0 +1,13 @@
+.restaurantList {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.restaurantList-backButton {
+    align-self: flex-start;
+}
+
+.restaurantList-title {
+    margin: 0.5em;
+}
