@@ -15,6 +15,10 @@ const jwtSecret = process.env.NODE_ENV === 'test'
   ? 'sekret'
   : process.env.SECRET
 
+const bcryptSaltRounds = process.env.NODE_ENV === 'test'
+  ? 4
+  : process.env.SALT_ROUNDS || 10
+
 if (dbUrl === null || dbUrl === undefined) {
   throw new Error('Database URL is not defined! Environment variable MONGODB_URI was empty. Either define it manually or add it to your .env')
 }
@@ -28,5 +32,6 @@ module.exports = {
   staticDir,
   dbUrl,
   dbName,
-  jwtSecret
+  jwtSecret,
+  bcryptSaltRounds,
 }

@@ -34,7 +34,8 @@
     "start:back": "nodemon server/index.js",
     "lint": "eslint src",
     "lint:back": "eslint server",
-    "lint:all": "yarn lint && yarn lint:back"
+    "lint:all": "yarn lint && yarn lint:back",
+    "add-user": "node ./scripts/add_user.js"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
