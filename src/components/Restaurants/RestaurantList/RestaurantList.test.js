@@ -1,13 +1,13 @@
 import React from 'react'
 import { fireEvent } from '@testing-library/react'
-import restaurantService from '../services/restaurant'
-import categoryService from '../services/category'
+import restaurantService from '../../../services/restaurant'
+import categoryService from '../../../services/category'
 import RestaurantList from './RestaurantList'
 
-import { actRender } from '../test/utilities'
+import { actRender } from '../../../test/utilities'
 
-jest.mock('../services/restaurant.js')
-jest.mock('../services/category.js')
+jest.mock('../../../services/restaurant.js')
+jest.mock('../../../services/category.js')
 
 beforeEach(() => {
   jest.clearAllMocks()

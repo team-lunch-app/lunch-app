@@ -2,13 +2,13 @@ import React from 'react'
 import { fireEvent, wait, waitForElement } from '@testing-library/react'
 import { within } from '@testing-library/dom'
 import AddForm from './AddForm'
-import restaurantService from '../services/restaurant'
-import categoryService from '../services/category'
+import restaurantService from '../../../services/restaurant'
+import categoryService from '../../../services/category'
 
-import { actRender } from '../test/utilities'
+import { actRender } from '../../../test/utilities'
 
-jest.mock('../services/restaurant.js')
-jest.mock('../services/category.js')
+jest.mock('../../../services/restaurant.js')
+jest.mock('../../../services/category.js')
 
 beforeEach(() => {
   jest.clearAllMocks()

@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import FilterList from './FilterList'
-import FilterType from './filter/FilterType'
-import CategoryDropdown from './CategoryDropdown'
+import FilterList from '../FilterList/FilterList'
+import FilterType from '../FilterType/FilterType'
+import CategoryDropdown from '../CategoryDropdown/CategoryDropdown'
 import './Filter.css'
 
 const Filter = ({ filterCategories, setFilterCategories, filterType, setFilterType, dropdownText, emptyMessage }) => {

@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
-import Filter from './Filter'
+import Filter from '../Filter/Filter/Filter'
 import './Randomizer.css'
 
-import restaurantService from '../services/restaurant'
+import restaurantService from '../../services/restaurant'
 
 const Randomizer = () => {
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })

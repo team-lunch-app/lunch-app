@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Alert } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import RestaurantEntry from './RestaurantEntry'
-import restaurantService from '../services/restaurant'
+import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
+import restaurantService from '../../../services/restaurant'
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()

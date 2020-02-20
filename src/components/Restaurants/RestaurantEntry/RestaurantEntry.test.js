@@ -2,9 +2,9 @@ import React from 'react'
 import { fireEvent } from '@testing-library/react'
 import RestaurantEntry from './RestaurantEntry'
 
-import { actRender } from '../test/utilities'
+import { actRender } from '../../../test/utilities'
 
-jest.mock('../services/restaurant.js')
+jest.mock('../../../services/restaurant.js')
 
 const testRestaurant = {
   name: 'Luigi\'s pizza',
