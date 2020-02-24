@@ -4,7 +4,7 @@ const dbUtil = require('../test/dbUtil')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const config = require('../config')
-
+const authorization = require('../util/authorization')
 
 const userData = [
   {
@@ -13,7 +13,7 @@ const userData = [
   }
 ]
 
-let server, users
+let server, users, user, token
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
@@ -24,6 +24,9 @@ beforeEach(async () => {
   }
 
   users = await dbUtil.createRowsFrom(User, processedUsers)
+
+  user = await dbUtil.createUser('admintestuser', 'kissakoira123')
+  token = authorization.createToken(user._id, user.username)
 })
 
 afterEach(async () => {
@@ -63,4 +66,46 @@ test('post request to login with invalid data returns http code 403', async () =
     .post('/api/auth/login')
     .send({ username: '', password: 'koira' })
     .expect(403)
+})
+
+describe('when logged in', () => {
+  test('post request to users with valid data returns http code 201', async () => {
+    await server
+      .post('/api/auth/users')
+      .set('authorization', `bearer ${token}`)
+      .send({ username: 'newuser', password: 'koirakissakoira' })
+      .expect(201)
+  })
+
+  test('post request to users with valid data returns user object', async () => {
+    const response = await server
+      .post('/api/auth/users')
+      .set('authorization', `bearer ${token}`)
+      .send({ username: 'newuser', password: 'koirakissakoira' })
+
+    expect(response.body).toMatchObject({ username: 'newuser', id: expect.anything() })
+  })
+
+  test('get request to users returns all users', async () => {
+    const response = await server
+      .get('/api/auth/users')
+      .set('authorization', `bearer ${token}`)
+
+    expect(response.body).toHaveLength(2)
+  })
+})
+
+describe('when not logged in', () => {
+  test('post request to users returns http code 403', async () => {
+    await server
+      .post('/api/auth/users')
+      .send({ username: 'newuser', password: 'koirakissakoira' })
+      .expect(403)
+  })
+
+  test('get request to users returns http code 403', async () => {
+    await server
+      .get('/api/auth/users')
+      .expect(403)
+  })
 })

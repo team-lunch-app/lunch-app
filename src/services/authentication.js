@@ -20,8 +20,20 @@ const logout = () => {
   setToken(undefined)
 }
 
+const getAllUsers = async () => {
+  const response = await axios.get(`${baseUrl}/users`, { headers: { authorization: `bearer ${token}` } })
+  return response.data
+}
+
+const register = async (user) => {
+  const response = await axios.post(`${baseUrl}/users`, user, { headers: { authorization: `bearer ${token}` } })
+  return response.data
+}
+
 export default {
   login,
   logout,
-  getToken
+  getAllUsers,
+  getToken,
+  register
 }

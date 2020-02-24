@@ -7,7 +7,7 @@ const List = ({ entries, renderNoEntries, renderEntry }) => {
     ? <Alert variant='warning' role='alert'>The list is empty :c</Alert>
     : renderNoEntries()
 
-  if (entries === undefined) {
+  if (entries === undefined || entries === null) {
     return <div data-testid='list-loading'>Loading...</div>
   }
 

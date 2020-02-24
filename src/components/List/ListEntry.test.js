@@ -17,7 +17,7 @@ test('renders item name', async () => {
     ['/admin/categories']
   )
 
-  const label = within(getByTestId('list-entry')).getByRole('label')
+  const label = within(getByTestId('list-entry')).getByTestId('label')
   expect(label).toBeInTheDocument()
 })
 

@@ -37,3 +37,55 @@ Returns an authentication token wrapped into an json-object; that is, an object 
 
 ### Errors
  - `Status: 403 Forbidden` - if credentials are not valid
+
+
+`POST /api/auth/users`
+----------------------
+
+*register*-endpoint. Requires authorization, registers a new admin. Usernames must be unique.
+
+### Request
+Accepts a json-object containing desired login credentials.
+```js
+{
+  username: string,
+  password: string,
+}
+```
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `201 Created`      |
+
+Returns an user with shape
+```js
+{
+  id: ObjectId,
+  username: string,
+}
+```
+
+
+`GET /api/auth/users`
+----------------------
+
+*get-All*-endpoint. Requires authorization. Gets a list of all users.
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+Returns an array of users with shape
+```js
+[
+  {
+    id: ObjectId,
+    username: string,
+  },
+  // ...
+]
+```
