@@ -1,4 +1,6 @@
 import axios from 'axios'
+import authService from './authentication'
+
 const baseUrl = '/api/restaurants'
 
 const getAll = async () => {
@@ -12,17 +14,17 @@ const getOneById = async (id) => {
 }
 
 const add = async (restaurant) => {
-  const response = await axios.post(`${baseUrl}`, restaurant)
+  const response = await axios.post(`${baseUrl}`, restaurant, { headers: { Authorization: `bearer ${authService.getToken()}` } })
   return response.data
 }
 
 const update = async (restaurant) => {
-  const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant)
+  const response = await axios.put(`${baseUrl}/${restaurant.id}`, restaurant, { headers: { Authorization: `bearer ${authService.getToken()}` } })
   return response.data
 }
 
 const remove = async (id) => {
-  return await axios.delete(`${baseUrl}/${id}`)
+  return await axios.delete(`${baseUrl}/${id}`, { headers: { Authorization: `bearer ${authService.getToken()}` } })
 }
 
 const getRandom = async (filterType, filterCategories) => {
