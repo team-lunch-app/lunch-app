@@ -1,7 +1,7 @@
 require('dotenv').config()
 const path = require('path')
 
-const staticDir = path.join(__dirname, '..', 'build')
+const staticDir = path.join(__dirname, '../../app/build')
 const port = process.env.PORT || 3001
 const dbUrl = process.env.NODE_ENV === 'test'
   ? global.MONGODB_URI
