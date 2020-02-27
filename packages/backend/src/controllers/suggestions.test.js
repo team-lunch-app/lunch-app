@@ -37,12 +37,18 @@ beforeEach(async () => {
   suggestions = await dbUtil.createRowsFrom(Suggestion, suggestionData)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
 
-  const testRemoveSuggestion = {
-    type: 'REMOVE',
-    data: restaurants[0]
-  }
+  const testRemoveSuggestions = [
+    {
+      type: 'REMOVE',
+      data: restaurants[0]
+    },
+    {
+      type: 'REMOVE',
+      data: restaurants[0]
+    }
+  ]
 
-  removeSuggestions = await dbUtil.createRowsFrom(Suggestion, [testRemoveSuggestion])
+  removeSuggestions = await dbUtil.createRowsFrom(Suggestion, testRemoveSuggestions)
 
   user = await dbUtil.createUser('jaskajoku', 'kissa')
   token = authorization.createToken(user._id, user.username)
@@ -179,6 +185,16 @@ test('approving a REMOVE request with a valid id removes database entry for rest
   expect(restaurant).toBeFalsy()
 })
 
+test('approving a REMOVE request with a valid id removes other suggestions related to the restaurant from thedatabase', async () => {
+  const suggestions = removeSuggestions
+  await server
+    .post(`/api/suggestions/approve/${suggestions[0].id}`)
+    .set('authorization', `bearer ${token}`)
+
+  const otherSuggestion = await Suggestion.findById(suggestions[1].id)
+  expect(otherSuggestion).toBeFalsy()
+})
+
 test('approving a request with a valid id removes database entry for suggestion', async () => {
   const suggestion = removeSuggestions[0]
   await server
@@ -237,5 +253,5 @@ describe('when not logged in', () => {
 test('get request to /api/suggestions returns correct number of suggestions', async () => {
   const response = await server.get('/api/suggestions').set('authorization', `bearer ${token}`)
   const contents = response.body
-  expect(contents.length).toBe(2)
+  expect(contents.length).toBe(3)
 })
