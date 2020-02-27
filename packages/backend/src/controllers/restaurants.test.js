@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
+const Suggestion = require('../models/suggestion')
 const app = require('../app')
 const authorization = require('../util/authorization')
 
@@ -39,6 +40,20 @@ beforeEach(async () => {
   server = supertest(app)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
   categories = await dbUtil.createRowsFrom(Category, testCategoryData)
+
+  const testSuggestionData = [
+    {
+      type: 'REMOVE',
+      data: restaurants[0]
+    },
+    {
+      type: 'REMOVE',
+      data: restaurants[0]
+    }
+  ]
+
+  await dbUtil.createRowsFrom(Suggestion, testSuggestionData)
+
   user = await dbUtil.createUser('jaskajoku', 'kissa')
   token = authorization.createToken(user._id, user.username)
 })
@@ -258,6 +273,17 @@ describe('when logged in', () => {
     expect(restaurant).toBeNull()
   })
 
+  test('delete request to /api/restaurants/id with proper ID removes any suggestions related to the restaurant', async () => {
+    const id = restaurants[0]._id
+
+    await server
+      .delete(`/api/restaurants/${id}`)
+      .set('authorization', `bearer ${token}`)
+
+    const removedSuggestions = await Suggestion.find({ 'data._id': { $eq: id } })
+    expect(removedSuggestions.length).toBe(0)
+  })
+
   test('delete request to /api/restaurants/id with invalid ID fails 400', async () => {
     const id = 'invalid'
 
@@ -318,6 +344,18 @@ describe('when logged in', () => {
       url: 'https://torigrilli.fi',
       categories: []
     })
+  })
+
+  test('put request with valid data removes all suggestions related to the restaurant', async () => {
+    const testRestaurantId = restaurants[0].id
+
+    await server
+      .put(`/api/restaurants/${testRestaurantId}`)
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+
+    const removedSuggestions = await Suggestion.find({ 'data._id': { $eq: testRestaurantId } })
+    expect(removedSuggestions.length).toBe(0)
   })
 
   describe('queries update backwards references', () => {

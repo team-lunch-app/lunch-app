@@ -30,7 +30,7 @@ const parseSuggestion = (body, type) => {
   return parsed
 }
 
-// add restaurant
+// suggest to add a restaurant
 suggestionsRouter.post('/add', async (request, response, next) => {
   try {
     const suggestion = await new Suggestion(parseSuggestion(request.body, 'ADD')).save()
@@ -41,7 +41,7 @@ suggestionsRouter.post('/add', async (request, response, next) => {
   }
 })
 
-// remove restaurant
+// suggest to remove a restaurant
 suggestionsRouter.post('/remove', async (request, response, next) => {
   try {
     if (request.body.id) {
@@ -78,8 +78,7 @@ suggestionsRouter.post('/approve/:id', async (request, response, next) => {
     } else if (suggestion.type === 'REMOVE') {
       const restaurant = suggestion.data.toJSON()
       await tryRemoveRestaurant(restaurant.id)
-      await Suggestion.findByIdAndRemove(id)
-
+      
       return response.status(204).end()
     }
 

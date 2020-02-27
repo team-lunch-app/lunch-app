@@ -1,6 +1,7 @@
 const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
+const Suggestion = require('../models/suggestion')
 const authorization = require('../util/authorization')
 
 const tryCreateRestaurant = async (restaurant) => {
@@ -19,10 +20,16 @@ const tryRemoveRestaurant = async (id) => {
     return null
   }
   await removeRestaurantFromCategories(removedRestaurant.id, removedRestaurant.categories)
+  await tryRemoveSuggestionsByRestaurant(removedRestaurant.id)
   return removedRestaurant
 }
 
-
+const tryUpdateRestaurant = async (restaurant) => {
+  const { categories: oldCategories } = await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+  await removeRestaurantFromCategories(restaurant.id, oldCategories)
+  await addRestaurantToCategories(restaurant.id, restaurant.categories)
+  await tryRemoveSuggestionsByRestaurant(restaurant.id)
+}
 
 const addRestaurantToCategories = async (restaurantId, categoryIds) => {
   return await Category.updateMany(
@@ -36,6 +43,16 @@ const removeRestaurantFromCategories = async (restaurantId, categoryIds) => {
     { _id: { $in: [...categoryIds] } },
     { $pull: { restaurants: { $in: [restaurantId] } } },
   )
+}
+
+const tryRemoveSuggestionsByRestaurant = async (restaurantId) => {
+  const removedSuggestions = await Suggestion.deleteMany({ 'data._id': { $eq: restaurantId } })
+
+  if (!removedSuggestions) {
+    return null
+  }
+
+  return removedSuggestions
 }
 
 /**
@@ -144,10 +161,7 @@ restaurantsRouter.put('/:id', async (request, response, next) => {
   try {
     authorization.requireAuthorized(request)
 
-    const restaurant = parseRestaurant(request.body, request.params.id)
-    const { categories: oldCategories } = await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
-    await removeRestaurantFromCategories(restaurant.id, oldCategories)
-    await addRestaurantToCategories(restaurant.id, restaurant.categories)
+    await tryUpdateRestaurant(parseRestaurant(request.body, request.params.id))
 
     return response.status(204).end()
   } catch (error) {
