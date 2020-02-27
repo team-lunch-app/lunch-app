@@ -48,9 +48,6 @@ const removeRestaurantFromCategories = async (restaurantId, categoryIds) => {
 const tryRemoveSuggestionsByRestaurant = async (restaurantId) => {
   const removedSuggestions = await Suggestion.deleteMany({ 'data._id': { $eq: restaurantId } })
 
-  if (!removedSuggestions) {
-    return null
-  }
 
   return removedSuggestions
 }
