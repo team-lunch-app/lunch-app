@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 
 import './SuggestionList.css'
+import List from '../List/List'
 
 export const SuggestionList = () => {
   const [suggestions, setSuggestions] = useState()
@@ -14,10 +15,6 @@ export const SuggestionList = () => {
   useEffect(() => {
     suggestionService.getAll().then(setSuggestions)
   }, [])
-
-  if (suggestions === undefined || suggestions === null) {
-    return <div data-testid='suggestionList-loading'>Loading...</div>
-  }
 
   const handleReject = async (id) => {
     await suggestionService.reject(id)
@@ -32,10 +29,17 @@ export const SuggestionList = () => {
     <div data-testid='suggestionList'>
       <Link to='/'><Button data-testid='suggestionList-backButton'>Back</Button></Link>
       <h1 data-testid='suggestionList-title'>Pending Suggestions</h1>
-      {suggestions.length === 0
-        ? <Alert data-testid='suggestionList-alertMessage' variant='warning'>Sorry, No suggestions available :C</Alert>
-        : suggestions.map((suggestion) => <SuggestionEntry key={suggestion.id} suggestion={suggestion} handleApprove={handleApprove} handleReject={handleReject} />)
-      }
+      <List
+        entries={suggestions}
+        renderNoEntries={() => <Alert data-testid='suggestionList-alertMessage' variant='warning'>Sorry, No suggestions available :C</Alert>}
+        renderEntry={(suggestion) =>
+          <SuggestionEntry
+            key={suggestion.id}
+            suggestion={suggestion}
+            handleApprove={handleApprove}
+            handleReject={handleReject}
+          />}
+      />
     </div>
   )
 }
@@ -43,7 +47,7 @@ export const SuggestionList = () => {
 export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => {
   return (
     <Card className='suggestion-entry' data-testid='suggestionList-entry'>
-      <Card.Header className = {suggestion.type} >{suggestion.type}</Card.Header>
+      <Card.Header className={suggestion.type} >{suggestion.type}</Card.Header>
       <Card.Body>
         <Card.Title>{suggestion.data.name}</Card.Title>
         <Card.Subtitle>

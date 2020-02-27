@@ -1,20 +1,22 @@
 import React from 'react'
 import './App.css'
-import { Nav, Navbar, Button } from 'react-bootstrap'
-import { Route, Switch, Link, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom'
 import Randomizer from './components/Randomizer/Randomizer'
 import AddForm from './components/Restaurants/AddForm/AddForm'
 import NotFound from './components/error/NotFound'
-import restaurantService from './services/restaurant'
-import categoryService from './services/category'
-
 import RestaurantList from './components/Restaurants/RestaurantList/RestaurantList'
 import LoginForm from './components/auth/LoginForm'
-import authService from './services/authentication'
-import suggestionService from './services/suggestion'
 import CategoryForm from './components/Categories/CategoryForm/CategoryForm'
 import CategoryList from './components/Categories/CategoryList/CategoryList'
+import UserList from './components/users/UserList'
+import NavBar from './components/NavBar'
+import RegisterForm from './components/users/RegisterForm'
 import { SuggestionList } from './components/suggestionlist/SuggestionList'
+
+import suggestionService from './services/suggestion'
+import restaurantService from './services/restaurant'
+import categoryService from './services/category'
+import authService from './services/authentication'
 
 const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components
@@ -27,45 +29,6 @@ const App = () => {
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
-  const logout = () => {
-    authService.logout()
-    history.push('/')
-  }
-
-  const navbar = () => {
-    return (
-      <Navbar collapseOnSelect bg="light" expand="lg">
-        <Navbar.Brand as={Link} href='#' to='/'>Lunch Application</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link as={Link} href='#' data-testid='addForm-link' to='/add'>
-              Add a Restaurant
-            </Nav.Link>
-            <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
-              List Restaurants
-            </Nav.Link>
-            {isLoggedIn &&
-              <>
-                <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
-                  List Categories
-                </Nav.Link>
-                <Nav.Link as={Link} href='#' data-testid='suggestionList-link' to='/admin/suggestions'>
-                  Pending Suggestions
-                </Nav.Link>
-              </>
-            }
-          </Nav>
-        </Navbar.Collapse>
-        {isLoggedIn &&
-          <Nav className="ml-auto">
-            <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
-          </Nav>
-        }
-      </Navbar>
-    )
-  }
-
   const adminRoutes =
     <Route path="/admin" render={() =>
       <Switch>
@@ -74,6 +37,8 @@ const App = () => {
         <Route exact path="/admin/categories/edit/:id" render={({ match }) => <CategoryForm id={match.params.id} onSubmit={categoryService.update} />} />
         <Route exact path="/admin/categories" render={() => <CategoryList />} />
         <Route exact path="/admin/suggestions" render={() => <SuggestionList />} />
+        <Route exact path="/admin/users" render={() => <UserList />} />
+        <Route exact path="/admin/users/register" render={() => <RegisterForm onSubmit={(user) => authService.register(user)} />} />
         <Redirect to={'/admin/suggestions'} />
       </Switch>
     } />
@@ -81,7 +46,7 @@ const App = () => {
   return (
     <>
       <header className='main-navbar'>
-        {navbar()}
+        <NavBar loggedIn={isLoggedIn} />
       </header>
       <section className='main-container'>
         <Switch>

@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Alert } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
+import { Link, useHistory } from 'react-router-dom'
 import restaurantService from '../../../services/restaurant'
 import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
+import List from '../../List/List'
+import ListEntry from '../../List/ListEntry'
+
 import './RestaurantList.css'
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
+  const history = useHistory()
+
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
@@ -31,22 +35,28 @@ const RestaurantList = () => {
         await suggestionService.removeRestaurant(restaurant)
       }
     }
-
   }
 
-  // Show loading text when restaurants haven't yet been fetched
-  if (restaurants === undefined || restaurants === null) {
-    return <div data-testid='restaurantList-loading'>Loading...</div>
+  const editRestaurant = (restaurant) => {
+    history.push(`/edit/${restaurant.id}`)
   }
 
   return (
     <div data-testid='restaurantList' className="restaurantList">
       <Link to='/' className="restaurantList-backButton"><Button data-testid='restaurantList-backButton'>Back</Button></Link>
       <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
-      {restaurants.length === 0
-        ? <Alert data-testid='restaurantList-alertMessage' variant='warning'>Sorry, No restaurants available :C</Alert>
-        : restaurants.map((restaurant) => <RestaurantEntry key={restaurant.id} restaurant={restaurant} onRemove={removeRestaurant} />)
-      }
+      <List
+        entries={restaurants}
+        renderNoEntries={() => <Alert variant='warning'>Sorry, No restaurants available :C</Alert>}
+        renderEntry={(restaurant) =>
+          <ListEntry
+            key={restaurant.id}
+            item={restaurant}
+            onClickRemove={removeRestaurant}
+            onClickEdit={isLoggedIn ? editRestaurant : undefined}
+          />
+        }
+      />
     </div>
   )
 }
