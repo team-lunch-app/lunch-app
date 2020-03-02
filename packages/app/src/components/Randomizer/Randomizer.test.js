@@ -77,4 +77,3 @@ test('user is not redirected to an external website if not confirmed', async () 
   })
   expect(queryByTestId('randomizer-restaurantUrl')).toBeInTheDocument()
 })
-
