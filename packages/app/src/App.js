@@ -2,7 +2,8 @@ import React from 'react'
 import './App.css'
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom'
 import Randomizer from './components/Randomizer/Randomizer'
-import AddForm from './components/Restaurants/AddForm/AddForm'
+import AddForm from './components/Restaurants/AddForm'
+import EditForm from './components/Restaurants/EditForm'
 import NotFound from './components/error/NotFound'
 import RestaurantList from './components/Restaurants/RestaurantList/RestaurantList'
 import LoginForm from './components/auth/LoginForm'
@@ -53,8 +54,8 @@ const App = () => {
           <Route exact path="/error/404" render={() => <NotFound />} />
 
           <Route exact path="/" render={() => <Randomizer />} />
-          <Route exact path="/add" render={() => <AddForm key={window.location} onSubmit={isLoggedIn ? restaurantService.add : suggestionService.addRestaurant} />} />
-          <Route exact path="/edit/:id" render={({ match }) => <AddForm key={window.location} id={match.params.id} onSubmit={isLoggedIn ? restaurantService.update : suggestionService.editRestaurant} />} />
+          <Route exact path="/add" render={() => <AddForm key={window.location} />} />
+          <Route exact path="/edit/:id" render={({ match }) => <EditForm key={window.location} id={match.params.id} />} />
           <Route exact path="/restaurants" render={() => <RestaurantList />} />
           <Route exact path="/login" render={() => isLoggedIn
             ? <Redirect to={'/admin/suggestions'} />

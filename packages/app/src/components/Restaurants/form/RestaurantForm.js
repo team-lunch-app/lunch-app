@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Form, Button, ButtonToolbar, Alert, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons'
@@ -6,48 +6,21 @@ import { useHistory } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
 
-import restaurantService from '../../../services/restaurant'
-import authService from '../../../services/authentication'
-import locationService from "../../../services/location"
-
-import './AddForm.css'
 import Filter from '../../Filter/Filter/Filter'
 
-const AddForm = ({ id, onSubmit }) => {
-  const createDefaultRestaurant = () => ({ name: '', url: '', categories: [], address: '', coordinates: { latitude: 60, longitude: 24 }, distance: 1000 })
+import locationService from "../../../services/location"
 
-  const [error, setError] = useState('')
+import './RestaurantForm.css'
+
+const RestaurantForm = ({ restaurant, setRestaurant, error, setError, onSubmit, submitMessage = 'Suggest', suggestTooltip = 'Create suggestion' }) => {
   const { register, handleSubmit, errors } = useForm()
-  const [restaurant, setRestaurant] = useState(!id ? createDefaultRestaurant() : undefined)
   const [validated, setValidated] = useState(true)
   const setName = (name) => setRestaurant({ ...restaurant, name })
   const setUrl = (url) => setRestaurant({ ...restaurant, url })
   const setAddress = (address) => setRestaurant({ ...restaurant, address })
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
-  const token = authService.getToken()
-  const isLoggedIn = token !== undefined
   let history = useHistory()
-
-  useEffect(() => {
-    if (id) {
-      restaurantService
-        .getOneById(id)
-        .then(fetched => {
-          console.log(fetched)
-          setRestaurant({
-            ...fetched,
-            name: fetched.name || '',
-            url: fetched.url || '',
-            categories: fetched.categories || [],
-          })
-        })
-        .catch(() => {
-          setError('Could not find restaurant with the given ID')
-          setRestaurant(createDefaultRestaurant())
-        })
-    }
-  }, [id])
 
   const checkAddress = async (event) => {
     try {
@@ -74,7 +47,6 @@ const AddForm = ({ id, onSubmit }) => {
           categories: restaurant.categories.map(category => category.id)
         })
       }
-      !isLoggedIn && window.alert('Your suggestion has been received. An admin will have to approve it.')
       setError('')
       history.push('/')
     }
@@ -83,12 +55,16 @@ const AddForm = ({ id, onSubmit }) => {
     }
   }
 
+  const renderedError = error &&
+    <Alert data-testid='error-msg-generic' variant='danger'>{error}</Alert>
+
   return (
-    <div data-testid='addForm'>
-      {error ? <Alert data-testid='addForm-errorMessage' variant='danger'>{error}</Alert> : null}
-      {restaurant ?
-        <Form onSubmit={handleSubmit(saveRestaurant)} className='add-form'>
-          <Form.Group data-testid='addForm-nameField'>
+    <div data-testid='restaurant-form'>
+      {renderedError}
+      {!restaurant
+        ? 'Loading...'
+        : <Form onSubmit={handleSubmit(saveRestaurant)} className='add-form'>
+          <Form.Group data-testid='name-field'>
             <Form.Label>Restaurant Name</Form.Label>
             <Form.Control
               disabled={!restaurant}
@@ -106,7 +82,7 @@ const AddForm = ({ id, onSubmit }) => {
             }
           </Form.Group>
 
-          <Form.Group data-testid='addForm-urlField'>
+          <Form.Group data-testid='url-field'>
             <Form.Label>Restaurant Website</Form.Label>
             <Form.Control
               disabled={!restaurant}
@@ -140,14 +116,14 @@ const AddForm = ({ id, onSubmit }) => {
             setFilterCategories={setCategories} />
           <ButtonToolbar>
             <Button
-              data-testid='addForm-cancelButton'
+              data-testid='cancel-button'
               onClick={() => history.push('/')}
               variant='secondary'
             >
               Cancel
             </Button>
             <Button
-              data-testid='addForm-checkButton'
+              data-testid='check-button'
               onClick={checkAddress}
               variant='success'
             >
@@ -158,23 +134,22 @@ const AddForm = ({ id, onSubmit }) => {
                 placement='right'
                 overlay={
                   <Tooltip >
-                    {!isLoggedIn ? (id ? 'Send a suggestion to edit this restaurant' : 'Send a suggestion to add this restaurant') : ''}
+                    {suggestTooltip}
                   </Tooltip>
                 }
               >
                 <Button
-                  data-testid='addForm-addButton'
+                  data-testid='submit-button'
                   type='submit'
                   variant='primary'
                   disabled={!validated}
                 >
-                  {!isLoggedIn ? 'Suggest' : (id ? 'Update' : 'Add')}
+                  {submitMessage}
                 </Button>
               </OverlayTrigger>
             </div>
           </ButtonToolbar>
-        </Form>
-        : 'Loading...'}
+        </Form>}
     </div>
   )
 }
@@ -199,9 +174,16 @@ const FilterEmptyMessage = () => {
   )
 }
 
-AddForm.propTypes = {
-  id: PropTypes.any,
+RestaurantForm.propTypes = {
+  restaurant: PropTypes.shape({
+    id: PropTypes.any,
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    categories: PropTypes.array,
+  }),
   onSubmit: PropTypes.func,
+  suggestTooltip: PropTypes.string,
+  submitMessage: PropTypes.string,
 }
 
-export default AddForm
+export default RestaurantForm
