@@ -8,18 +8,23 @@ import PropTypes from 'prop-types'
 
 import restaurantService from '../../../services/restaurant'
 import authService from '../../../services/authentication'
+import locationService from "../../../services/location"
 
 import './AddForm.css'
 import Filter from '../../Filter/Filter/Filter'
 
 const AddForm = ({ id, onSubmit }) => {
-  const createDefaultRestaurant = () => ({ name: '', url: '', categories: [] })
+  const createDefaultRestaurant = () => ({ name: '', url: '', categories: [], address: '', coordinates: { latitude: 60, longitude: 24 }, distance: 1000 })
 
   const [error, setError] = useState('')
   const { register, handleSubmit, errors } = useForm()
   const [restaurant, setRestaurant] = useState(!id ? createDefaultRestaurant() : undefined)
+  const [validated, setValidated] = useState(true)
   const setName = (name) => setRestaurant({ ...restaurant, name })
   const setUrl = (url) => setRestaurant({ ...restaurant, url })
+  const setAddress = (address) => setRestaurant({ ...restaurant, address })
+  const setCoordinates = (latitude, longitude) => setRestaurant({ ...restaurant, coordinates: { ...restaurant.coordinates, latitude: latitude, longitude: longitude } })
+  const setDistance = (distance) => setRestaurant({ ...restaurant, distance })
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
   const token = authService.getToken()
@@ -30,12 +35,15 @@ const AddForm = ({ id, onSubmit }) => {
     if (id) {
       restaurantService
         .getOneById(id)
-        .then(fetched => setRestaurant({
-          ...fetched,
-          name: fetched.name || '',
-          url: fetched.url || '',
-          categories: fetched.categories || [],
-        }))
+        .then(fetched => {
+          console.log(fetched)
+          setRestaurant({
+            ...fetched,
+            name: fetched.name || '',
+            url: fetched.url || '',
+            categories: fetched.categories || [],
+          })
+        })
         .catch(() => {
           setError('Could not find restaurant with the given ID')
           setRestaurant(createDefaultRestaurant())
@@ -43,11 +51,27 @@ const AddForm = ({ id, onSubmit }) => {
     }
   }, [id])
 
+  const checkAddress = async (address) => {
+    try {
+      const coordinates = await locationService.getCoordinates(restaurant.address)
+      const distance = await locationService.getDistance(coordinates.latitude, coordinates.longitude)
+      setDistance(distance)
+      setCoordinates(coordinates.latitude, coordinates.longitude)
+      setValidated(true)
+      setError()
+    } catch (error) {
+      console.log(error)
+      setError("Could not find that location or address.")
+      setValidated(false)
+    }
+  }
+
   const saveRestaurant = async (data, event) => {
     event.preventDefault()
 
     try {
       if (onSubmit) {
+        console.log("Submitting", restaurant)
         await onSubmit({
           ...restaurant,
           categories: restaurant.categories.map(category => category.id)
@@ -102,6 +126,16 @@ const AddForm = ({ id, onSubmit }) => {
               </Alert>
             }
           </Form.Group>
+          <Form.Group data-testid='addForm-addressField'>
+            <Form.Label>Restaurant Address</Form.Label>
+            <Form.Control
+              disabled={!restaurant}
+              type='text'
+              name='address'
+              defaultValue={restaurant.address}
+              onChange={(event) => setAddress(event.target.value)}
+            />
+          </Form.Group>
           <Filter
             dropdownText='Categories'
             emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
@@ -115,27 +149,33 @@ const AddForm = ({ id, onSubmit }) => {
             >
               Cancel
             </Button>
-
-
-          </ButtonToolbar>
-          <div>
-            <OverlayTrigger
-              placement='right'
-              overlay={
-                <Tooltip >
-                  {!isLoggedIn ? (id ? 'Send a suggestion to edit this restaurant' : 'Send a suggestion to add this restaurant') : ''}
-                </Tooltip>
-              }
+            <Button
+              data-testid='addForm-checkButton'
+              onClick={checkAddress}
+              variant='success'
             >
-              <Button
-                data-testid='addForm-addButton'
-                type='submit'
-                variant='primary'
+              Check
+            </Button>
+            <div>
+              <OverlayTrigger
+                placement='right'
+                overlay={
+                  <Tooltip >
+                    {!isLoggedIn ? (id ? 'Send a suggestion to edit this restaurant' : 'Send a suggestion to add this restaurant') : ''}
+                  </Tooltip>
+                }
               >
-                {!isLoggedIn ? 'Suggest' : (id ? 'Update' : 'Add')}
-              </Button>
-            </OverlayTrigger>
-          </div>
+                <Button
+                  data-testid='addForm-addButton'
+                  type='submit'
+                  variant='primary'
+                  disabled={!validated}
+                >
+                  {!isLoggedIn ? 'Suggest' : (id ? 'Update' : 'Add')}
+                </Button>
+              </OverlayTrigger>
+            </div>
+          </ButtonToolbar>
         </Form>
         : 'Loading...'}
     </div>

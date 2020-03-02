@@ -321,7 +321,7 @@ describe('when logged in', () => {
     await server
       .put(`/api/restaurants/${testRestaurantId}`)
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000 })
 
 
     const restaurant = await Restaurant.findById(testRestaurantId)
@@ -329,7 +329,10 @@ describe('when logged in', () => {
       id: testRestaurantId,
       name: 'Torigrilli Senaatintori',
       url: 'https://torigrilli.fi',
-      categories: []
+      categories: [],
+      address: 'Senaatintori',
+      coordinates: { latitude: 60, longitude: 24 },
+      distance: 1000
     })
   })
 

@@ -14,6 +14,23 @@ const restaurantSchema = new mongoose.Schema({
     minlength: 1,
     maxlength: 240
   },
+  coordinates: {
+    latitude: {
+      type:Number
+    },
+    longitude: {
+      type:Number
+    }
+  },
+  address: {
+    type: String,
+    required: false,
+    minlength: 1,
+    maxlength: 240
+  },
+  distance: {
+    type: Number
+  },
   categories: [
     {
       type: mongoose.Schema.Types.ObjectId,

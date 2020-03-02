@@ -4,15 +4,19 @@ import { within } from '@testing-library/dom'
 import AddForm from './AddForm'
 import restaurantService from '../../../services/restaurant'
 import categoryService from '../../../services/category'
+import locationService from '../../../services/location'
 
 import { actRender } from '../../../test/utilities'
 
 jest.mock('../../../services/restaurant.js')
 jest.mock('../../../services/category.js')
+jest.mock('../../../services/location.js')
 
 beforeEach(() => {
   jest.clearAllMocks()
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
+  locationService.getCoordinates.mockResolvedValue({latitude: 60, longitude: 24})
+  locationService.getDistance.mockResolvedValue(1000)
 })
 
 
@@ -27,7 +31,6 @@ describe('form alerts', () => {
 
   test('invalid name input displays an error message', async () => {
     const { queryByTestId } = await actRender(<AddForm onSubmit={jest.fn()} />, ['/add'])
-
     const buttonElement = await queryByTestId('addForm-addButton')
     fireEvent.click(buttonElement)
 
@@ -70,7 +73,7 @@ test('add button calls restaurant callback with correct arguments', async () => 
 
   fireEvent.click(buttonElement)
 
-  await wait(() => expect(mockSubmit).toBeCalledWith({ name: 'Lidl City Center', url: 'https://www.lidl.fi/', categories: [] }))
+  await wait(() => expect(mockSubmit).toBeCalledWith({ name: 'Lidl City Center', url: 'https://www.lidl.fi/', categories: [], address: '', coordinates: {latitude:60, longitude: 24}, distance: 1000 }))
 })
 
 test('form is closed after adding a restaurant', async () => {
