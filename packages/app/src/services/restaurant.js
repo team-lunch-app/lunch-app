@@ -27,9 +27,9 @@ const remove = async (id) => {
   return await axios.delete(`${baseUrl}/${id}`, { headers: { Authorization: `bearer ${authService.getToken()}` } })
 }
 
-const getRandom = async (filterType, filterCategories) => {
+const getAllMatches = async (filterType, filterCategories) => {
   const filterIds = filterCategories.map(category => category.id)
-  const response = await axios.post(`${baseUrl}/random`, { categories: filterIds, type: filterType })
+  const response = await axios.post(`${baseUrl}/allMatches`, { categories: filterIds, type: filterType })
   return response.data
 }
 
@@ -38,6 +38,6 @@ export default {
   getOneById,
   add,
   remove,
-  getRandom,
+  getAllMatches,
   update
 }

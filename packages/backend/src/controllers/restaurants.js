@@ -87,8 +87,8 @@ restaurantsRouter.get('/', async (request, response) => {
   response.json(restaurants.map(rest => rest.toJSON()))
 })
 
-// getRandom
-restaurantsRouter.post('/random', async (request, response) => {
+//getAllMatches
+restaurantsRouter.post('/allMatches', async (request, response) => {
   const filterType = request.body.type || 'some'
   const filterCategories = request.body.categories || []
 
@@ -121,12 +121,9 @@ restaurantsRouter.post('/random', async (request, response) => {
       .find({}).populate('categories')
   }
 
-  if (restaurants.length > 0) {
-    const restaurant = restaurants[Math.floor(Math.random() * restaurants.length)]
-    response.json(restaurant.toJSON())
-  } else {
-    response.status(404).json({ error: 'No restaurants found with the given filter.' })
-  }
+  restaurants.length > 0
+    ? response.json(restaurants.map(rest => rest.toJSON()))
+    : response.status(404).json({ error: 'No restaurants found with the given filter.' })
 })
 
 // getOne

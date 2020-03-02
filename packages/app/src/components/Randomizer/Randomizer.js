@@ -1,62 +1,56 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import Filter from '../Filter/Filter/Filter'
+import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
+import soundService from '../../services/sound'
 import './Randomizer.css'
 
 import restaurantService from '../../services/restaurant'
 
+
+
 const Randomizer = () => {
+  const maxNumberOfRotations = 28
+  const minTimeBetweenRotations = 15 // in milliseconds
   const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
+  const [disableButton, setDisableButton] = useState(false)
   const [filterType, setFilterType] = useState('some')
   const [filterCategories, setFilterCategories] = useState([])
 
-  const changeRestaurantHandler = async (event) => {
-    event.preventDefault()
+  const sleep = async (duration) => {
+    return new Promise(r => setTimeout(r, duration))
+  }
 
+  const roll = async (event) => {
+    event.preventDefault()
+    setDisableButton(true)
     try {
-      const newRestaurant = await restaurantService.getRandom(filterType, filterCategories)
-      if (newRestaurant) {
-        setRestaurant(newRestaurant)
+      const restaurants = await restaurantService.getAllMatches(filterType, filterCategories)
+      if (restaurants.length > 1) {
+        let restaurantIndex = Math.floor(Math.random() * restaurants.length)
+        for (let rotations = 0; rotations <= maxNumberOfRotations; rotations++) {
+          await sleep(rotations * minTimeBetweenRotations)
+          restaurantIndex = (restaurantIndex + 1) > (restaurants.length - 1) ? 0 : restaurantIndex + 1
+          setRestaurant(restaurants[restaurantIndex])
+          soundService.playBeep()
+        }
+      } else {
+        setRestaurant(restaurants[0])
       }
+      soundService.playFanfare()
+      soundService.playCheer()
     } catch (errorResponse) {
       const error = errorResponse.response.data
       setRestaurant({ name: error.error })
+      soundService.playTrombone()
     }
-  }
-
-  const processUrl = (url) => {
-    const hasPrefix = url.startsWith('https://') || url.startsWith('http://') || url.startsWith('//')
-
-    return hasPrefix ? url : `//${url}`
-  }
-
-  const confirmLeave = (event) => {
-    if (!window.confirm(`This URL is user-submitted content that leads to an external website. 
-    Are you sure you want to leave? URL: ${restaurant.url}`)) {
-      event.preventDefault()
-    }
+    setDisableButton(false)
   }
 
   return (
     <div data-testid='randomizer' className='randomizer'>
-      <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
-      {restaurant.url
-        ? <p>
-          <a data-testid='randomizer-restaurantUrl'
-            className='restaurant-url'
-            onClick={(event) => confirmLeave(event)}
-            href={processUrl(restaurant.url)}
-            target='_blank'
-            rel='noopener noreferrer'>
-            <span>Website </span>
-            <FontAwesomeIcon icon={faExternalLinkAlt} />
-          </a>
-        </p>
-        : <></>
-      }
-      <Button data-testid='randomizer-randomizeButton' onClick={changeRestaurantHandler} variant='success' size='lg'>
+      {restaurant && <RestaurantEntry restaurant={restaurant} />}
+      <Button data-testid='randomizer-randomizeButton' onClick={roll} variant='success' size='lg' disabled={disableButton}>
         {`I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`}
       </Button>
       <Filter
