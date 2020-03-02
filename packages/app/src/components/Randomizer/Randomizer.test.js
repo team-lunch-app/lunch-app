@@ -63,6 +63,7 @@ test('pressing the button changes the text', async () => {
   const originalText = restaurantNameElement.textContent
   await act(async () => {
     fireEvent.click(queryByTestId('randomizer-randomizeButton'))
+    await wait(() => expect(restaurantNameElement.textContent).not.toBe(originalText))
   })
   expect(restaurantNameElement.textContent).not.toBe(originalText)
 })
