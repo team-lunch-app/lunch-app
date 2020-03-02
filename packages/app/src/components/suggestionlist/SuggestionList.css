@@ -8,8 +8,13 @@
 }
 
 .suggestion-entry > .card-header.ADD {
-    background-color: #19e3b1;
+    background-color: #9bcd65;
 }
+
 .suggestion-entry > .card-header.REMOVE {
-    background-color: #ff0066;
+    background-color: #ed5351;
+}
+
+.suggestion-entry > .card-header.EDIT {
+    background-color: #faa629;
 }

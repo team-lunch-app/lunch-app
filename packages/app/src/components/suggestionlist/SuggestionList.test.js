@@ -2,69 +2,75 @@ import React from 'react'
 import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
 import { SuggestionList, SuggestionEntry } from './SuggestionList'
 import suggestionService from '../../services/suggestion'
+import restaurantService from '../../services/restaurant'
+import categoryService from '../../services/category'
 import { actRender } from '../../test/utilities'
-
 
 jest.mock('../../services/restaurant.js')
 jest.mock('../../services/suggestion.js')
+jest.mock('../../services/category.js')
 
-const testSuggestion = {
-  type: 'ADD',
-  id: 1,
-  data: {
+
+const testRestaurants = [
+  {
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',
-    id: 1
+    id: 1,
+    categories: []
+  },
+  {
+    name: 'Pizzeria Rax',
+    url: 'www.rax.fi',
+    id: 2,
+    categories: []
+  },
+  {
+    name: 'Ravintola Artjärvi',
+    url: 'www.bestfood.fi',
+    id: 3,
+    categories: []
+  },
+  {
+    name: 'Kalevankadun Salaattibaari',
+    url: 'www.k-salaatti.fi',
+    id: 4,
+    categories: []
   }
-}
+]
+
+const testSuggestions = [
+  {
+    type: 'ADD',
+    id: 1,
+    data: testRestaurants[0]
+  },
+  {
+    type: 'ADD',
+    id: 2,
+    data: testRestaurants[1]
+  },
+  {
+    type: 'REMOVE',
+    id: 3,
+    data: testRestaurants[2]
+  },
+  {
+    type: 'EDIT',
+    id: 4,
+    data: testRestaurants[3]
+  }
+]
 
 beforeEach(() => {
   jest.clearAllMocks()
-  suggestionService.getAll.mockResolvedValue(
-    [
-      {
-        type: 'ADD',
-        id: 1,
-        data: {
-          name: 'Luigi\'s pizza',
-          url: 'www.pizza.fi',
-          id: 1
-        }
-      },
-      {
-        type: 'ADD',
-        id: 2,
-        data: {
-          name: 'Pizzeria Rax',
-          url: 'www.rax.fi',
-          id: 2
-        }
-      },
-      {
-        type: 'REMOVE',
-        id: 3,
-        data: {
-          name: 'Ravintola Artjärvi',
-          url: 'www.bestfood.fi',
-          id: 3
-        }
-      }
-    ]
-  )
+  suggestionService.getAll.mockResolvedValue(testSuggestions)
+  restaurantService.getOneById.mockResolvedValue(testSuggestions[0])
+  categoryService.getAll.mockResolvedValue(['Salad', 'Burger', 'Hangover'])
 })
 
 test('a suggestion is rendered if one exists', async () => {
-  suggestionService.getAll.mockResolvedValue([
-    {
-      type: 'REMOVE',
-      id: 3,
-      data: {
-        name: 'Ravintola Artjärvi',
-        url: 'www.bestfood.fi',
-        id: 3
-      }
-    }
-  ])
+  suggestionService.getAll.mockResolvedValue([testSuggestions[0]])
+  restaurantService.getOneById.mockResolvedValue(testRestaurants[0])
 
   const { queryByTestId } = await actRender(<SuggestionList />, ['/admin/suggestions'])
 
@@ -72,7 +78,7 @@ test('a suggestion is rendered if one exists', async () => {
   expect(suggestion).toBeInTheDocument()
 })
 
-test('multiple restaurants are rendered if more than one exist', async () => {
+test.only('multiple restaurants are rendered if more than one exist', async () => {
   const { queryAllByTestId } = await actRender(
     <SuggestionList />, ['/admin/suggestions']
   )

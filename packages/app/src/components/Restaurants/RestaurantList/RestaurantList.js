@@ -53,7 +53,7 @@ const RestaurantList = () => {
             key={restaurant.id}
             item={restaurant}
             onClickRemove={removeRestaurant}
-            onClickEdit={isLoggedIn ? editRestaurant : undefined}
+            onClickEdit={editRestaurant}
           />
         }
       />
