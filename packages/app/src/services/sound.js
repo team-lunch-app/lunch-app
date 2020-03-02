@@ -1,5 +1,4 @@
 import fanfare from '../data/fanfare.wav'
-import kids from '../data/kids.mp3'
 import trombone from '../data/trombone.wav'
 
 const playBeep = () => {
@@ -13,12 +12,6 @@ const playFanfare = () => {
   snd.volume = 0.05
   snd.play()
 }
-const playCheer = () => {
-  //https://www.myinstants.com/instant/kids-cheering/
-  var snd = new Audio(kids)
-  snd.volume = 0.1
-  snd.play()
-}
 const playTrombone = () => {
   //https://freesound.org/people/Benboncan/sounds/73581/
   var snd = new Audio(trombone)
@@ -26,4 +19,4 @@ const playTrombone = () => {
   snd.play()
 }
   
-export default { playBeep, playFanfare, playCheer, playTrombone }
+export default { playBeep, playFanfare, playTrombone }

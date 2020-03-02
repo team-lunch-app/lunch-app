@@ -84,13 +84,14 @@ Developed as part of the *Software Development Project Course* by
  - [@RoniNiklas](https://github.com/RoniNiklas)
 
 Attributions  
--------   
-This sites uses these sounds:
-TaDa! by jimhancock ( https://freesound.org/people/jimhancock/sounds/376318/ )    
-    Licensed under CC0 https://creativecommons.org/publicdomain/zero/1.0/  
+------------
+This sites uses these sounds:    
+TaDa! by jimhancock ( https://freesound.org/people/jimhancock/sounds/376318/ )     
+    Licensed under CC0 https://creativecommons.org/publicdomain/zero/1.0/   
 Sad Trombone by benboncan ( https://freesound.org/people/Benboncan/sounds/73581/  )   
-    Licensed under Attribution https://creativecommons.org/licenses/by/3.0/      
-Kids Cheering from myInstants ( https://www.myinstants.com/instant/kids-cheering/ )   
+    Licensed under Attribution https://creativecommons.org/licenses/by/3.0/         
+   
+Licensing
 ---------
 `TODO: What license should we use?`
 

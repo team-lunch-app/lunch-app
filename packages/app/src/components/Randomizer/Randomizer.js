@@ -37,7 +37,6 @@ const Randomizer = () => {
         setRestaurant(restaurants[0])
       }
       soundService.playFanfare()
-      soundService.playCheer()
     } catch (errorResponse) {
       const error = errorResponse.response.data
       setRestaurant({ name: error.error })
