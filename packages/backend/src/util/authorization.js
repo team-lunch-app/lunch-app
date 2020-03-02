@@ -9,10 +9,12 @@ const getTokenFromHeaders = (request) => {
 }
 
 const getTokenFromRequest = (request) => {
-  const token = getTokenFromHeaders(request)
-  return token
-    ? jwt.verify(token, config.jwtSecret)
-    : null
+  try {
+    const token = getTokenFromHeaders(request)
+    return jwt.verify(token, config.jwtSecret)
+  } catch (_) {
+    return null
+  }
 }
 
 const requireAuthorized = (request) => {
