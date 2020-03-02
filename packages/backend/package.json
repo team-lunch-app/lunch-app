@@ -5,8 +5,8 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "lint": "eslint src",
-    "test": "NODE_ENV=test yarn test:ci --watch",
-    "test:ci": "NODE_ENV=test jest --runInBand",
+    "test": "cross-env NODE_ENV=test yarn test:ci --watch",
+    "test:ci": "cross-env NODE_ENV=test jest --runInBand",
     "add-user": "node ./scripts/add_user.js"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "mongoose-unique-validator": "^2.0.3"
   },
   "devDependencies": {
+    "cross-env": "^7.0.0",
     "jest": "24.9.0",
     "mongodb-memory-server": "^6.2.2",
     "nodemon": "^2.0.2",
