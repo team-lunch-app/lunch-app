@@ -8,7 +8,6 @@ import './Randomizer.css'
 import restaurantService from '../../services/restaurant'
 
 
-
 const Randomizer = () => {
   const maxNumberOfRotations = 28
   const minTimeBetweenRotations = 15 // in milliseconds
