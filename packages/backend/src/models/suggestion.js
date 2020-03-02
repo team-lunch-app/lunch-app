@@ -7,7 +7,7 @@ const suggestionSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['ADD', 'REMOVE'],
+    enum: ['ADD', 'REMOVE', 'EDIT'],
   },
   data: {
     type: restaurantSchema,

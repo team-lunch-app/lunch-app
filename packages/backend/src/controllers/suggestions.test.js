@@ -29,7 +29,7 @@ const restaurantData = [
   },
 ]
 
-let server, suggestions, user, token, restaurants, removeSuggestions
+let server, suggestions, user, token, restaurants, removeSuggestions, editSuggestions
 
 beforeEach(async () => {
   dbUtil.connect()
@@ -48,7 +48,18 @@ beforeEach(async () => {
     }
   ]
 
+  const testEditSuggestions = [
+    {
+      type: 'EDIT',
+      data: {
+        _id: restaurants[0].id,
+        name: 'McDonalds Kamppi'
+      }
+    }
+  ]
+
   removeSuggestions = await dbUtil.createRowsFrom(Suggestion, testRemoveSuggestions)
+  editSuggestions = await dbUtil.createRowsFrom(Suggestion, testEditSuggestions)
 
   user = await dbUtil.createUser('jaskajoku', 'kissa')
   token = authorization.createToken(user._id, user.username)
@@ -88,6 +99,55 @@ test('creating an ADD suggestion creates a database entry', async () => {
       categories: [],
     }
   })
+})
+
+test('creating an EDIT suggestion creates a database entry', async () => {
+  const restaurant = restaurants[0]
+  const newRestaurant = {
+    id: restaurant.id,
+    name: 'McDonalds uusi',
+    url: 'www.mcduusi.fi',
+    categories: [],
+  }
+  const response = await server
+    .post('/api/suggestions/edit')
+    .send(newRestaurant)
+  const suggestion = await Suggestion.findById(response.body.id)
+  expect(suggestion.toJSON()).toMatchObject({
+    type: 'EDIT',
+    data: {
+      id: restaurant.id,
+      name: 'McDonalds uusi',
+      url: 'www.mcduusi.fi',
+      categories: [],
+    }
+  })
+})
+
+test('creating an EDIT suggestion responds with 201', async () => {
+  const newRestaurant = {
+    id: restaurants[0].id,
+    name: 'McDonalds uusi',
+    url: 'www.mcduusi.fi',
+    categories: [],
+  }
+  const response = await server
+    .post('/api/suggestions/edit')
+    .send(newRestaurant)
+    .expect(201)
+    .expect('Content-Type', /application\/json/i)
+})
+
+test('creating an EDIT suggestion without restaurant id responds with 400', async () => {
+  const newRestaurant = {
+    name: 'McDonalds uusi',
+    url: 'www.mcduusi.fi',
+    categories: [],
+  }
+  await server
+    .post('/api/suggestions/edit')
+    .send(newRestaurant)
+    .expect(400)
 })
 
 test('creating an REMOVE suggestion responds with 201', async () => {
@@ -203,6 +263,28 @@ test('approving a request with a valid id removes database entry for suggestion'
 
   const approvedSuggestion = await Suggestion.findById(suggestion.id)
   expect(approvedSuggestion).toBeFalsy()
+})
+
+test('approving an EDIT request with a valid id responds with status 200', async () => {
+  const suggestion = editSuggestions[0]
+  await server
+    .post(`/api/suggestions/approve/${suggestion.id}`)
+    .set('authorization', `bearer ${token}`)
+    .expect(200)
+})
+
+test.only('approving an EDIT request with a valid id updates the database entry for restaurant', async () => {
+  const suggestion = editSuggestions[0]
+  await server
+    .post(`/api/suggestions/approve/${suggestion.id}`)
+    .set('authorization', `bearer ${token}`)
+
+  const restaurant = await Restaurant.findById(suggestion.data.id)
+
+  const expected = { ...suggestion.data.toJSON() }
+
+  delete expected.id
+  expect(restaurant.toJSON()).toMatchObject(expected)
 })
 
 test('attempting to reject a request with an INVALID id returns with 404', async () => {
