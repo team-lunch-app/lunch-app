@@ -79,6 +79,10 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
     mapCategories()
   }, [suggestion])
 
+  const formatCoords = (coordinates) => coordinates
+    ? `${coordinates.latitude}, ${coordinates.longitude}`
+    : 'N/A'
+
   return (
     <Card className='suggestion-entry' data-testid='suggestionList-entry'>
       <Card.Header data-testid='suggestionEntry-type' className={suggestion.type} >{suggestion.type}</Card.Header>
@@ -115,6 +119,24 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
                   <td>{restaurant.categories.map((category) => <span key={category.id}>{category.name}, </span>)}</td>
                   {updatedRestaurant &&
                     <td data-testid='suggestionEntry-updated-restaurantCategories'>{updatedRestaurant.categories.map((category) => <span key={category.id}>{category.name}, </span>)}</td>}
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>{restaurant.address}</td>
+                  {updatedRestaurant &&
+                    <td data-testid='suggestionEntry-updated-restaurantAddress'>{updatedRestaurant.address}</td>}
+                </tr>
+                <tr>
+                  <td>Distance</td>
+                  <td>{restaurant.distance}</td>
+                  {updatedRestaurant &&
+                    <td data-testid='suggestionEntry-updated-restaurantDistance'>{updatedRestaurant.distance}</td>}
+                </tr>
+                <tr>
+                  <td>Coordinates</td>
+                  <td>{formatCoords(restaurant.coordinates)}</td>
+                  {updatedRestaurant &&
+                    <td data-testid='suggestionEntry-updated-restaurantCoordinates'>{formatCoords(updatedRestaurant.coordinates)}</td>}
                 </tr>
               </tbody>
             </Table>

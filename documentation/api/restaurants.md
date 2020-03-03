@@ -13,6 +13,12 @@ Unless otherwise stated, the served **restaurant**-resources have the following 
       name: string,
     },
   ],
+  address: string,
+  coordinates: {
+    latitude: Number,
+    longitude: Number,
+  },
+  distance: Number,
 }
 ```
 Few gotchas:
@@ -50,9 +56,9 @@ Response body contains the requested *restaurant*.
  - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
 
 
-`POST /api/restaurants/random`
+`POST /api/restaurants/allMatches`
 ------------------------------
-Randomly selects one restaurant.
+Returns a list of restaurants matching given filter criteria.
 
 ### Request
 Optional filter settings can be provided as an object in the request body. The object should contain the properties `type` and `categories`, though, if only one or neither is provided, their values are defaulted to values described below.
@@ -62,8 +68,9 @@ In full, the request body should have the following shape:
 {
   type: String,
   categories: [
-    "5e3934ee1c9d4400003d99a3",
-    "5e3935521c9d4400003d99a4",
+    ObjectId,
+    ObjectId,
+    ...
   ]
 }
 ```
@@ -96,7 +103,7 @@ If no categories are provided in the request, the value will default to an empty
 | `Content-Type` | `application/json` |
 | `Status Code`  | `200 OK`           |
 
-Response body contains a randomly selected *restaurant*.
+Response body contains a list of *restaurants*.
 
 ### Errors
  - `Status: 404 Not Found` - if no restaurants matching the criteria could be found. Response body contains the error message.
@@ -113,10 +120,16 @@ Accepts a *restaurant* json-object, without ID and with `categories` replaced wi
   name: string,
   url?: string,
   categories: [
-    CategoryID_1,
-    CategoryID_2,
+    ObjectId, // id of the first category,
+    ObjectId, // id of the second category, etc.
     ...
   ],
+  address: string,
+  coordinates: {
+    latitude: Number,
+    longitude: Number,
+  },
+  distance: Number,
 }
 ```
 
@@ -141,17 +154,23 @@ Returns the added *restaurant* as the response body. Received restaurant is guar
 *Update*-endpoint; Provided a *restaurant* with an ID, updates the information for that restaurant. Partial updates are not supported. Validation for `PUT` behaves exactly the same as `POST`-request validation. Requires authentication.
 
 ### Request
-Accepts a *restaurant* json-object, without ID and with `categories` replaced with an array of category IDs.
+Accepts a *restaurant* json-object, with `categories` replaced with an array of category IDs.
 ```js
 {
   id: ObjectId,
   name: string,
   url?: string,
   categories: [
-    CategoryID_1,
-    CategoryID_2,
+    ObjectId, // id of the first category,
+    ObjectId, // id of the second category, etc.
     ...
   ],
+  address: string,
+  coordinates: {
+    latitude: Number,
+    longitude: Number,
+  },
+  distance: Number,
 }
 ```
 

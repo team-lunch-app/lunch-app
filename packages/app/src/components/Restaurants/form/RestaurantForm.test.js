@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, within, act, wait } from '@testing-library/react'
+import { fireEvent, within, act } from '@testing-library/react'
 import RestaurantForm from './RestaurantForm'
 
 import categoryService from '../../../services/category'
