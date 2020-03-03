@@ -152,7 +152,9 @@ SuggestionEntry.propTypes = {
     type: PropTypes.string.isRequired,
     data: PropTypes.shape({
       name: PropTypes.string.isRequired,
-      url: PropTypes.string
+      url: PropTypes.string,
+      id: PropTypes.any,
+      categories: PropTypes.array
     }).isRequired
   }),
   handleApprove: PropTypes.any.isRequired,
