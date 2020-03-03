@@ -13,6 +13,12 @@ const suggestionData = [
       name: 'Torigrilli',
       url: 'www.url.fi',
       categories: [],
+      address: 'Jokukatu 2',
+      coordinates: {
+        latitude: 25,
+        longitude: 61
+      },
+      distance: 1001
     }
   }
 ]
@@ -22,14 +28,40 @@ const restaurantData = [
     name: 'McDonalds',
     url: 'www.mcd.fi',
     categories: [],
+    address: 'Jokukatu 2',
+    coordinates: {
+      latitude: 26,
+      longitude: 59
+    },
+    distance: 1020
   },
   {
     name: 'Steissin BK',
     url: 'https://www.steissin-bk.fi',
+    categories: [],
+    address: 'Jokukatu 2',
+    coordinates: {
+      latitude: 24,
+      longitude: 59
+    },
+    distance: 1020
   },
 ]
 
 let server, suggestions, user, token, restaurants, removeSuggestions, editSuggestions
+const getAdditionalSuggestions = () => [
+  {
+    name: 'McDonalds',
+    url: 'www.mcd.fi',
+    categories: [],
+    address: 'Jokukatu 3',
+    coordinates: {
+      latitude: 26,
+      longitude: 62
+    },
+    distance: 1002
+  }
+]
 
 beforeEach(async () => {
   dbUtil.connect()
@@ -53,7 +85,13 @@ beforeEach(async () => {
       type: 'EDIT',
       data: {
         _id: restaurants[0].id,
-        name: 'McDonalds Kamppi'
+        name: 'McDonalds Kamppi',
+        address: 'Jokukatu 42',
+        coordinates: {
+          latitude: 62,
+          longitude: 15
+        },
+        distance: 1074
       }
     }
   ]
@@ -70,34 +108,24 @@ afterEach(async () => {
 })
 
 test('creating an ADD suggestion responds with 201', async () => {
+  const toBeAdded = getAdditionalSuggestions()[0]
   await server
     .post('/api/suggestions/add')
-    .send({
-      name: 'McDonalds',
-      url: 'www.mcd.fi',
-      categories: [],
-    })
+    .send(toBeAdded)
     .expect(201)
     .expect('Content-Type', /application\/json/i)
 })
 
 test('creating an ADD suggestion creates a database entry', async () => {
+  const toBeAdded = getAdditionalSuggestions()[0]
   const response = await server
     .post('/api/suggestions/add')
-    .send({
-      name: 'McDonalds',
-      url: 'www.mcd.fi',
-      categories: [],
-    })
+    .send(toBeAdded)
 
   const suggestion = await Suggestion.findById(response.body.id)
   expect(suggestion.toJSON()).toMatchObject({
     type: 'ADD',
-    data: {
-      name: 'McDonalds',
-      url: 'www.mcd.fi',
-      categories: [],
-    }
+    data: toBeAdded
   })
 })
 
@@ -125,13 +153,8 @@ test('creating an EDIT suggestion creates a database entry', async () => {
 })
 
 test('creating an EDIT suggestion responds with 201', async () => {
-  const newRestaurant = {
-    id: restaurants[0].id,
-    name: 'McDonalds uusi',
-    url: 'www.mcduusi.fi',
-    categories: [],
-  }
-  const response = await server
+  const newRestaurant = getAdditionalSuggestions()[0]
+  await server
     .post('/api/suggestions/edit')
     .send(newRestaurant)
     .expect(201)
@@ -139,11 +162,7 @@ test('creating an EDIT suggestion responds with 201', async () => {
 })
 
 test('creating an EDIT suggestion without restaurant id responds with 400', async () => {
-  const newRestaurant = {
-    name: 'McDonalds uusi',
-    url: 'www.mcduusi.fi',
-    categories: [],
-  }
+  const newRestaurant = getAdditionalSuggestions()[0]
   await server
     .post('/api/suggestions/edit')
     .send(newRestaurant)
@@ -156,10 +175,6 @@ test('creating an REMOVE suggestion responds with 201', async () => {
     .post('/api/suggestions/remove')
     .send({
       id: id,
-      name: 'McDonalds',
-      url: 'www.mcd.fi',
-      categories: [],
-
     })
     .expect(201)
     .expect('Content-Type', /application\/json/i)

@@ -33,12 +33,12 @@ test('add form is hidden initially', async () => {
   expect(form).not.toBeInTheDocument()
 })
 
-test('addForm component is rendered when button is pressed', async () => {
+test('Restaurant form is rendered after add restaurant link is pressed', async () => {
   const { queryByTestId, getByTestId } = await actRender(<App />, ['/'])
 
   const button = queryByTestId('addForm-link')
   fireEvent.click(button)
-  const form = await waitForElement(() => getByTestId('addForm'))
+  const form = await waitForElement(() => getByTestId('restaurant-form'))
   expect(form).toBeInTheDocument()
 })
 

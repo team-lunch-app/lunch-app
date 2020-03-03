@@ -22,11 +22,14 @@ const trimAndUndefineIfEmpty = string => {
 }
 
 const parseSuggestion = (body, type) => {
+  const address = body.address
+  const coordinates = body.coordinates
+  const distance = body.distance
   const name = body.name
   const url = trimAndUndefineIfEmpty(body.url)
   const categories = body.categories || []
   const _id = body._id
-  const parsed = { type, data: { _id, name, url, categories } }
+  const parsed = { type, data: { _id, name, url, categories, address, coordinates, distance } }
   return parsed
 }
 

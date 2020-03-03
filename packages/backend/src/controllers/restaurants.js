@@ -74,9 +74,12 @@ const trimAndUndefineIfEmpty = string => {
  */
 const parseRestaurant = (body, id) => {
   const name = body.name
+  const address = body.address
+  const coordinates = body.coordinates
+  const distance = body.distance
   const url = trimAndUndefineIfEmpty(body.url)
   const categories = body.categories || []
-  return { id, name, url, categories }
+  return { id, name, url, categories, address, coordinates, distance }
 }
 
 // getAll
