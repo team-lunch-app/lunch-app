@@ -51,9 +51,22 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
   const [updatedRestaurant, setUpdatedRestaurant] = useState()
 
   useEffect(() => {
+
+    /* If the suggestion concerns an existing restaurant */
     if (suggestion.type === 'EDIT' || suggestion.type === 'REMOVE') {
-      restaurantService.getOneById(suggestion.data.id).then(setRestaurant)
+      const findExistingRestaurant = async () => {
+        const found = await restaurantService.getOneById(suggestion.data.id)
+        setRestaurant(found)
+      }
+
+      findExistingRestaurant()
     }
+
+    /**
+    * The restaurant within the given suggestion contains a list of category ids.
+    * To display the names of these categories, we need to fetch them
+    * from the database.
+    */
 
     const mapCategories = async () => {
       const categories = await categoryService.getAll()
@@ -68,40 +81,46 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
 
   return (
     <Card className='suggestion-entry' data-testid='suggestionList-entry'>
-      <Card.Header className={suggestion.type} >{suggestion.type}</Card.Header>
-      <Card.Body>
-        <Card.Title>{restaurant && restaurant.name}</Card.Title>
-      </Card.Body>
-      <Card.Body>
-        {restaurant &&
-          <Table striped bordered responsive='sm' size='sm'>
-            <thead>
-              <tr>
-                <th>Attribute</th>
-                {updatedRestaurant ? <th>Current</th> : <th>Value</th>}
-                {updatedRestaurant && <th>Suggested</th>}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Name</td>
-                <td>{restaurant.name}</td>
-                {updatedRestaurant && <td>{updatedRestaurant.name}</td>}
-              </tr>
-              <tr>
-                <td>URL</td>
-                <td><a href={restaurant.url}><span>{restaurant.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span></a></td>
-                {updatedRestaurant && <td><a href={updatedRestaurant.url}><span>{updatedRestaurant.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span></a></td>}
-              </tr>
-              <tr>
-                <td>Categories</td>
-                <td>{restaurant.categories.map((category) => <span key={category.id}>{category.name}, </span>)}</td>
-                {updatedRestaurant && <td>{updatedRestaurant.categories.map((category) => <span key={category.id}>{category.name}, </span>)}</td>}
-              </tr>
-            </tbody>
-          </Table>
-        }
-      </Card.Body>
+      <Card.Header data-testid='suggestionEntry-type' className={suggestion.type} >{suggestion.type}</Card.Header>
+      {restaurant &&
+        <>
+          <Card.Body>
+            <Card.Title data-testid='suggestionEntry-restaurantName'>{restaurant && restaurant.name}</Card.Title>
+          </Card.Body>
+          <Card.Body>
+            <Table striped bordered responsive='sm' size='sm'>
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  {updatedRestaurant ? <th>Current</th> : <th>Value</th>}
+                  {updatedRestaurant &&
+                    <th data-testid='suggestionEntry-updated-th'>Suggested</th>}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Name</td>
+                  <td>{restaurant.name}</td>
+                  {updatedRestaurant &&
+                    <td data-testid='suggestionEntry-updated-restaurantName'>{updatedRestaurant.name}</td>}
+                </tr>
+                <tr>
+                  <td>URL</td>
+                  <td><a href={restaurant.url}><span>{restaurant.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span></a></td>
+                  {updatedRestaurant &&
+                    <td data-testid='suggestionEntry-updated-restaurantUrl'><a href={updatedRestaurant.url}><span>{updatedRestaurant.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span></a></td>}
+                </tr>
+                <tr>
+                  <td>Categories</td>
+                  <td>{restaurant.categories.map((category) => <span key={category.id}>{category.name}, </span>)}</td>
+                  {updatedRestaurant &&
+                    <td data-testid='suggestionEntry-updated-restaurantCategories'>{updatedRestaurant.categories.map((category) => <span key={category.id}>{category.name}, </span>)}</td>}
+                </tr>
+              </tbody>
+            </Table>
+          </Card.Body>
+        </>
+      }
       <Card.Body className='buttons'>
         <Button
           data-testid='suggestionEntry-approveButton'
