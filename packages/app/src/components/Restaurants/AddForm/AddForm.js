@@ -23,8 +23,6 @@ const AddForm = ({ id, onSubmit }) => {
   const setName = (name) => setRestaurant({ ...restaurant, name })
   const setUrl = (url) => setRestaurant({ ...restaurant, url })
   const setAddress = (address) => setRestaurant({ ...restaurant, address })
-  const setCoordinates = (latitude, longitude) => setRestaurant({ ...restaurant, coordinates: { ...restaurant.coordinates, latitude: latitude, longitude: longitude } })
-  const setDistance = (distance) => setRestaurant({ ...restaurant, distance })
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
   const token = authService.getToken()
@@ -51,12 +49,11 @@ const AddForm = ({ id, onSubmit }) => {
     }
   }, [id])
 
-  const checkAddress = async (address) => {
+  const checkAddress = async (event) => {
     try {
       const coordinates = await locationService.getCoordinates(restaurant.address)
       const distance = await locationService.getDistance(coordinates.latitude, coordinates.longitude)
-      setDistance(distance)
-      setCoordinates(coordinates.latitude, coordinates.longitude)
+      setRestaurant({ ...restaurant, distance, coordinates })
       setValidated(true)
       setError()
     } catch (error) {
