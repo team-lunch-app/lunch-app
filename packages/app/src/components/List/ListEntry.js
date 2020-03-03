@@ -1,7 +1,11 @@
 import React from 'react'
-import { Button, Card } from 'react-bootstrap'
+import { Button, Card, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import './ListEntry.css'
+import authService from '../../services/authentication'
+
+const token = authService.getToken()
+const isLoggedIn = token !== undefined
 
 const ListEntry = ({ item, onClickRemove, onClickEdit }) => {
   const handleClickRemove = async (event) => {
@@ -25,15 +29,23 @@ const ListEntry = ({ item, onClickRemove, onClickEdit }) => {
     </Button>
 
   const removeButton = onClickRemove &&
-    <Button
-      role='remove-button'
-      onClick={handleClickRemove}
-      variant='danger'
-      size='sm'
+    <OverlayTrigger
+      placement='right'
+      overlay={
+        <Tooltip >
+          {!isLoggedIn ? ('Send a suggestion to remove ' + item.name) : 'Remove ' + item.name + ' permanently'}
+        </Tooltip>
+      }
     >
-      Remove
-    </Button>
-
+      <Button
+        role='remove-button'
+        onClick={handleClickRemove}
+        variant='danger'
+        size='sm'
+      >
+        {!isLoggedIn ? 'Suggest removal' : 'Remove '}
+      </Button>
+    </OverlayTrigger>
 
   return (
     <Card className='list-entry' data-testid='list-entry'>

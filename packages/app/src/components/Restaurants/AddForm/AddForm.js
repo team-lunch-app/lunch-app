@@ -115,14 +115,27 @@ const AddForm = ({ id, onSubmit }) => {
             >
               Cancel
             </Button>
-            <Button
-              data-testid='addForm-addButton'
-              type='submit'
-              variant='primary'
-            >
-              {!isLoggedIn ? 'Suggest' : (id ? 'Update' : 'Add')}
-            </Button>
+
+
           </ButtonToolbar>
+          <div>
+            <OverlayTrigger
+              placement='right'
+              overlay={
+                <Tooltip >
+                  {!isLoggedIn ? (id ? 'Send a suggestion to edit this restaurant' : 'Send a suggestion to add this restaurant') : ''}
+                </Tooltip>
+              }
+            >
+              <Button
+                data-testid='addForm-addButton'
+                type='submit'
+                variant='primary'
+              >
+                {!isLoggedIn ? 'Suggest' : (id ? 'Update' : 'Add')}
+              </Button>
+            </OverlayTrigger>
+          </div>
         </Form>
         : 'Loading...'}
     </div>
