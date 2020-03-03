@@ -27,10 +27,16 @@ const removeRestaurant = async (restaurant) => {
   return response.data
 }
 
+const editRestaurant = async (restaurant) => {
+  const response = await axios.post(`${baseUrl}/edit`, restaurant)
+  return response.data
+}
+
 export default {
   getAll,
   approve,
   reject,
   addRestaurant,
-  removeRestaurant
+  removeRestaurant,
+  editRestaurant
 }

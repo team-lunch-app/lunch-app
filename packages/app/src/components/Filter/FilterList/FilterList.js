@@ -10,7 +10,7 @@ const FilterList = ({ selected, onRemove, emptyMessage }) => {
 
   return (
     <span data-testid='filter-list' className='category-list'>
-      {selected.length > 0
+      {selected && selected.length > 0
         ? selected.map((category) =>
           <Badge
             className='entry'
@@ -18,7 +18,7 @@ const FilterList = ({ selected, onRemove, emptyMessage }) => {
             data-testid='filter-listEntry'
             key={category.id}>
             <span>{category.name}</span>
-            <button data-testid='filter-listEntry-deleteButton' onClick={removeHandler(category.id)}>×</button>
+            {onRemove && <button data-testid='filter-listEntry-deleteButton' onClick={removeHandler(category.id)}>×</button>}
           </Badge>
         )
         : <span data-testid='filter-emptyMessage'>{emptyMessage}</span>

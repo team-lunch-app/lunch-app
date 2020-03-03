@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/suggestions/edit HTTP/1.1
+Content-Type: application/json
+
+{
+        "id": "5e4bc29bf481f53cebbd785d",
+        "name": "Kalevankadun Salaatti",
+        "url": "https://www.kaleva-salaatti.fi",
+        "categories": []
+}
