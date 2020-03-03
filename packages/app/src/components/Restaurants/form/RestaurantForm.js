@@ -8,21 +8,26 @@ import PropTypes from 'prop-types'
 
 import Filter from '../../Filter/Filter/Filter'
 
-import locationService from "../../../services/location"
+import locationService from '../../../services/location'
 
 import './RestaurantForm.css'
 
-const RestaurantForm = ({ restaurant, setRestaurant, error, setError, onSubmit, submitMessage = 'Suggest', suggestTooltip = 'Create suggestion' }) => {
+const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = 'Suggest', suggestTooltip = 'Create suggestion' }) => {
   const { register, handleSubmit, errors } = useForm()
-  const [validated, setValidated] = useState(true)
+  const [validated, setValidated] = useState(false)
+  const [error, setError] = useState()
   const setName = (name) => setRestaurant({ ...restaurant, name })
   const setUrl = (url) => setRestaurant({ ...restaurant, url })
-  const setAddress = (address) => setRestaurant({ ...restaurant, address })
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
 
   let history = useHistory()
 
-  const checkAddress = async (event) => {
+  const handleAddressChange = (address) => {
+    setRestaurant({ ...restaurant, address })
+    setValidated(false)
+  }
+
+  const checkAddress = async () => {
     try {
       const coordinates = await locationService.getCoordinates(restaurant.address)
       const distance = await locationService.getDistance(coordinates.latitude, coordinates.longitude)
@@ -30,8 +35,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, error, setError, onSubmit, 
       setValidated(true)
       setError()
     } catch (error) {
-      console.log(error)
-      setError("Could not find that location or address.")
+      setError('Could not find that location or address.')
       setValidated(false)
     }
   }
@@ -41,7 +45,6 @@ const RestaurantForm = ({ restaurant, setRestaurant, error, setError, onSubmit, 
 
     try {
       if (onSubmit) {
-        console.log("Submitting", restaurant)
         await onSubmit({
           ...restaurant,
           categories: restaurant.categories.map(category => category.id)
@@ -99,14 +102,14 @@ const RestaurantForm = ({ restaurant, setRestaurant, error, setError, onSubmit, 
               </Alert>
             }
           </Form.Group>
-          <Form.Group data-testid='addForm-addressField'>
+          <Form.Group data-testid='address-field'>
             <Form.Label>Restaurant Address</Form.Label>
             <Form.Control
               disabled={!restaurant}
               type='text'
               name='address'
               defaultValue={restaurant.address}
-              onChange={(event) => setAddress(event.target.value)}
+              onChange={(event) => handleAddressChange(event.target.value)}
             />
           </Form.Group>
           <Filter
@@ -180,8 +183,10 @@ RestaurantForm.propTypes = {
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     categories: PropTypes.array,
+    address: PropTypes.string
   }),
   onSubmit: PropTypes.func,
+  setRestaurant: PropTypes.func.isRequired,
   suggestTooltip: PropTypes.string,
   submitMessage: PropTypes.string,
 }

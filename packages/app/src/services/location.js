@@ -1,10 +1,12 @@
-import axios from "axios"
+import axios from 'axios'
 
 const unityLat = 60.170000
 const unityLon = 24.941944
+const baseUrl = 'https://api.digitransit.fi'
+const maxDistance = 50
 
 const createDistanceQuery = (targetLat, targetLon) => {
-    return (`
+  return (`
     {
         plan(
             from: { lat: ${unityLat}, lon: ${unityLon} }
@@ -18,11 +20,11 @@ const createDistanceQuery = (targetLat, targetLon) => {
             }
         }
     }`
-    )
+  )
 }
 
 const createItineraryQuery = (lat, lon) => {
-    return (`
+  return (`
     {
         plan(
             from: { lat: ${lat}, lon: ${lon} }
@@ -63,36 +65,36 @@ const createItineraryQuery = (lat, lon) => {
             }
         }
     }`
-    )
+  )
 }
 
 const getItineraries = async (lat, lon) => {
-    const response = await axios.post(
-        "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql",
-        createItineraryQuery(lat, lon),
-        {
-            headers: { "Content-Type": "application/graphql" },
-        })
-    const fetchedItineraries = response.data.data.plan.itineraries
-    return fetchedItineraries
+  const response = await axios.post(
+    `${baseUrl}/routing/v1/routers/hsl/index/graphql`,
+    createItineraryQuery(lat, lon),
+    {
+      headers: { 'Content-Type': 'application/graphql' },
+    })
+  const fetchedItineraries = response.data.data.plan.itineraries
+  return fetchedItineraries
 }
 
 const getDistance = async (lat, lon) => {
-    const response = await axios.post(
-        "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql",
-        createDistanceQuery(lat, lon),
-        {
-            headers: { "Content-Type": "application/graphql" },
-        })
-    const fetchedItineraries = response.data.data.plan.itineraries
-    const distance = fetchedItineraries[0].legs.map(leg => leg.distance).reduce((total, singleLeg) => total + singleLeg)
-    return distance
+  const response = await axios.post(
+    `${baseUrl}/routing/v1/routers/hsl/index/graphql`,
+    createDistanceQuery(lat, lon),
+    {
+      headers: { 'Content-Type': 'application/graphql' },
+    })
+  const fetchedItineraries = response.data.data.plan.itineraries
+  const distance = fetchedItineraries[0].legs.map(leg => leg.distance).reduce((total, singleLeg) => total + singleLeg)
+  return distance
 }
 
 const getCoordinates = async (text) => {
-    const response = await axios.get("https://api.digitransit.fi/geocoding/v1/search?text=" + text + "&boundary.circle.lat=60.169447&boundary.circle.lon=24.925796&boundary.circle.radius=50")
-    const coordinates = response.data.features[0].geometry.coordinates
-    return { latitude: coordinates[1], longitude: coordinates[0] }
+  const response = await axios.get(`${baseUrl}/geocoding/v1/search?text=${text}&boundary.circle.lat=${unityLat}&boundary.circle.lon=${unityLon}&boundary.circle.radius=${maxDistance}`)
+  const coordinates = response.data.features[0].geometry.coordinates
+  return { latitude: coordinates[1], longitude: coordinates[0] }
 }
 
 export default { getCoordinates, getDistance, getItineraries }

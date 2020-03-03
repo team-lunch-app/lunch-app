@@ -6,7 +6,6 @@ import restaurantService from '../../services/restaurant'
 import suggestionService from '../../services/suggestion'
 
 const AddForm = () => {
-  const [error, setError] = useState('')
   const [restaurant, setRestaurant] = useState({
     name: '',
     url: '',
@@ -35,8 +34,6 @@ const AddForm = () => {
     <RestaurantForm
       restaurant={restaurant}
       setRestaurant={setRestaurant}
-      error={error}
-      setError={setError}
       onSubmit={handleSubmit}
       suggestTooltip={'Send a suggestion to add this restaurant'}
       submitMessage={!isLoggedIn ? 'Suggest' : 'Add'} />

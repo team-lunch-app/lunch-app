@@ -14,8 +14,6 @@ import NavBar from './components/NavBar'
 import RegisterForm from './components/users/RegisterForm'
 import { SuggestionList } from './components/suggestionlist/SuggestionList'
 
-import suggestionService from './services/suggestion'
-import restaurantService from './services/restaurant'
 import categoryService from './services/category'
 import authService from './services/authentication'
 
@@ -54,8 +52,8 @@ const App = () => {
           <Route exact path="/error/404" render={() => <NotFound />} />
 
           <Route exact path="/" render={() => <Randomizer />} />
-          <Route exact path="/add" render={() => <AddForm key={window.location} />} />
-          <Route exact path="/edit/:id" render={({ match }) => <EditForm key={window.location} id={match.params.id} />} />
+          <Route exact path="/add" render={() => <AddForm />} />
+          <Route exact path="/edit/:id" render={({ match }) => <EditForm id={match.params.id} />} />
           <Route exact path="/restaurants" render={() => <RestaurantList />} />
           <Route exact path="/login" render={() => isLoggedIn
             ? <Redirect to={'/admin/suggestions'} />

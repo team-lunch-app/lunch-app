@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import Alert from 'react-bootstrap/Alert'
 import RestaurantForm from './form/RestaurantForm'
 
 import authService from '../../services/authentication'
@@ -42,19 +43,17 @@ const EditForm = ({ id }) => {
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
-  return (
-    <RestaurantForm
+  return error
+    ? <Alert data- testid='error-msg-generic' variant='danger' > {error}</Alert >
+    : <RestaurantForm
       restaurant={restaurant}
       setRestaurant={setRestaurant}
-      error={error}
-      setError={setError}
       onSubmit={isLoggedIn ? restaurantService.update : suggestionService.editRestaurant}
       submitMessage={!isLoggedIn ? 'Suggest' : 'Update'}
       suggestTooltip={'Send a suggestion to edit this restaurant'} />
-  )
 }
 
-RestaurantForm.propTypes = {
+EditForm.propTypes = {
   id: PropTypes.any,
 }
 

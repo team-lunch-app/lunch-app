@@ -11,14 +11,33 @@ const restaurantData = [
   {
     name: 'Torigrilli',
     url: 'https://www.torigrilli.fi',
+    categories: [],
+    address: 'Jokukatu 1',
+    coordinates: {
+      latitude: 24,
+      longitude: 60
+    },
+    distance: 1000
   },
   {
     name: 'Jaskan Pitsa & Kebab Oy',
     url: 'https://www.jaskankebu.fi',
+    address: 'Jokukatu 2',
+    coordinates: {
+      latitude: 25,
+      longitude: 61
+    },
+    distance: 1001
   },
   {
     name: 'Steissin BK',
     url: 'https://www.steissin-bk.fi',
+    address: 'Jokukatu 3',
+    coordinates: {
+      latitude: 26,
+      longitude: 62
+    },
+    distance: 1002
   },
 ]
 
@@ -31,6 +50,46 @@ const testCategoryData = [
   },
   {
     name: 'Burger',
+  }
+]
+
+const getAdditionalRestaurants = (categoryA, categoryB) => [
+  {
+    name: 'Piritorin Pirikioski',
+    url: 'N/A',
+    categories: categoryA ? [categoryA] : [],
+    address: 'Jokukatu 420',
+    coordinates: {
+      latitude: 260,
+      longitude: 620
+    },
+    distance: 1022
+  },
+  {
+    name: 'Joku Toinen Paikka',
+    url: 'N/A',
+    categories: categoryA ? [categoryA] : [],
+    address: 'Jokukatu 30',
+    coordinates: {
+      latitude: 27,
+      longitude: 61
+    },
+    distance: 1003
+  },
+  {
+    name: 'Kauppatorin Nakkikioski',
+    url: 'N/A',
+    categories: categoryA
+      ? categoryB
+        ? [categoryA, categoryB]
+        : [categoryA]
+      : [],
+    address: 'Jokukatu 3',
+    coordinates: {
+      latitude: 26,
+      longitude: 62
+    },
+    distance: 1002
   }
 ]
 
@@ -83,58 +142,40 @@ test('get request to a specific id returns the correct restaurant', async () => 
 })
 
 test('getAllMatches request without category ids returns all restaurants', async () => {
-  const testCategoryId = categories[0].id
-  await dbUtil.createRowsFrom(Restaurant, [
-    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId] },
-    { name: 'Joku Toinen Paikka', url: 'N/A', categories: [testCategoryId] }
-  ])
-
   const response = await server
     .post('/api/restaurants/allMatches')
     .send({ categories: [], type: 'some' })
 
   const contents = response.body
-  expect(contents.length).toBe(5)
+  expect(contents.length).toBe(3)
 })
 
 test('getAllMatches request with a category id returns all restaurants belonging to the given category', async () => {
-  const testCategoryId = categories[0].id
-  await dbUtil.createRowsFrom(Restaurant, [
-    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId] },
-    { name: 'Joku Toinen Paikka', url: 'N/A', categories: [testCategoryId] }
-  ])
+  await dbUtil.createRowsFrom(Restaurant, getAdditionalRestaurants(categories[0].id))
 
   const response = await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [testCategoryId], type: 'some' })
+    .send({ categories: [categories[0].id], type: 'some' })
 
   const contents = response.body
-  expect(contents.length).toBe(2)
-  expect(contents.every(restaurant => restaurant.categories.includes(testCategoryId)))
+  expect(contents.length).toBe(3)
+  expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id)))
 })
 
 test('getAllMatches request with two category ids returns all restaurants that belong to both of the categories', async () => {
-  const testCategoryId = categories[0].id
-  await dbUtil.createRowsFrom(Restaurant, [
-    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId, categories[1].id] },
-    { name: 'Joku Toinen Paikka', url: 'N/A', categories: [testCategoryId] }
-  ])
+  await dbUtil.createRowsFrom(Restaurant, getAdditionalRestaurants(categories[0].id, categories[1].id))
 
   const response = await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [testCategoryId, categories[1].id], type: 'all' })
+    .send({ categories: [categories[0].id, categories[1].id], type: 'all' })
 
   const contents = response.body
   expect(contents.length).toBe(1)
-  expect(contents.every(restaurant => restaurant.categories.includes(testCategoryId) && restaurant.categories.includes(categories[1].id)))
+  expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id) && restaurant.categories.includes(categories[1].id)))
 })
 
 test('getAllMatches request with type none returns no restaurants in those categories', async () => {
-  const testCategoryId = categories[0].id
-  await dbUtil.createRowsFrom(Restaurant, [
-    { name: 'Kauppatorin Nakkikioski', url: 'N/A', categories: [testCategoryId, categories[1].id] },
-    { name: 'Joku Toinen Paikka', url: 'N/A', categories: [testCategoryId] }
-  ])
+  await dbUtil.createRowsFrom(Restaurant, getAdditionalRestaurants(categories[0].id, categories[1].id))
 
   const response = await server
     .post('/api/restaurants/allMatches')
@@ -160,72 +201,78 @@ test('get request to an invalid id returns code 404', async () => {
 
 describe('when logged in', () => {
   test('post request to /api/restaurants succeeds (with 201) even if no category list is provided', async () => {
+    const toBeAdded = getAdditionalRestaurants()[1]
+    delete toBeAdded.categories
     await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', url: 'N/A', })
+      .send(toBeAdded)
       .expect(201)
   })
 
   test('post request to /api/restaurants with valid data succeeds', async () => {
+    const toBeAdded = getAdditionalRestaurants(categories[0].id)[0]
     await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [] })
+      .send(toBeAdded)
       .expect(201)
       .expect('Content-Type', /application\/json/i)
   })
 
   test('post request to /api/restaurants with valid data gets added restaurant as response', async () => {
-    const categoryId = categories[0].id
+    const toBeAdded = getAdditionalRestaurants(categories[0].id)[0]
 
     const response = await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', url: 'N/A', categories: [categoryId] })
+      .send(toBeAdded)
 
     const contents = response.body
-    expect(contents).toMatchObject({
-      name: 'Ravintola Artjärvi',
-      url: 'N/A',
-      categories: [categoryId]
-    })
+    expect(contents).toMatchObject(toBeAdded)
   })
 
   test('post request to /api/restaurants with valid data adds the restaurant to DB', async () => {
+    const toBeAdded = getAdditionalRestaurants()[0]
     const response = await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', url: 'N/A' })
+      .send(toBeAdded)
 
     const id = response.body.id
     const restaurant = await Restaurant.findById(id)
-    expect(restaurant).toBeDefined()
+    expect(restaurant.toJSON()).toMatchObject(toBeAdded)
   })
 
   test('post request to /api/restaurants without url succeeds', async () => {
+    const toBeAdded = getAdditionalRestaurants()[0]
+    delete toBeAdded.url
     await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', categories: [] })
+      .send(toBeAdded)
       .expect(201)
       .expect('Content-Type', /application\/json/i)
   })
 
   test('post request to /api/restaurants with url containing only whitespace succeeds', async () => {
+    const toBeAdded = getAdditionalRestaurants()[0]
+    toBeAdded.url = ' \t'.repeat(42)
     await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
+      .send(toBeAdded)
       .expect(201)
       .expect('Content-Type', /application\/json/i)
   })
 
   test('after post request to /api/restaurants with url containing only whitespace, the url is undefined', async () => {
+    const toBeAdded = getAdditionalRestaurants()[0]
+    toBeAdded.url = ' \t'.repeat(42)
     const response = await server
       .post('/api/restaurants')
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Ravintola Artjärvi', url: '   ', categories: [] })
+      .send(toBeAdded)
 
     const id = response.body.id
     const restaurant = await Restaurant.findById(id)
@@ -350,20 +397,15 @@ describe('when logged in', () => {
 
   describe('queries update backwards references', () => {
     test('adding a restaurant adds references to the associated categories', async () => {
+      const toBeAdded = getAdditionalRestaurants()[0]
+      toBeAdded.categories = [categories[0]._id, categories[1]._id]
+
       const response = await server
         .post('/api/restaurants')
         .set('authorization', `bearer ${token}`)
-        .send({
-          name: 'Ravintola Artjärvi',
-          url: 'https://www.joku.fi',
-          categories: [
-            categories[0]._id,
-            categories[1]._id,
-          ]
-        })
+        .send(toBeAdded)
 
       const addedId = response.body.id
-
       const updatedA = await Category.findById(categories[0]._id)
       const updatedB = await Category.findById(categories[1]._id)
 
@@ -372,14 +414,10 @@ describe('when logged in', () => {
     })
 
     test('removing a restaurant removes references from the associated categories', async () => {
-      const rawRestaurant = new Restaurant({
-        name: 'Ravintola Artjärvi',
-        url: 'https://www.joku.fi',
-        categories: [
-          categories[0]._id,
-          categories[1]._id,
-        ]
-      })
+      const toBeAdded = getAdditionalRestaurants()[0]
+      toBeAdded.categories = [categories[0]._id, categories[1]._id]
+
+      const rawRestaurant = new Restaurant(toBeAdded)
       const restaurant = await rawRestaurant.save()
       const id = restaurant._id
 
@@ -395,14 +433,10 @@ describe('when logged in', () => {
     })
 
     test('updating a restaurant removes references from categories no longer referenced', async () => {
-      const rawRestaurant = new Restaurant({
-        name: 'Ravintola Artjärvi',
-        url: 'https://www.joku.fi',
-        categories: [
-          categories[0]._id,
-          categories[1]._id,
-        ]
-      })
+      const toBeAdded = getAdditionalRestaurants()[0]
+      toBeAdded.categories = [categories[0]._id, categories[1]._id]
+  
+      const rawRestaurant = new Restaurant(toBeAdded)
       const restaurant = await rawRestaurant.save()
       const id = restaurant._id
 

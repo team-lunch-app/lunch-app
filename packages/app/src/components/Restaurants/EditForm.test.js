@@ -1,11 +1,12 @@
 import React from 'react'
-import { wait, within, fireEvent } from '@testing-library/react'
+import { within, fireEvent } from '@testing-library/react'
 import EditForm from './EditForm'
 
 import restaurantService from '../../services/restaurant'
 import suggestionService from '../../services/suggestion'
 import categoryService from '../../services/category'
 import authService from '../../services/authentication'
+import locationService from '../../services/location'
 
 import { actRender } from '../../test/utilities'
 import { act } from 'react-dom/test-utils'
@@ -13,12 +14,15 @@ import { act } from 'react-dom/test-utils'
 jest.mock('../../services/restaurant.js')
 jest.mock('../../services/suggestion.js')
 jest.mock('../../services/category.js')
+jest.mock('../../services/location.js')
 jest.mock('../../services/authentication.js')
 
 beforeEach(() => {
   jest.clearAllMocks()
   authService.getToken.mockReturnValue(undefined)
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
+  locationService.getCoordinates.mockResolvedValue({ latitude: 69, longitude: 42 })
+  locationService.getDistance.mockResolvedValue(1234)
 })
 
 test('form is empty if restaurant is not found with the given id parameter', async () => {
@@ -87,7 +91,9 @@ describe.only('when logged in', () => {
     fireEvent.change(nameField, { target: { value: edited.name } })
     fireEvent.change(urlField, { target: { value: edited.url } })
     
+    const checkElement = within(form).getByTestId(/check-button/i)
     const buttonElement = within(form).getByTestId(/submit-button/i)
+    await act(async () => fireEvent.click(checkElement))
     await act(async () => fireEvent.click(buttonElement))
 
     expect(restaurantService.update).toBeCalledWith(expect.objectContaining({
