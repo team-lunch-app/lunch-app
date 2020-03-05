@@ -93,34 +93,39 @@ restaurantsRouter.get('/', async (request, response) => {
 restaurantsRouter.post('/allMatches', async (request, response) => {
   const filterType = request.body.type || 'some'
   const filterCategories = request.body.categories || []
+  const maxDistance = request.body.distance || 50000
 
   let restaurants
+
   if (filterCategories.length > 0) {
     switch (filterType) {
       case 'some': {
         restaurants = await Restaurant.find({
-          'categories': { '$in': filterCategories }
+          'categories': { '$in': filterCategories },
+          'distance': { '$lte': maxDistance }
         })
         break
       }
 
       case 'all': {
         restaurants = await Restaurant.find({
-          'categories': { '$all': filterCategories }
+          'categories': { '$all': filterCategories },
+          'distance': { '$lte': maxDistance }
         })
         break
       }
 
       case 'none': {
         restaurants = await Restaurant.find({
-          'categories': { '$nin': filterCategories }
+          'categories': { '$nin': filterCategories },
+          'distance': { '$lte': maxDistance }
         })
         break
       }
     }
   } else {
     restaurants = await Restaurant
-      .find({}).populate('categories')
+      .find({ 'distance': { '$lte': maxDistance } })
   }
 
   restaurants.length > 0

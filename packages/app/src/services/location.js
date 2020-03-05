@@ -23,12 +23,12 @@ const createDistanceQuery = (targetLat, targetLon) => {
   )
 }
 
-const createItineraryQuery = (lat, lon) => {
+const createItineraryQuery = (targetLat, targetLon) => {
   return (`
     {
         plan(
-            from: { lat: ${lat}, lon: ${lon} }
-          to: { lat: 60.169447, lon: 24.925796 }
+            from: { lat: ${unityLat}, lon: ${unityLon} }
+          to: { lat: ${targetLat}, lon: ${targetLon} }
           numItineraries: 3
         ) {
             itineraries {

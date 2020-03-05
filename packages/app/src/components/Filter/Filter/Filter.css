@@ -1,20 +1,43 @@
+.filter-title {
+    width:100%;
+    color:black;
+}
+.filter-container {
+    display: flex;
+    flex-direction:column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
 .category-filter {
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 0.75em 0em;
+    width:100%;
 }
 
 .filter-typeselect {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0.75em 0em;
+    width:100%;
+    color:black;
 }
-
-.filter-typeselect > span {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
+.distance-filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width:100%;
+    color:black;
+}
+.distance-filter > form {
+    margin: 0em 0.5em;
+}
+.distance-filter > form > .form-group {
+    margin: 0;
+}
+.filter-typeselect > .dropdown {
+    margin: 0em 0.5em;
 }
 
 .category-list {

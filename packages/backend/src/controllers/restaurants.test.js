@@ -17,7 +17,7 @@ const restaurantData = [
       latitude: 24,
       longitude: 60
     },
-    distance: 1000
+    distance: 300
   },
   {
     name: 'Jaskan Pitsa & Kebab Oy',
@@ -27,7 +27,7 @@ const restaurantData = [
       latitude: 25,
       longitude: 61
     },
-    distance: 1001
+    distance: 500
   },
   {
     name: 'Steissin BK',
@@ -37,7 +37,7 @@ const restaurantData = [
       latitude: 26,
       longitude: 62
     },
-    distance: 1002
+    distance: 700
   },
 ]
 
@@ -63,7 +63,7 @@ const getAdditionalRestaurants = (categoryA, categoryB) => [
       latitude: 260,
       longitude: 620
     },
-    distance: 1022
+    distance: 999
   },
   {
     name: 'Joku Toinen Paikka',
@@ -74,7 +74,7 @@ const getAdditionalRestaurants = (categoryA, categoryB) => [
       latitude: 27,
       longitude: 61
     },
-    distance: 1003
+    distance: 1000
   },
   {
     name: 'Kauppatorin Nakkikioski',
@@ -89,7 +89,7 @@ const getAdditionalRestaurants = (categoryA, categoryB) => [
       latitude: 26,
       longitude: 62
     },
-    distance: 1002
+    distance: 1001
   }
 ]
 
@@ -141,10 +141,10 @@ test('get request to a specific id returns the correct restaurant', async () => 
   })
 })
 
-test('getAllMatches request without category ids returns all restaurants', async () => {
+test('getAllMatches request without category ids or distance returns all restaurants', async () => {
   const response = await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [], type: 'some' })
+    .send({ categories: [], type: 'some', distance: undefined })
 
   const contents = response.body
   expect(contents.length).toBe(3)
@@ -155,10 +155,11 @@ test('getAllMatches request with a category id returns all restaurants belonging
 
   const response = await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [categories[0].id], type: 'some' })
+    .send({ categories: [categories[0].id], type: 'some', distance: 1000 })
+    .expect(200)
 
   const contents = response.body
-  expect(contents.length).toBe(3)
+  expect(contents.length).toBe(2)
   expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id)))
 })
 
@@ -167,7 +168,8 @@ test('getAllMatches request with two category ids returns all restaurants that b
 
   const response = await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [categories[0].id, categories[1].id], type: 'all' })
+    .send({ categories: [categories[0].id, categories[1].id], type: 'all', distance: 1002 })
+    .expect(200)
 
   const contents = response.body
   expect(contents.length).toBe(1)
@@ -179,18 +181,38 @@ test('getAllMatches request with type none returns no restaurants in those categ
 
   const response = await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [categories[1].id], type: 'none' })
+    .send({ categories: [categories[1].id], type: 'none', distance: 500 })
 
   const contents = response.body
   expect(contents.every(restaurant => !restaurant.categories.includes(categories[1].id)))
 })
 
-test('getAllMatches responds with status 404 when no restaurants are found with the given filter', async () => {
+test('getAllMatches request with distance returns only restaurants with less than or equal the given distance', async () => {
+  const testdistance = 500
+  const response = await server
+    .post('/api/restaurants/allMatches')
+    .send({ categories: [], type: 'some', distance: testdistance })
+    .expect('Content-Type', /json/)
+    .expect(200)
+  const contents = response.body
+  expect(contents.every(restaurant => restaurant.distance <= testdistance))
+})
+
+
+test('getAllMatches responds with status 404 when no restaurants are found with the given categories', async () => {
   const testCategoryId = categories[0].id
 
   await server
     .post('/api/restaurants/allMatches')
-    .send({ categories: [testCategoryId], type: 'some' })
+    .send({ categories: [testCategoryId], type: 'some', distance: 500 })
+    .expect('Content-Type', /json/)
+    .expect(404)
+})
+
+test('getAllMatches responds with status 404 when no restaurants are found with the given distance', async () => {
+  await server
+    .post('/api/restaurants/allMatches')
+    .send({ categories: [], type: 'some', distance: 10 })
     .expect('Content-Type', /json/)
     .expect(404)
 })
@@ -435,7 +457,7 @@ describe('when logged in', () => {
     test('updating a restaurant removes references from categories no longer referenced', async () => {
       const toBeAdded = getAdditionalRestaurants()[0]
       toBeAdded.categories = [categories[0]._id, categories[1]._id]
-  
+
       const rawRestaurant = new Restaurant(toBeAdded)
       const restaurant = await rawRestaurant.save()
       const id = restaurant._id

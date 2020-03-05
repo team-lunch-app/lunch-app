@@ -8,7 +8,7 @@ const FilterType = ({ filterType, setFilterType }) => {
       data-testid='filtertype-dropdown'
       onSelect={(eventKey) => setFilterType(eventKey)}
     >
-      <Dropdown.Toggle data-testid='filtertype-dropdown-toggle'>
+      <Dropdown.Toggle variant='outline-secondary' data-testid='filtertype-dropdown-toggle'>
         {filterType}
       </Dropdown.Toggle>
       <Dropdown.Menu >

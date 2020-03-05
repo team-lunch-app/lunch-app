@@ -17,3 +17,11 @@
 .restaurant-url:hover {
     color: #E7A0E3;
 }
+
+.randomizer-showFilterButton {
+    margin: 0.5em;
+    background-color: Transparent;
+    outline:none;
+    color:white; 
+    border:none;
+}
