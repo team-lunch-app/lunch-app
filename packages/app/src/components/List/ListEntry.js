@@ -6,9 +6,9 @@ import authService from '../../services/authentication'
 
 
 const ListEntry = ({ item, onClickRemove, onClickEdit }) => {
-
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
+
   const handleClickRemove = async (event) => {
     event.preventDefault()
     await onClickRemove(item)
