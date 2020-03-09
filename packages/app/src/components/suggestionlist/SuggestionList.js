@@ -18,13 +18,14 @@ export const SuggestionList = () => {
     suggestionService.getAll().then(setSuggestions)
   }, [])
 
-  const handleReject = async (id) => {
-    await suggestionService.reject(id)
-    setSuggestions(suggestions.filter(s => s.id !== id))
+  const handleReject = async (suggestion) => {
+    await suggestionService.reject(suggestion.id)
+    setSuggestions(suggestions.filter(s => s.id !== suggestion.id))
   }
-  const handleApprove = async (id) => {
-    await suggestionService.approve(id)
-    setSuggestions(suggestions.filter(s => s.id !== id))
+  
+  const handleApprove = async (suggestion) => {
+    await suggestionService.approve(suggestion.id)
+    setSuggestions(suggestions.filter(s => s.data.id !== suggestion.data.id))
   }
 
   return (
@@ -147,7 +148,7 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
         <Button
           data-testid='suggestionEntry-approveButton'
           variant='warning'
-          onClick={() => handleApprove(suggestion.id)}
+          onClick={() => handleApprove(suggestion)}
           size='sm'
         >
           Approve
@@ -155,7 +156,7 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
         <Button
           data-testid='suggestionEntry-rejectButton'
           variant='danger'
-          onClick={() => handleReject(suggestion.id)}
+          onClick={() => handleReject(suggestion)}
           size='sm'
         >
           Reject
