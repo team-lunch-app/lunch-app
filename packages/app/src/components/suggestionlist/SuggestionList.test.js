@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent } from '@testing-library/react'
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
 import { SuggestionList, SuggestionEntry } from './SuggestionList'
 import suggestionService from '../../services/suggestion'
 import restaurantService from '../../services/restaurant'
@@ -115,6 +115,34 @@ test('if no suggestions are listed an alert message is rendered', async () => {
   expect(alertMessage).toBeInTheDocument()
 })
 
+test.only('Suggestions related to a restaurant are removed when a REMOVE suggestion is approved', async () => {
+  suggestionService.getAll.mockResolvedValue([testSuggestions[2], {...testSuggestions[2], id: 7}, {...testSuggestions[2], type: 'EDIT', id: 22}])
+
+  const { queryAllByTestId } = await actRender(<SuggestionList />, ['/admin/suggestions'])
+
+  const approveButtons = await queryAllByTestId('suggestionEntry-approveButton')
+  fireEvent.click(approveButtons[0])
+
+  await waitForElementToBeRemoved(() => queryAllByTestId('suggestionList-entry'))
+
+  const suggestions = await queryAllByTestId('suggestionList-entry')
+  expect(suggestions.length).toBe(0)
+})
+
+test.only('Suggestions related to a restaurant are removed when an EDIT suggestion is approved', async () => {
+  suggestionService.getAll.mockResolvedValue([{...testSuggestions[2], type: 'EDIT', id: 22}, testSuggestions[2], {...testSuggestions[2], id: 7}])
+
+  const { queryAllByTestId } = await actRender(<SuggestionList />, ['/admin/suggestions'])
+
+  const approveButtons = await queryAllByTestId('suggestionEntry-approveButton')
+  fireEvent.click(approveButtons[0])
+
+  await waitForElementToBeRemoved(() => queryAllByTestId('suggestionList-entry'))
+
+  const suggestions = await queryAllByTestId('suggestionList-entry')
+  expect(suggestions.length).toBe(0)
+})
+
 /**
  * BELOW: SuggestionEntry specific tests!
  */
@@ -133,7 +161,7 @@ test('pressing the approve button calls the provided callback', async () => {
 
   const approveButton = await queryByTestId('suggestionEntry-approveButton')
   fireEvent.click(approveButton)
-  expect(mockOnApprove).toBeCalledWith(suggestion.id)
+  expect(mockOnApprove).toBeCalledWith(suggestion)
 })
 
 test('renders approve button', async () => {
@@ -165,7 +193,7 @@ test('pressing the reject button calls the provided callback', async () => {
 
   const rejectButton = await queryByTestId('suggestionEntry-rejectButton')
   fireEvent.click(rejectButton)
-  expect(mockOnReject).toBeCalledWith(suggestion.id)
+  expect(mockOnReject).toBeCalledWith(suggestion)
 })
 
 test('renders reject button', async () => {
