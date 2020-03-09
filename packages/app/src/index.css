@@ -13,44 +13,44 @@ code {
 }
 
 .btn-primary {
-  background-color: #00cccc;
-  border-color: #00cccc;
+  background-color: #2196f3;
+  border-color: #2196f3;
 }
 
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-  background-color: #00aaaa;
-  border-color: #00aaaa;
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary:disabled {
+  background-color: #1b72b9;
+  border-color: #1b72b9;
 }
 
 .btn-success {
-  background-color: #1bbe96;
-  border-color: #1bbe96;
+  background-color: #20a69b;
+  border-color: #20a69b;
 }
 
-.btn-success:hover {
-  background-color: #16a581;
-  border-color: #16a581;
+.btn-success:hover, .btn-success:disabled {
+  background-color: #146962;
+  border-color: #146962;
 }
 
 .btn-danger {
-  background-color: #ff0066;
-  border-color: #ff0066;
+  background-color: #e25125;
+  border-color: #e25125;
 }
 
 .btn-danger:hover {
-  background-color: #cf0053;
-  border-color: #cf0053;
+  background-color: #a33b1b;
+  border-color: #a33b1b;
 }
 
 .btn-warning {
-  color: #f2f2f2;
-  background-color: #ff7f33;
-  border-color: #ff7f33;
+  color: white;
+  background-color: #faa629;
+  border-color: #faa629;
 }
 
 .btn-warning:hover {
-  background-color: #e66f2b;
-  border-color: #e66f2b;
+  background-color: #b87a1c;
+  border-color: #b87a1c;
 }
 
 .show > .btn-primary.dropdown-toggle {
@@ -61,15 +61,17 @@ code {
 #root {
   min-height: 100vh;
   height: 100%;
-  color: #f2f2f2;
+  background-color: black;
+  color: white;
   /*background-color: #F1C40F;*/
 
-  background: linear-gradient(-45deg, #221c37, #b83c82, #221c37,  #b83c82);
+  /*background: linear-gradient(-45deg, #221c37, #b83c82, #221c37,  #b83c82);
   background-size: 400%;
   animation: gradientAnim;
   animation-duration: 60s;  
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+  */
 }
 
 @keyframes gradientAnim {
@@ -80,4 +82,37 @@ code {
   100% {
     background-position: 100% 100%;
   }
+}
+
+.card {
+  background: rgba(255,255,255, 0.2);
+  color: white;
+  border: 0px;
+}
+
+.card-header{
+  background: rgba(0,0,0, 0.5);
+  color:white;
+}
+
+.card-body {
+  background: rgba(255,255,255, 0.05);
+  color:white;
+}
+
+.table {
+  color:white;
+}
+
+a {
+  color: #34c1d6;
+}
+
+a:hover {
+  color: #fce5ec;
+}
+
+.dropdown-toggle {
+  background:white;
+  color:black;
 }

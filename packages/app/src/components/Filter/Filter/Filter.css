@@ -1,6 +1,10 @@
+.input-group-text {
+    background:white;
+    color:black;
+}
+
 .filter-title {
     width:100%;
-    color:black;
 }
 .filter-container {
     display: flex;
@@ -18,20 +22,18 @@
 
 .filter-typeselect {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     width:100%;
-    color:black;
 }
 .distance-filter {
     display: flex;
     flex-direction: row;
     align-items: center;
     width:100%;
-    color:black;
 }
 .distance-filter > form {
-    margin: 0em 0.5em;
+    margin: 0em 0em;
 }
 .distance-filter > form > .form-group {
     margin: 0;

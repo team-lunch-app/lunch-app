@@ -17,6 +17,7 @@ test('distancefilter and categorydropdown do not show by default', async () => {
       filterType={'some'}
       setFilterType={jest.fn()}
       showFilter={false}
+      setDistance={jest.fn()}
     />
   )
   const dropdownElement = queryByTestId('filter-dropdown')
@@ -34,6 +35,7 @@ test('filter list exists when opened', async () => {
       filterType={'some'}
       setFilterType={jest.fn()}
       showFilter={true}
+      setDistance={jest.fn()}
     />
   )
   const listElement = queryByTestId('filter-list')
@@ -49,9 +51,10 @@ test('filter dropdown exists when opened', async () => {
       filterType={'some'}
       setFilterType={jest.fn()}
       showFilter={true}
+      setDistance={jest.fn()}
     />
   )
-  const dropdownElement = queryByTestId('filter-dropdown')
+  const dropdownElement = queryByTestId('category-dropdown-toggle')
   expect(dropdownElement).toBeInTheDocument()
 })
 
@@ -64,6 +67,7 @@ test('distance filter exists when opened', async () => {
       filterType={'some'}
       setFilterType={jest.fn()}
       showFilter={true}
+      setDistance={jest.fn()}
     />
   )
   const distanceElement = queryByTestId('filter-distance')
@@ -79,6 +83,7 @@ test('distance filter does not exist without a filtertype', async () => {
       filterType={undefined}
       setFilterType={jest.fn()}
       showFilter={true}
+      setDistance={jest.fn()}
     />
   )
   const dropdownElement = queryByTestId('filter-distance')
@@ -95,6 +100,7 @@ test('when deletebutton is pressed, setFilterCategories is called with right val
       filterType={'some'}
       setFilterType={jest.fn()}
       showFilter={true}
+      setDistance={jest.fn()}
     />
   )
   const removeButton = queryByTestId('filter-listEntry-deleteButton')

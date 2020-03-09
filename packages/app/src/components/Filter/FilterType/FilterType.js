@@ -1,14 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Dropdown } from 'react-bootstrap'
+import "./FilterType.css"
 
 const FilterType = ({ filterType, setFilterType }) => {
   return (
     <Dropdown
+
       data-testid='filtertype-dropdown'
       onSelect={(eventKey) => setFilterType(eventKey)}
     >
-      <Dropdown.Toggle variant='outline-secondary' data-testid='filtertype-dropdown-toggle'>
+      <Dropdown.Toggle
+        className="filtertype-dropdown"
+        variant='secondary'
+        data-testid='filtertype-dropdown-toggle'>
         {filterType}
       </Dropdown.Toggle>
       <Dropdown.Menu >

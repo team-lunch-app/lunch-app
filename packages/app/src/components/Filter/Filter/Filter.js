@@ -37,8 +37,6 @@ const Filter = ({ filterCategories, setFilterCategories, filterType, setFilterTy
             </InputGroup.Prepend>
             
             </InputGroup>           
-          </Card.Body >
-          <Card.Body className='category-filter' data-testid='filter-dropdown'>
             <FilterList selected={filterCategories} onRemove={handleRemove} emptyMessage={emptyMessage} />
           </Card.Body>
           <Card.Body className='distance-filter' data-testid='filter-distance'>
