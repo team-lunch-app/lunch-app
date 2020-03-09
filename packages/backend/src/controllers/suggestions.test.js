@@ -338,22 +338,22 @@ test('attempting to reject a request with a VALID id returns with 204', async ()
 })
 
 describe('when not logged in', () => {
-  test('trying to approve request fails with 403', async () => {
+  test('trying to approve request fails with 401', async () => {
     await server
       .post(`/api/suggestions/approve/${suggestions[0].id}`)
-      .expect(403)
+      .expect(401)
   })
 
-  test('trying to reject request fails with 403', async () => {
+  test('trying to reject request fails with 401', async () => {
     await server
       .post(`/api/suggestions/reject/${suggestions[0].id}`)
-      .expect(403)
+      .expect(401)
   })
 
-  test('trying to getAll fails with 403', async () => {
+  test('trying to getAll fails with 401', async () => {
     await server
       .get('/api/suggestions/')
-      .expect(403)
+      .expect(401)
   })
 })
 

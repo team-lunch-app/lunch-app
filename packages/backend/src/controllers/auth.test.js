@@ -136,23 +136,23 @@ describe('when logged in', () => {
 })
 
 describe('when not logged in', () => {
-  test('post request to users returns http code 403', async () => {
+  test('post request to users returns http code 401', async () => {
     await server
       .post('/api/auth/users')
       .send({ username: 'newuser', password: 'koirakissakoira' })
-      .expect(403)
+      .expect(401)
   })
 
-  test('get request to users returns http code 403', async () => {
+  test('get request to users returns http code 401', async () => {
     await server
       .get('/api/auth/users')
-      .expect(403)
+      .expect(401)
   })
 
-  test('trying to change password fails with 403', async () => {
+  test('trying to change password fails with 401', async () => {
     await server
       .post(`/api/auth/users/${user.id}/password`)
       .send({ password: 'kissakoira123', newPassword: 'koirakissa321' })
-      .expect(403)
+      .expect(401)
   })
 })
