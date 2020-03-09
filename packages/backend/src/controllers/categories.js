@@ -10,7 +10,7 @@ categoryRouter.get('/', async (request, response) => {
 
 categoryRouter.post('/', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const body = request.body
 
@@ -28,7 +28,7 @@ categoryRouter.post('/', async (request, response, next) => {
 
 categoryRouter.get('/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const category = await Category.findById(request.params.id)
     return category
@@ -41,7 +41,7 @@ categoryRouter.get('/:id', async (request, response, next) => {
 
 categoryRouter.put('/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const category = request.body
     const updatedCategory = await Category.findByIdAndUpdate(category.id, category)
@@ -53,7 +53,7 @@ categoryRouter.put('/:id', async (request, response, next) => {
 
 categoryRouter.delete('/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const id = request.params.id
 

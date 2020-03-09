@@ -5,6 +5,7 @@ const config = require('../config')
 
 const authRouter = require('express').Router()
 
+// login
 authRouter.post('/login', async (request, response) => {
   const body = request.body
   const username = body.username
@@ -27,9 +28,10 @@ authRouter.post('/login', async (request, response) => {
     .send({ token })
 })
 
+// get all users
 authRouter.get('/users', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const usersWithoutPasswords = await User.find({})
     response.json(usersWithoutPasswords.map(rest => rest.toJSON()))
@@ -38,10 +40,10 @@ authRouter.get('/users', async (request, response, next) => {
   }
 })
 
+// register
 authRouter.post('/users', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
-
+    await authorization.requireAuthorized(request)
     const body = request.body
     const username = body.username
     const password = body.password
@@ -57,6 +59,34 @@ authRouter.post('/users', async (request, response, next) => {
     }).save()
 
     return response.status(201).send(user.toJSON())
+  } catch (error) {
+    next(error)
+  }
+})
+
+// change user password
+authRouter.post('/users/:id/password', async (request, response, next) => {
+  try {
+    const token = await authorization.requireAuthorized(request, { acceptExpiredPassword: true })
+
+    const body = request.body
+    const password = body.password
+    const newPassword = body.newPassword
+
+    const user = await User.findById(token.id)
+    const passwordCorrect = user === null
+      ? false
+      : await bcrypt.compare(password, user.password)
+
+    if (!passwordCorrect) {  
+      return response.status(403).send({ error: 'wrong or invalid old password' })
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, config.bcryptSaltRounds)
+    user.password = passwordHash
+    await user.save()
+
+    return response.status(200).end()
   } catch (error) {
     next(error)
   }

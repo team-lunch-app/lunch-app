@@ -47,12 +47,12 @@ const createRowsFrom = async (model, entries) => {
 }
 
 const createUser = async (username, password) => {
-  const passwordHash = await bcrypt.hash(password, 8)
+  const passwordHash = await bcrypt.hash(password, config.bcryptSaltRounds)
   const user = new User({
     username: username,
     password: passwordHash
   })
-  return await user.save()
+  return user.save()
 }
 
 

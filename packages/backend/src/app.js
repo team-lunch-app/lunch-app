@@ -38,8 +38,9 @@ app.use((error, request, response, next) => {
     return response.status(400).send({ error: error.message })
   } else if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return response.status(400).send({ error: error.message })
+  } else if (error.name === 'PasswordExpired') {
+    return response.status(403).send({ error: error.message })
   }
-
   next(error)
 })
 

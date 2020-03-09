@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  passwordExpired: {
+    type: Boolean,
+    required: false
   }
 })
 userSchema.plugin(require('mongoose-unique-validator'))

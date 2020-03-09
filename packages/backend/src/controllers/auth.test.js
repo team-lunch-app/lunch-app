@@ -93,6 +93,46 @@ describe('when logged in', () => {
 
     expect(response.body).toHaveLength(2)
   })
+
+  test('trying to change password for other user fails with 403', async () => {
+    const newPassword = 'hähähäää'
+    await server
+      .post(`/api/auth/users/${users[0].id}/password`)
+      .set('authorization', `bearer ${token}`)
+      .send({ password: users[0].id, newPassword })
+      .expect(403)
+  })
+
+  test('trying to change password fails with 403 when current password is wrong', async () => {
+    const newPassword = 'hähähäää'
+    await server
+      .post(`/api/auth/users/${user.id}/password`)
+      .set('authorization', `bearer ${token}`)
+      .send({ password: 'väärä salasana', newPassword })
+      .expect(403)
+  })
+
+  test('trying to change password succeeds with 200 when credentials are correct', async () => {
+    const newPassword = 'koirakissa321'
+    await server
+      .post(`/api/auth/users/${user._id}/password`)
+      .set('authorization', `bearer ${token}`)
+      .send({ password: 'kissakoira123', newPassword })
+      .expect(200)
+  })
+
+  test('new password can be used to log in after succesfull password update', async () => {
+    const newPassword = 'koirakissa321'
+    await server
+      .post(`/api/auth/users/${user._id}/password`)
+      .set('authorization', `bearer ${token}`)
+      .send({ password: 'kissakoira123', newPassword })
+
+    await server
+      .post('/api/auth/login')
+      .send({ username: user.username, password: newPassword })
+      .expect(200)
+  })
 })
 
 describe('when not logged in', () => {
@@ -106,6 +146,13 @@ describe('when not logged in', () => {
   test('get request to users returns http code 403', async () => {
     await server
       .get('/api/auth/users')
+      .expect(403)
+  })
+
+  test('trying to change password fails with 403', async () => {
+    await server
+      .post(`/api/auth/users/${user.id}/password`)
+      .send({ password: 'kissakoira123', newPassword: 'koirakissa321' })
       .expect(403)
   })
 })

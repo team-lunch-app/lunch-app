@@ -76,7 +76,7 @@ suggestionsRouter.post('/remove', async (request, response, next) => {
 // approve
 suggestionsRouter.post('/approve/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const id = request.params.id
     const suggestion = await Suggestion.findById(id)
@@ -113,7 +113,7 @@ suggestionsRouter.post('/approve/:id', async (request, response, next) => {
 // reject
 suggestionsRouter.post('/reject/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const id = request.params.id
     const removed = await Suggestion.findByIdAndRemove(id)
@@ -129,7 +129,7 @@ suggestionsRouter.post('/reject/:id', async (request, response, next) => {
 // getAll
 suggestionsRouter.get('/', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const suggestions = await Suggestion
       .find({})
