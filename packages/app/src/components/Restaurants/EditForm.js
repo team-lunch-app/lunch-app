@@ -43,12 +43,21 @@ const EditForm = ({ id }) => {
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
+  const handleSubmit = async (restaurant) => {
+    if (isLoggedIn) {
+      restaurantService.update(restaurant)
+    } else {
+      suggestionService.editRestaurant(restaurant)
+      window.alert('Your suggestion has been received. An admin will have to approve it.')
+    }
+  }
+
   return error
     ? <Alert data- testid='error-msg-generic' variant='danger' > {error}</Alert >
     : <RestaurantForm
       restaurant={restaurant}
       setRestaurant={setRestaurant}
-      onSubmit={isLoggedIn ? restaurantService.update : suggestionService.editRestaurant}
+      onSubmit={handleSubmit}
       submitMessage={!isLoggedIn ? 'Suggest' : 'Update'}
       suggestTooltip={'Send a suggestion to edit this restaurant'} />
 }
