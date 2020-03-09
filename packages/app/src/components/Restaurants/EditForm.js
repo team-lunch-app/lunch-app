@@ -20,19 +20,22 @@ const EditForm = ({ id }) => {
     distance: 1000
   })
   const [restaurant, setRestaurant] = useState(!id ? createDefaultRestaurant() : undefined)
-  const [error, setError] = useState('')
+  const [error, setError] = useState('Loading...')
 
 
   useEffect(() => {
     if (id !== undefined) {
       restaurantService
         .getOneById(id)
-        .then(fetched => setRestaurant({
-          ...fetched,
-          name: fetched.name || '',
-          url: fetched.url || '',
-          categories: fetched.categories || [],
-        }))
+        .then(fetched => {
+          setRestaurant({
+            ...fetched,
+            name: fetched.name || '',
+            url: fetched.url || '',
+            categories: fetched.categories || [],
+          })
+          setError()
+        })
         .catch(() => {
           setRestaurant(createDefaultRestaurant())
           setError('Could not find restaurant with the given ID')
@@ -53,7 +56,7 @@ const EditForm = ({ id }) => {
   }
 
   return error
-    ? <Alert data- testid='error-msg-generic' variant='danger' > {error}</Alert >
+    ? <Alert data-testid='error-msg-generic' variant='danger' >{error}</Alert >
     : <RestaurantForm
       restaurant={restaurant}
       setRestaurant={setRestaurant}
