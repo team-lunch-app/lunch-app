@@ -5,7 +5,7 @@ import { actRender } from '../../../test/utilities'
 
 test('distance field renders', async () => {
   const mockSetDistance = jest.fn()
-  const distance = 500
+  const distance = '500'
   const { queryByTestId } =
     await actRender(
       <DistanceFilter distance={distance} setDistance={mockSetDistance} />
@@ -16,7 +16,7 @@ test('distance field renders', async () => {
 
 test('distance field renders the distance value', async () => {
   const mockSetDistance = jest.fn()
-  const distance = 500
+  const distance = '500'
   const { getByTestId } =
     await actRender(
       <DistanceFilter distance={distance} setDistance={mockSetDistance} />
@@ -31,8 +31,8 @@ test('distance field renders the distance value', async () => {
 
 test('distance field calls setDistance with the correct arguments', async () => {
   const mockSetDistance = jest.fn()
-  const distance = 500
-  const newDistance = 50000
+  const distance = '500'
+  const newDistance = '50000'
   const { getByTestId } =
     await actRender(
       <DistanceFilter distance={distance} setDistance={mockSetDistance} />

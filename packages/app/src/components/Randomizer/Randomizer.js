@@ -16,7 +16,7 @@ const Randomizer = () => {
   const [disableButton, setDisableButton] = useState(false)
   const [filterType, setFilterType] = useState('some')
   const [filterCategories, setFilterCategories] = useState([])
-  const [distance, setDistance] = useState()
+  const [distance, setDistance] = useState('')
   const [showFilter, setShowFilter] = useState(false)
 
   const sleep = async (duration) => {

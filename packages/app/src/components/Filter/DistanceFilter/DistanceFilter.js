@@ -17,15 +17,16 @@ const DistanceFilter = ({ distance, setDistance }) => {
           className='distance-form-input-control'
           type='number'
           name='distance'
+          min={0}
           defaultValue={distance}
-          onChange={(event) => setDistance(event.target.value)} />
+          onChange={(event) => setDistance(''+ event.target.value)} />
       </Form.Group>
     </Form>
   )
 }
 
 DistanceFilter.propTypes = {
-  distance: PropTypes.number,
+  distance: PropTypes.string,
   setDistance: PropTypes.func.isRequired
 }
 export default DistanceFilter
