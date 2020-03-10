@@ -25,31 +25,34 @@ const Filter = ({ filterCategories, setFilterCategories, filterType, setFilterTy
           <Card.Header className='filter-title'> I only want restaurants that... </Card.Header>
           <Card.Body className='filter-typeselect' >
             <InputGroup>
-            <InputGroup.Prepend> 
-            <InputGroup.Text>
+              <InputGroup.Prepend> 
+                <InputGroup.Text>
             Serve  
-            </InputGroup.Text>
-            <FilterType filterType={filterType} setFilterType={setFilterType} /> 
-            <InputGroup.Text>
+                </InputGroup.Text>
+                <FilterType filterType={filterType} setFilterType={setFilterType} /> 
+              </InputGroup.Prepend>
+            </InputGroup>
+            <InputGroup>
+              <InputGroup.Prepend> 
+                <InputGroup.Text>
             of the following
-            </InputGroup.Text>         
-            <CategoryDropdown text={dropdownText} selected={filterCategories} onAdd={handleAdd} onRemove={handleRemove} />  
-            </InputGroup.Prepend>
-            
+                </InputGroup.Text>         
+                <CategoryDropdown text={dropdownText} selected={filterCategories} onAdd={handleAdd} onRemove={handleRemove} />  
+              </InputGroup.Prepend>
             </InputGroup>           
-            <FilterList selected={filterCategories} onRemove={handleRemove} emptyMessage={emptyMessage} />
           </Card.Body>
+          <FilterList selected={filterCategories} onRemove={handleRemove} emptyMessage={emptyMessage} />
           <Card.Body className='distance-filter' data-testid='filter-distance'>
-          <InputGroup>
-            <InputGroup.Prepend> 
-            <InputGroup.Text>
-            Are at most
-            </InputGroup.Text>
-            <DistanceFilter distance={distance} setDistance={setDistance} />
-            <InputGroup.Text>
-            meters away from the office
-            </InputGroup.Text>
-            </InputGroup.Prepend>
+            <InputGroup>
+              <InputGroup.Prepend> 
+                <InputGroup.Text>
+            Max distance:
+                </InputGroup.Text>
+                <DistanceFilter distance={distance} setDistance={setDistance} />
+                <InputGroup.Text>
+            meters
+                </InputGroup.Text>
+              </InputGroup.Prepend>
             </InputGroup>
           </Card.Body>
         </Card>

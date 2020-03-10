@@ -7,12 +7,14 @@ const DistanceFilter = ({ distance, setDistance }) => {
   return (
     <Form
       data-testid='distance-form'
+      className='distance-form'
       onSubmit={(event) => event.preventDefault()}
     >
       <Form.Group data-testid='distance-field'
-      className='distance-form-input'
+        className='distance-form-input'
       >
         <Form.Control
+          className='distance-form-input-control'
           type='number'
           name='distance'
           defaultValue={distance}

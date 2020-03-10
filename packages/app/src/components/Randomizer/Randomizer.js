@@ -67,7 +67,7 @@ const Randomizer = () => {
         }
       </button>
       <Filter
-        emptyMessage={<strong>#I'llEatAnything</strong>}
+        emptyMessage={<strong>#IEatAnything</strong>}
         setFilterCategories={setFilterCategories}
         filterCategories={filterCategories}
         filterType={filterType}

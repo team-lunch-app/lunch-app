@@ -148,7 +148,7 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
         <Button
           data-testid='suggestionEntry-approveButton'
           variant='primary'
-          onClick={() => handleApprove(suggestion.id)}
+          onClick={() => handleApprove(suggestion)}
           size='sm'
         >
           Approve

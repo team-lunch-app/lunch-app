@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Dropdown } from 'react-bootstrap'
-import "./FilterType.css"
+import './FilterType.css'
 
 const FilterType = ({ filterType, setFilterType }) => {
   return (

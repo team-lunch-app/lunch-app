@@ -22,9 +22,9 @@
 
 .filter-typeselect {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    width:100%;
+    flex-wrap: wrap;
 }
 .distance-filter {
     display: flex;
@@ -42,37 +42,34 @@
     margin: 0em 0.5em;
 }
 
-.category-list {
-    padding: 0em 0.75em;
-}
-
-.category-list .entry {    
-    margin: 0em 0.25em;
-    padding: 0em 1em;
-    padding-right: 0em;
-}
-
-.category-list .entry > * {    
-    vertical-align: middle;
-}
-
-
-.category-list > .entry > button {
-    background-color: transparent;
-    border: transparent;
-    font-size: x-large;
-}
-
-.category-list > span > .empty-message {
+.filter-typeselect > .input-group {
+    width: inherit !important;
     display: flex;
+    flex: 1;
+    margin-bottom: 0.5em;
+}
+
+.filter-typeselect > .input-group > .input-group-prepend {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+}
+
+.filter-typeselect > .input-group > .input-group-prepend > .input-group-text {
+    flex: 1;
+}
+
+.input-group-text {
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+.filter-typeselect > .input-group > .input-group-prepend > .dropdown {
+    display: flex;
+    flex: 1;
+}
+
+.distance-filter > .input-group {
+    display:flex;
     align-items: center;
-}
-
-.category-list > span > .empty-message > .alert {
-    margin-bottom: 0;
-    padding: 0.25em 1em;
-}
-
-.category-list > span > .empty-message > .question-mark {
-    margin-left: 0.5em;
+    justify-content:center;
 }
