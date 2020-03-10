@@ -25,7 +25,7 @@ beforeEach(() => {
   locationService.getDistance.mockResolvedValue(1234)
 })
 
-test.only('form is not rendered if restaurant cannot be found', async () => {
+test('form is not rendered if restaurant cannot be found', async () => {
   restaurantService.getOneById.mockRejectedValue({ message: 'Error.' })
 
   const { queryByTestId } = await actRender(

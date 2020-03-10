@@ -69,7 +69,7 @@ test('post request to login with invalid data returns http code 403', async () =
 })
 
 describe('when logged in', () => {
-  test('post request to users with valid data returns http code 201', async () => {
+  test('registering user with valid data returns http code 201', async () => {
     await server
       .post('/api/auth/users')
       .set('authorization', `bearer ${token}`)
@@ -94,19 +94,10 @@ describe('when logged in', () => {
     expect(response.body).toHaveLength(2)
   })
 
-  test('trying to change password for other user fails with 403', async () => {
-    const newPassword = 'hähähäää'
-    await server
-      .post(`/api/auth/users/${users[0].id}/password`)
-      .set('authorization', `bearer ${token}`)
-      .send({ password: users[0].id, newPassword })
-      .expect(403)
-  })
-
   test('trying to change password fails with 403 when current password is wrong', async () => {
     const newPassword = 'hähähäää'
     await server
-      .post(`/api/auth/users/${user.id}/password`)
+      .post('/api/auth/users/password')
       .set('authorization', `bearer ${token}`)
       .send({ password: 'väärä salasana', newPassword })
       .expect(403)
@@ -115,16 +106,16 @@ describe('when logged in', () => {
   test('trying to change password succeeds with 200 when credentials are correct', async () => {
     const newPassword = 'koirakissa321'
     await server
-      .post(`/api/auth/users/${user._id}/password`)
+      .post('/api/auth/users/password')
       .set('authorization', `bearer ${token}`)
       .send({ password: 'kissakoira123', newPassword })
       .expect(200)
   })
 
-  test('new password can be used to log in after succesfull password update', async () => {
+  test('new password can be used to log in after successful password update', async () => {
     const newPassword = 'koirakissa321'
     await server
-      .post(`/api/auth/users/${user._id}/password`)
+      .post('/api/auth/users/password')
       .set('authorization', `bearer ${token}`)
       .send({ password: 'kissakoira123', newPassword })
 
@@ -132,6 +123,36 @@ describe('when logged in', () => {
       .post('/api/auth/login')
       .send({ username: user.username, password: newPassword })
       .expect(200)
+  })
+
+  test('fails with 400 when new password is too short', async () => {
+    const newPassword = '1234abc'
+    await server
+      .post('/api/auth/users/password')
+      .set('authorization', `bearer ${token}`)
+      .send({ password: 'kissakoira123', newPassword })
+      .expect(400)
+  })
+
+  test('fails with 400 when passwords are equal', async () => {
+    const newPassword = 'kissakoira123'
+    await server
+      .post('/api/auth/users/password')
+      .set('authorization', `bearer ${token}`)
+      .send({ password: 'kissakoira123', newPassword })
+      .expect(400)
+  })
+
+  test('password expiration flag is reset after successful password update', async () => {
+    const newPassword = 'kissakoira123'
+    await server
+      .post('/api/auth/users/password')
+      .set('authorization', `bearer ${token}`)
+      .send({ password: 'kissakoira123', newPassword })
+      .expect(400)
+
+    const userAfterUpdate = await User.findById(user.id)
+    expect(userAfterUpdate.passwordExpired || false).toBe(false)
   })
 })
 
@@ -151,8 +172,9 @@ describe('when not logged in', () => {
 
   test('trying to change password fails with 401', async () => {
     await server
-      .post(`/api/auth/users/${user.id}/password`)
+      .post('/api/auth/users/password')
       .send({ password: 'kissakoira123', newPassword: 'koirakissa321' })
       .expect(401)
   })
 })
+

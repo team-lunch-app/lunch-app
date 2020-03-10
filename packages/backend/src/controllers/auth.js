@@ -5,6 +5,10 @@ const config = require('../config')
 
 const authRouter = require('express').Router()
 
+const isValidPassword = (password) => {
+  return password !== undefined && password.length >= 8
+}
+
 // login
 authRouter.post('/login', async (request, response) => {
   const body = request.body
@@ -26,7 +30,7 @@ authRouter.post('/login', async (request, response) => {
   const token = authorization.createToken(user._id, user.username)
   return response
     .status(200)
-    .send({ token, passwordExpired })
+    .send({ token, passwordExpired, userId: user._id })
 })
 
 // get all users
@@ -49,7 +53,7 @@ authRouter.post('/users', async (request, response, next) => {
     const username = body.username
     const password = body.password
 
-    if (password.length < 8) {
+    if (!isValidPassword(password)) {
       return response.status(400).send({ error: 'password too short' })
     }
 
@@ -66,13 +70,20 @@ authRouter.post('/users', async (request, response, next) => {
 })
 
 // change user password
-authRouter.post('/users/:id/password', async (request, response, next) => {
+authRouter.post('/users/password', async (request, response, next) => {
   try {
     const token = await authorization.requireAuthorized(request, { acceptExpiredPassword: true })
 
     const body = request.body
     const password = body.password
     const newPassword = body.newPassword
+
+    if (!isValidPassword(newPassword)) {
+      return response.status(400).send({ error: 'password too short' })
+    }
+    if(password === newPassword){
+      return response.status(400).send({ error: 'new password cannot be your old password!' })
+    }
 
     const user = await User.findById(token.id)
     const passwordCorrect = user === null
@@ -85,6 +96,7 @@ authRouter.post('/users/:id/password', async (request, response, next) => {
 
     const passwordHash = await bcrypt.hash(newPassword, config.bcryptSaltRounds)
     user.password = passwordHash
+    user.passwordExpired = false
     await user.save()
 
     return response.status(200).end()

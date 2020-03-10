@@ -73,13 +73,13 @@ test('error message is shown if login fails', async () => {
   expect(error).toBeInTheDocument()
 })
 
-test('user is redirected to /admin on succesfull login', async () => {
+test('user is redirected to /admin on successful login', async () => {
   const { queryByTestId, getPath } = await actRender(<LoginForm onSubmit={jest.fn()} />, ['/login'])
 
-  authService.login.mockResolvedValue()
+  authService.login.mockResolvedValue({ passwordExpired: false })
 
   const buttonElement = await queryByTestId(/loginForm-loginButton/i)
-  fireEvent.click(buttonElement)
+  await act(async () => fireEvent.click(buttonElement))
 
   await wait(() => expect(getPath().pathname).toBe('/admin'))
 })
