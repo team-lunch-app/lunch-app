@@ -1,0 +1,7 @@
+.distance-form-input {
+    align-self:center;
+    margin: 0 !important;
+}
+.distance-form-input > input {
+    width: 7em !important;
+}

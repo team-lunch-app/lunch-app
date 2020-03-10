@@ -8,8 +8,7 @@ jest.mock('../../../services/category.js')
 const testCategories = [{ id: 1, name: 'pizza' }, { id: 2, name: 'burger' }, { id: 3, name: 'salads' }]
 
 categoryService.getAll.mockResolvedValue([...testCategories])
-
-test('filter list exists', async () => {
+test('distancefilter and categorydropdown do not show by default', async () => {
   const { queryByTestId } = await actRender(
     <Filter
       filterCategories={[...testCategories]}
@@ -17,13 +16,33 @@ test('filter list exists', async () => {
       emptyMessage={<strong>#NoFilter</strong>}
       filterType={'some'}
       setFilterType={jest.fn()}
+      showFilter={false}
+      setDistance={jest.fn()}
+    />
+  )
+  const dropdownElement = queryByTestId('filter-dropdown')
+  expect(dropdownElement).not.toBeInTheDocument()
+  const distanceElement = queryByTestId('filter-distance')
+  expect(distanceElement).not.toBeInTheDocument()
+})
+
+test('filter list exists when opened', async () => {
+  const { queryByTestId } = await actRender(
+    <Filter
+      filterCategories={[...testCategories]}
+      setFilterCategories={jest.fn()}
+      emptyMessage={<strong>#NoFilter</strong>}
+      filterType={'some'}
+      setFilterType={jest.fn()}
+      showFilter={true}
+      setDistance={jest.fn()}
     />
   )
   const listElement = queryByTestId('filter-list')
   expect(listElement).toBeInTheDocument()
 })
 
-test('filter dropdown exists', async () => {
+test('filter dropdown exists when opened', async () => {
   const { queryByTestId } = await actRender(
     <Filter
       filterCategories={[...testCategories]}
@@ -31,10 +50,44 @@ test('filter dropdown exists', async () => {
       emptyMessage={<strong>#NoFilter</strong>}
       filterType={'some'}
       setFilterType={jest.fn()}
+      showFilter={true}
+      setDistance={jest.fn()}
     />
   )
-  const dropdownElement = queryByTestId('filter-dropdown')
+  const dropdownElement = queryByTestId('category-dropdown-toggle')
   expect(dropdownElement).toBeInTheDocument()
+})
+
+test('distance filter exists when opened', async () => {
+  const { queryByTestId } = await actRender(
+    <Filter
+      filterCategories={[...testCategories]}
+      setFilterCategories={jest.fn()}
+      emptyMessage={<strong>#NoFilter</strong>}
+      filterType={'some'}
+      setFilterType={jest.fn()}
+      showFilter={true}
+      setDistance={jest.fn()}
+    />
+  )
+  const distanceElement = queryByTestId('filter-distance')
+  expect(distanceElement).toBeInTheDocument()
+})
+
+test('distance filter does not exist without a filtertype', async () => {
+  const { queryByTestId } = await actRender(
+    <Filter
+      filterCategories={[...testCategories]}
+      setFilterCategories={jest.fn()}
+      emptyMessage={<strong>#NoFilter</strong>}
+      filterType={undefined}
+      setFilterType={jest.fn()}
+      showFilter={true}
+      setDistance={jest.fn()}
+    />
+  )
+  const dropdownElement = queryByTestId('filter-distance')
+  expect(dropdownElement).not.toBeInTheDocument()
 })
 
 test('when deletebutton is pressed, setFilterCategories is called with right value', async () => {
@@ -46,6 +99,8 @@ test('when deletebutton is pressed, setFilterCategories is called with right val
       emptyMessage={<strong>#NoFilter</strong>}
       filterType={'some'}
       setFilterType={jest.fn()}
+      showFilter={true}
+      setDistance={jest.fn()}
     />
   )
   const removeButton = queryByTestId('filter-listEntry-deleteButton')

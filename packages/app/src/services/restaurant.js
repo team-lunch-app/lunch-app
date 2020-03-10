@@ -27,9 +27,9 @@ const remove = async (id) => {
   return await axios.delete(`${baseUrl}/${id}`, { headers: { Authorization: `bearer ${authService.getToken()}` } })
 }
 
-const getAllMatches = async (filterType, filterCategories) => {
+const getAllMatches = async (filterType, filterCategories, distance) => {
   const filterIds = filterCategories.map(category => category.id)
-  const response = await axios.post(`${baseUrl}/allMatches`, { categories: filterIds, type: filterType })
+  const response = await axios.post(`${baseUrl}/allMatches`, { categories: filterIds, type: filterType, distance: distance })
   return response.data
 }
 

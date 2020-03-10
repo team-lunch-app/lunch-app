@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Badge } from 'react-bootstrap'
-
+import './FilterList.css'
 const FilterList = ({ selected, onRemove, emptyMessage }) => {
   const removeHandler = (id) => (event) => {
     event.preventDefault()
@@ -9,7 +9,7 @@ const FilterList = ({ selected, onRemove, emptyMessage }) => {
   }
 
   return (
-    <span data-testid='filter-list' className='category-list'>
+    <div data-testid='filter-list' className='category-list'>
       {selected && selected.length > 0
         ? selected.map((category) =>
           <Badge
@@ -23,7 +23,7 @@ const FilterList = ({ selected, onRemove, emptyMessage }) => {
         )
         : <span data-testid='filter-emptyMessage'>{emptyMessage}</span>
       }
-    </span>
+    </div>
   )
 }
 

@@ -147,7 +147,7 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
       <Card.Body className='buttons'>
         <Button
           data-testid='suggestionEntry-approveButton'
-          variant='warning'
+          variant='primary'
           onClick={() => handleApprove(suggestion)}
           size='sm'
         >

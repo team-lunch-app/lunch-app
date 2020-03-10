@@ -51,7 +51,7 @@ const ListEntry = ({ item, onClickRemove, onClickEdit }) => {
   return (
     <Card className='list-entry' data-testid='list-entry'>
       <Card.Body>
-        <span data-testid='label'>{item.name}</span>
+        <span data-testid='label' className="list-entry-title">{item.name}</span>
         <div className='buttons'>
           {editButton}
           {removeButton}

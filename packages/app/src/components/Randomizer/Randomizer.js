@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import Filter from '../Filter/Filter/Filter'
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import soundService from '../../services/sound'
-import './Randomizer.css'
-
 import restaurantService from '../../services/restaurant'
+import './Randomizer.css'
 
 
 const Randomizer = () => {
@@ -15,6 +16,8 @@ const Randomizer = () => {
   const [disableButton, setDisableButton] = useState(false)
   const [filterType, setFilterType] = useState('some')
   const [filterCategories, setFilterCategories] = useState([])
+  const [distance, setDistance] = useState('')
+  const [showFilter, setShowFilter] = useState(false)
 
   const sleep = async (duration) => {
     return new Promise(r => setTimeout(r, duration))
@@ -24,7 +27,7 @@ const Randomizer = () => {
     event.preventDefault()
     setDisableButton(true)
     try {
-      const restaurants = await restaurantService.getAllMatches(filterType, filterCategories)
+      const restaurants = await restaurantService.getAllMatches(filterType, filterCategories, distance)
       if (restaurants.length > 1) {
         let restaurantIndex = Math.floor(Math.random() * restaurants.length)
         for (let rotations = 0; rotations <= maxNumberOfRotations; rotations++) {
@@ -51,12 +54,29 @@ const Randomizer = () => {
       <Button data-testid='randomizer-randomizeButton' onClick={roll} variant='success' size='lg' disabled={disableButton}>
         {`I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`}
       </Button>
+      <button 
+        className='randomizer-showFilterButton' 
+        onClick={() => setShowFilter(!showFilter)}>
+        {showFilter
+          ? 'Hide filter ' 
+          : 'Set filter '
+        }
+        {showFilter 
+          ? <FontAwesomeIcon icon={faAngleUp}/>
+          : <FontAwesomeIcon icon={faAngleDown}/>
+        }
+      </button>
       <Filter
-        emptyMessage={<strong>#NoFilter</strong>}
+        emptyMessage={<strong>#IEatAnything</strong>}
         setFilterCategories={setFilterCategories}
         filterCategories={filterCategories}
         filterType={filterType}
-        setFilterType={setFilterType} />
+        setFilterType={setFilterType} 
+        distance={distance}
+        setDistance={setDistance} 
+        showFilter={showFilter}
+        setShowFilter={setShowFilter}
+      />
     </div>
   )
 }

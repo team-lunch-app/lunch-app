@@ -1,53 +1,75 @@
+.input-group-text {
+    background:white;
+    color:black;
+}
+
+.filter-title {
+    width:100%;
+}
+.filter-container {
+    display: flex;
+    flex-direction:column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
 .category-filter {
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 0.75em 0em;
+    width:100%;
 }
 
 .filter-typeselect {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    padding: 0.75em 0em;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
-
-.filter-typeselect > span {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-}
-
-.category-list {
-    padding: 0em 0.75em;
-}
-
-.category-list .entry {    
-    margin: 0em 0.25em;
-    padding: 0em 1em;
-    padding-right: 0em;
-}
-
-.category-list .entry > * {    
-    vertical-align: middle;
-}
-
-
-.category-list > .entry > button {
-    background-color: transparent;
-    border: transparent;
-    font-size: x-large;
-}
-
-.category-list > span > .empty-message {
+.distance-filter {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    width:100%;
+}
+.distance-filter > form {
+    margin: 0em 0em;
+}
+.distance-filter > form > .form-group {
+    margin: 0;
+}
+.filter-typeselect > .dropdown {
+    margin: 0em 0.5em;
 }
 
-.category-list > span > .empty-message > .alert {
-    margin-bottom: 0;
-    padding: 0.25em 1em;
+.filter-typeselect > .input-group {
+    width: inherit !important;
+    display: flex;
+    flex: 1;
+    margin-bottom: 0.5em;
 }
 
-.category-list > span > .empty-message > .question-mark {
-    margin-left: 0.5em;
+.filter-typeselect > .input-group > .input-group-prepend {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+}
+
+.filter-typeselect > .input-group > .input-group-prepend > .input-group-text {
+    flex: 1;
+}
+
+.input-group-text {
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+.filter-typeselect > .input-group > .input-group-prepend > .dropdown {
+    display: flex;
+    flex: 1;
+}
+
+.distance-filter > .input-group {
+    display:flex;
+    align-items: center;
+    justify-content:center;
 }

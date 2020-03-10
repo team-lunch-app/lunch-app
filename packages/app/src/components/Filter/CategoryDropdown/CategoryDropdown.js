@@ -32,8 +32,8 @@ const CategoryDropdown = ({ text, selected, onAdd, onRemove }) => {
         setDropdownOpen(source !== 'select' ? isOpen : dropdownOpen)
       }}
     >
-      <Dropdown.Toggle data-testid='category-dropdown-toggle' id="dropdown-custom-1">
-        {text || 'Filter by'}
+      <Dropdown.Toggle variant='secondary' data-testid='category-dropdown-toggle' id="dropdown-custom-1">
+        {text || 'food categories'}
       </Dropdown.Toggle>
       <Dropdown.Menu >
         {categories

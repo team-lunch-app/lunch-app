@@ -1,0 +1,40 @@
+.category-list {
+    display:flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 1em;
+    padding: 0.2em;
+    max-width:420px;
+}
+
+
+.category-list .entry {    
+    margin: 0.25em 0.25em;
+}
+
+.category-list .entry > * {    
+    vertical-align: middle;
+}
+
+
+.category-list > .entry > button {
+    background-color: transparent;
+    border: transparent;
+    font-size: x-large;
+}
+
+.category-list > span > .empty-message {
+    display: flex;
+    align-items: center;
+}
+
+.category-list > span > .empty-message > .alert {
+    margin-bottom: 0;
+    padding: 0.25em 1em;
+}
+
+.category-list > span > .empty-message > .question-mark {
+    margin-left: 0.5em;
+}
