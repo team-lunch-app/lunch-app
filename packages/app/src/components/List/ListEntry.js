@@ -5,7 +5,7 @@ import './ListEntry.css'
 import authService from '../../services/authentication'
 
 
-const ListEntry = ({ item, onClickRemove, onClickEdit }) => {
+const ListEntry = ({ item, onClickRemove, onClickEdit, children }) => {
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
@@ -55,6 +55,7 @@ const ListEntry = ({ item, onClickRemove, onClickEdit }) => {
         <div className='buttons'>
           {editButton}
           {removeButton}
+          {children}
         </div>
       </Card.Body>
     </Card>
@@ -67,7 +68,8 @@ ListEntry.propTypes = {
     name: PropTypes.string.isRequired
   }).isRequired,
   onClickRemove: PropTypes.func,
-  onClickEdit: PropTypes.func
+  onClickEdit: PropTypes.func,
+  children: PropTypes.any,
 }
 
 export default ListEntry

@@ -6,6 +6,10 @@ const getToken = () => {
   return token
 }
 
+const getUserId = () => {
+  return userId
+}
+
 const setLoggedInUser = (newToken, newUserId) => {
   token = newToken
   userId = newUserId
@@ -66,6 +70,7 @@ export default {
   logout,
   getAllUsers,
   getToken,
+  getUserId,
   register,
   changePassword,
   restoreUser,

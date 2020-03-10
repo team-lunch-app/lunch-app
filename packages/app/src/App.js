@@ -53,7 +53,8 @@ const App = () => {
       <section className='main-container'>
         <Switch>
           <Route exact path="/error/404" render={() => <NotFound />} />
-          <Route exact path="/password-reset" render={() => <PasswordReset />} />
+          <Route exact path="/admin/password-reset" render={() => <PasswordReset reset />} />
+          <Route exact path="/admin/change-password" render={() => <PasswordReset />} />
 
           <Route exact path="/" render={() => <Randomizer />} />
           <Route exact path="/add" render={() => <AddForm />} />

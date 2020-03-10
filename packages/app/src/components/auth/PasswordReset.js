@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Form, Button, Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import authService from '../../services/authentication'
 
-const PasswordReset = () => {
+const PasswordReset = ({ reset = false }) => {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [error, setError] = useState('')
@@ -24,10 +25,17 @@ const PasswordReset = () => {
   return (
     <>
       <Form onSubmit={handleSubmit} data-testid='reset-password-form'>
-        <h1>Uh oh! Password reset needed!</h1>
-        <p>
-          Either you are logging in for the first time, or your password has expired. Please provide a new password.
-        </p>
+        {reset
+          ? <>
+            <h1>Uh oh! Password reset needed!</h1>
+            <p>
+              Either you are logging in for the first time, or your password has expired. Please provide a new password.
+            </p>
+          </>
+          : <>
+            <h1>Change password</h1>
+          </>
+        }
         <Form.Group data-testid='old-password-field'>
           <Form.Label >Old Password</Form.Label>
           <Form.Control
@@ -49,6 +57,10 @@ const PasswordReset = () => {
       </Form>
     </>
   )
+}
+
+PasswordReset.propTypes = {
+  reset: PropTypes.bool,
 }
 
 export default PasswordReset

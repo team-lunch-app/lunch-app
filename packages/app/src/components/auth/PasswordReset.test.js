@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, wait } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import { within } from '@testing-library/dom'
 import { actRender } from '../../test/utilities'
 import PasswordReset from './PasswordReset'
@@ -49,7 +49,7 @@ test('when credentials are accepted, user is redirected to /admin', async () => 
 
 test('when credentials are accepted, changePassword is called', async () => {
   authService.changePassword.mockResolvedValue()
-  const { getByTestId, getPath } = await actRender(<PasswordReset />, ['/password-reset'])
+  const { getByTestId } = await actRender(<PasswordReset />, ['/password-reset'])
 
   const form = getByTestId(/reset-password-form/i)
   const oldPasswordField = within(within(form).getByTestId(/old-password-field/i)).getByRole(/textbox/i)
@@ -66,7 +66,7 @@ test('when credentials are accepted, changePassword is called', async () => {
 
 test('when credentials are rejected, error is displayed', async () => {
   authService.changePassword.mockRejectedValue({ response: { data: { error: 'password too short' } } })
-  const { getByTestId, getPath } = await actRender(<PasswordReset />, ['/password-reset'])
+  const { getByTestId } = await actRender(<PasswordReset />, ['/password-reset'])
 
   const form = getByTestId(/reset-password-form/i)
   const oldPasswordField = within(within(form).getByTestId(/old-password-field/i)).getByRole(/textbox/i)

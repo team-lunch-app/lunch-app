@@ -14,7 +14,7 @@ const LoginForm = () => {
     try {
       const { passwordExpired } = await authService.login(username, password)
       history.push(passwordExpired
-        ? '/password-reset'
+        ? '/admin/password-reset'
         : '/admin')
     } catch (error) {
       setError(error.message)
