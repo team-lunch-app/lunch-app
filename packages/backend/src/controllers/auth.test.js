@@ -77,13 +77,24 @@ describe('when logged in', () => {
       .expect(201)
   })
 
-  test('post request to users with valid data returns user object', async () => {
+  test('registering user with valid data returns user object', async () => {
     const response = await server
       .post('/api/auth/users')
       .set('authorization', `bearer ${token}`)
       .send({ username: 'newuser', password: 'koirakissakoira' })
 
     expect(response.body).toMatchObject({ username: 'newuser', id: expect.anything() })
+  })
+
+  test('newly created user must reset password', async () => {
+    const response = await server
+      .post('/api/auth/users')
+      .set('authorization', `bearer ${token}`)
+      .send({ username: 'newuser', password: 'koirakissakoira' })
+
+    const id = response.body.id
+    const newUser = await User.findById(id)
+    expect(newUser.passwordExpired).toBe(true)
   })
 
   test('get request to users returns all users', async () => {

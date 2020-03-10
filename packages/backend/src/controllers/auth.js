@@ -61,6 +61,7 @@ authRouter.post('/users', async (request, response, next) => {
     const user = await new User({
       username: username,
       password: passwordHash,
+      passwordExpired: true,
     }).save()
 
     return response.status(201).send(user.toJSON())
