@@ -486,23 +486,23 @@ describe('when logged in', () => {
 })
 
 describe('when not logged in', () => {
-  test('post fails with status 403', async () => {
+  test('post fails with status 401', async () => {
     await server
       .post('/api/restaurants')
       .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
-      .expect(403)
+      .expect(401)
   })
 
-  test('put fails with status 403', async () => {
+  test('put fails with status 401', async () => {
     await server
       .put(`/api/restaurants/${restaurants[0].id}`)
       .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [] })
-      .expect(403)
+      .expect(401)
   })
 
-  test('delete fails with status 403', async () => {
+  test('delete fails with status 401', async () => {
     await server
       .delete(`/api/restaurants/${restaurants[0].id}`)
-      .expect(403)
+      .expect(401)
   })
 })

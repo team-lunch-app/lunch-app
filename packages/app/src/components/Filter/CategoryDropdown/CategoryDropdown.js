@@ -8,8 +8,7 @@ const CategoryDropdown = ({ text, selected, onAdd, onRemove }) => {
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    categoryService
-      .getAll()
+    categoryService.getAll()
       .then(fetched => setCategories([...fetched]))
   }, [])
 

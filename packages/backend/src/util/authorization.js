@@ -1,5 +1,20 @@
 const jwt = require('jsonwebtoken')
 const config = require('../config')
+const User = require('../models/user')
+
+class NotAuthorizedError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'NotAuthorized'
+  }
+}
+
+class PasswordExpiredError extends Error {
+  constructor() {
+    super()
+    this.name = 'PasswordExpired'
+  }
+}
 
 const getTokenFromHeaders = (request) => {
   const authorization = request.get('authorization')
@@ -17,13 +32,29 @@ const getTokenFromRequest = (request) => {
   }
 }
 
-const requireAuthorized = (request) => {
+const requireAuthorized = async (request, params) => {
   const token = getTokenFromRequest(request)
+  const allowExpired = params
+    ? params.acceptExpiredPassword
+    : false
+
   if (!token) {
-    const error = new Error('Not authorized')
-    error.name = 'NotAuthorized'
-    throw error
+    throw new NotAuthorizedError('Not authorized')
   }
+
+  let expired = false
+  try {
+    const user = await User.findById(token.id)
+    expired = user.passwordExpired
+  } catch (error) {
+    throw new NotAuthorizedError('Not authorized')
+  }
+
+  if (expired && !allowExpired) {
+    throw new PasswordExpiredError('Password has expired')
+  }
+
+  return token
 }
 
 const createToken = (id, username) => {
@@ -33,5 +64,7 @@ const createToken = (id, username) => {
 module.exports = {
   getTokenFromRequest,
   requireAuthorized,
-  createToken
+  createToken,
+  NotAuthorizedError,
+  PasswordExpiredError
 }

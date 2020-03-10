@@ -136,6 +136,12 @@ test('creating an EDIT suggestion creates a database entry', async () => {
     name: 'McDonalds uusi',
     url: 'www.mcduusi.fi',
     categories: [],
+    address: 'Jokukatu 42',
+    coordinates: {
+      latitude: 62,
+      longitude: 15
+    },
+    distance: 1074
   }
   const response = await server
     .post('/api/suggestions/edit')
@@ -153,7 +159,11 @@ test('creating an EDIT suggestion creates a database entry', async () => {
 })
 
 test('creating an EDIT suggestion responds with 201', async () => {
-  const newRestaurant = getAdditionalSuggestions()[0]
+  const restaurant = restaurants[0]
+  const newRestaurant = {
+    id: restaurant.id,
+    ...getAdditionalSuggestions()[0]
+  }
   await server
     .post('/api/suggestions/edit')
     .send(newRestaurant)
@@ -288,7 +298,7 @@ test('approving an EDIT request with a valid id responds with status 200', async
     .expect(200)
 })
 
-test.only('approving an EDIT request with a valid id updates the database entry for restaurant', async () => {
+test('approving an EDIT request with a valid id updates the database entry for restaurant', async () => {
   const suggestion = editSuggestions[0]
   await server
     .post(`/api/suggestions/approve/${suggestion.id}`)
@@ -328,27 +338,27 @@ test('attempting to reject a request with a VALID id returns with 204', async ()
 })
 
 describe('when not logged in', () => {
-  test('trying to approve request fails with 403', async () => {
+  test('trying to approve request fails with 401', async () => {
     await server
       .post(`/api/suggestions/approve/${suggestions[0].id}`)
-      .expect(403)
+      .expect(401)
   })
 
-  test('trying to reject request fails with 403', async () => {
+  test('trying to reject request fails with 401', async () => {
     await server
       .post(`/api/suggestions/reject/${suggestions[0].id}`)
-      .expect(403)
+      .expect(401)
   })
 
-  test('trying to getAll fails with 403', async () => {
+  test('trying to getAll fails with 401', async () => {
     await server
       .get('/api/suggestions/')
-      .expect(403)
+      .expect(401)
   })
 })
 
 test('get request to /api/suggestions returns correct number of suggestions', async () => {
   const response = await server.get('/api/suggestions').set('authorization', `bearer ${token}`)
   const contents = response.body
-  expect(contents.length).toBe(3)
+  expect(contents.length).toBe(4)
 })

@@ -287,7 +287,7 @@ describe('when restaurant is not validated', () => {
   })
 })
 
-describe.only('when restaurant is validated', () => {
+describe('when restaurant is validated', () => {
   test('add button calls restaurant callback with correct arguments', async () => {
     const mockSubmit = jest.fn()
     window.alert = jest.fn(() => true)
@@ -331,7 +331,7 @@ describe.only('when restaurant is validated', () => {
     }))
   })
 
-  test.only('modifying the address after check blocks submit button', async () => {
+  test('modifying the address after check blocks submit button', async () => {
     const mockSubmit = jest.fn()
     window.alert = jest.fn(() => true)
 

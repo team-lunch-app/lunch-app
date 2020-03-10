@@ -40,11 +40,12 @@ const NavBar = ({ loggedIn }) => {
           }
         </Nav>
       </Navbar.Collapse>
-      {loggedIn &&
-        <Nav className="ml-auto">
-          <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
-        </Nav>
-      }
+      <Nav className="ml-auto">
+        {loggedIn
+          ? <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
+          : <Button data-testid='admin-button' onClick={() => history.push('/login')} variant='light' size='sm' className='ml-auto'>Admin Login</Button>
+        }
+      </Nav>
     </Navbar>
   )
 }

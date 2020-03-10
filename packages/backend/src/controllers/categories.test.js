@@ -87,11 +87,11 @@ test('delete removes the correct category', async () => {
 })
 
 describe('when not logged in', () => {
-  test('post request with valid data and invalid token returns http code 403', async () => {
+  test('post request with valid data and invalid token returns http code 401', async () => {
     await server
       .post('/api/categories')
       .send({ name: 'Italian', restaurants: [] })
-      .expect(403)
+      .expect(401)
   })
 
   test('getById only allows authorized requests', async () => {
@@ -100,7 +100,7 @@ describe('when not logged in', () => {
     const category = contents[0]
     response =   await server
       .get('/api/categories/'+category.id)
-      .expect(403)
+      .expect(401)
   })
 
   test('delete only allows authorized requests', async () => {
@@ -109,6 +109,6 @@ describe('when not logged in', () => {
     const category = contents[0]
     response =   await server
       .delete('/api/categories/'+category.id)
-      .expect(403)
+      .expect(401)
   })
 })

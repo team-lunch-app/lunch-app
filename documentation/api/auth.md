@@ -32,6 +32,8 @@ Returns an authentication token wrapped into an json-object; that is, an object 
 ```js
 {
   token: string,
+  userId: ObjectId,
+  passwordExpired: Boolean,
 }
 ```
 
@@ -89,3 +91,25 @@ Returns an array of users with shape
   // ...
 ]
 ```
+
+`POST /api/auth/users/password`
+----------------------
+
+*change password*-endpoint. Requires authorization. Changes the password for current user
+
+### Request
+Accepts a json-object containing login credentials. `password` is the current/old password.
+```js
+{
+  newPassword: string,
+  password: string,
+}
+```
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+Request body contains error message in case of error. Errors occur as password validation errors if any are present.

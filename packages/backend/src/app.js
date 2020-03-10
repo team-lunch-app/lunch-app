@@ -33,13 +33,14 @@ app.get('/*', (req, res) => {
 
 app.use((error, request, response, next) => {
   if (error.name === 'NotAuthorized') {
-    return response.status(403).send({ error: error.message })
+    return response.status(401).send({ error: error.message })
   } else if (error.name === 'ValidationError') {
     return response.status(400).send({ error: error.message })
   } else if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return response.status(400).send({ error: error.message })
+  } else if (error.name === 'PasswordExpired') {
+    return response.status(403).send({ error: error.message })
   }
-
   next(error)
 })
 

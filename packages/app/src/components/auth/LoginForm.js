@@ -12,8 +12,10 @@ const LoginForm = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      await authService.login(username, password)
-      history.push('/admin')
+      const { passwordExpired } = await authService.login(username, password)
+      history.push(passwordExpired
+        ? '/admin/password-reset'
+        : '/admin')
     } catch (error) {
       setError(error.message)
     }

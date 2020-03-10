@@ -147,7 +147,7 @@ restaurantsRouter.get('/:id', async (request, response) => {
 // add
 restaurantsRouter.post('/', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const restaurant = await tryCreateRestaurant(parseRestaurant(request.body))
     return response.status(201).json(restaurant.toJSON())
@@ -160,7 +160,7 @@ restaurantsRouter.post('/', async (request, response, next) => {
 // update
 restaurantsRouter.put('/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     await tryUpdateRestaurant(parseRestaurant(request.body, request.params.id))
 
@@ -173,7 +173,7 @@ restaurantsRouter.put('/:id', async (request, response, next) => {
 // delete
 restaurantsRouter.delete('/:id', async (request, response, next) => {
   try {
-    authorization.requireAuthorized(request)
+    await authorization.requireAuthorized(request)
 
     const id = request.params.id
     return await tryRemoveRestaurant(id)
