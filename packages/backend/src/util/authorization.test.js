@@ -63,12 +63,12 @@ test('requireAuthorized returns user info when token is valid', async () => {
   expect(userInfo.username).toBe(user.username)
 })
 
-test('requireAuthorized fails with 403 if password has expired', async () => {
+test('requireAuthorized fails with PasswordExpired if password has expired', async () => {
   const mockGet = jest.fn()
   mockGet.mockReturnValue(`bearer ${expiredUserToken}`)
   const request = { get: mockGet }
 
-  await expect(authorization.requireAuthorized(request)).rejects.toThrowError(authorization.NotAuthorizedError)
+  await expect(authorization.requireAuthorized(request)).rejects.toThrowError(authorization.PasswordExpiredError)
 })
 
 test('requireAuthorized succeeds if password has expired but override flag is provided', async () => {

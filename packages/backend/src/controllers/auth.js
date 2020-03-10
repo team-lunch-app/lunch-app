@@ -22,10 +22,11 @@ authRouter.post('/login', async (request, response) => {
     })
   }
 
+  const passwordExpired = user.passwordExpired || false
   const token = authorization.createToken(user._id, user.username)
-  response
+  return response
     .status(200)
-    .send({ token })
+    .send({ token, passwordExpired })
 })
 
 // get all users
@@ -78,7 +79,7 @@ authRouter.post('/users/:id/password', async (request, response, next) => {
       ? false
       : await bcrypt.compare(password, user.password)
 
-    if (!passwordCorrect) {  
+    if (!passwordCorrect) {
       return response.status(403).send({ error: 'wrong or invalid old password' })
     }
 

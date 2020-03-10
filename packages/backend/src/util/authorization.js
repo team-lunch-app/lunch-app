@@ -9,7 +9,7 @@ class NotAuthorizedError extends Error {
   }
 }
 
-class PasswordExpired extends Error {
+class PasswordExpiredError extends Error {
   constructor() {
     super()
     this.name = 'PasswordExpired'
@@ -41,14 +41,17 @@ const requireAuthorized = async (request, params) => {
   if (!token) {
     throw new NotAuthorizedError('Not authorized')
   }
+
+  let expired = false
   try {
     const user = await User.findById(token.id)
-    const expired = user.passwordExpired || false
-    if (expired && !allowExpired) {
-      throw new PasswordExpired('Password has expired')
-    }
+    expired = user.passwordExpired
   } catch (error) {
     throw new NotAuthorizedError('Not authorized')
+  }
+
+  if (expired && !allowExpired) {
+    throw new PasswordExpiredError('Password has expired')
   }
 
   return token
@@ -62,5 +65,6 @@ module.exports = {
   getTokenFromRequest,
   requireAuthorized,
   createToken,
-  NotAuthorizedError
+  NotAuthorizedError,
+  PasswordExpiredError
 }

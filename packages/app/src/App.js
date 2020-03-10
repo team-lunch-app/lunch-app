@@ -42,6 +42,7 @@ const App = () => {
       </Switch>
     } />
 
+  // TODO: Password reset page
   return (
     <>
       <header className='main-navbar'>
@@ -50,6 +51,7 @@ const App = () => {
       <section className='main-container'>
         <Switch>
           <Route exact path="/error/404" render={() => <NotFound />} />
+          <Route exact path="/password-reset" render={() => <NotFound />} />
 
           <Route exact path="/" render={() => <Randomizer />} />
           <Route exact path="/add" render={() => <AddForm />} />

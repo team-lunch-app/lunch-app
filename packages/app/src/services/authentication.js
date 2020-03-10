@@ -14,6 +14,9 @@ const setToken = (newToken) => {
 const login = async (username, password) => {
   const response = await axios.post(`${baseUrl}/login`, { username: username, password: password })
   setToken(response.data.token)
+
+  const passwordExpired = response.data.passwordExpired || false
+  return { token, passwordExpired }
 }
 
 const logout = () => {
