@@ -1,3 +1,5 @@
+/* GENERAL */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,6 +13,42 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+a {
+  color: #34c1d6;
+}
+
+a:hover {
+  color: #fce5ec;
+}
+
+#root {
+  min-height: 100vh;
+  height: 100%;
+  background-color: black;
+  color: white;
+  /*background-color: #F1C40F;*/
+
+  /*background: linear-gradient(-45deg, #221c37, #b83c82, #221c37,  #b83c82);
+  background-size: 400%;
+  animation: gradientAnim;
+  animation-duration: 60s;  
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  */
+}
+
+@keyframes gradientAnim {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* BUTTONS */
 
 .btn-primary {
   background-color: #2196f3;
@@ -53,36 +91,30 @@ code {
   border-color: #b87a1c;
 }
 
+.btn-secondary {
+  color: black;
+  background-color: white;
+  border-color: white;
+}
+
+.btn-secondary:hover, .btn-secondary:disabled, .btn-secondary:active, .btn-secondary:focus {
+  color: black !important;
+  background-color: #eceff0 !important;
+  border-color: #eceff0 !important;
+}
+
 .show > .btn-primary.dropdown-toggle {
-  background-color: #00aaaa;
-  border-color: #00aaaa;
+  background-color: #2196f3;
+  border-color: #2196f3;
 }
 
-#root {
-  min-height: 100vh;
-  height: 100%;
-  background-color: black;
-  color: white;
-  /*background-color: #F1C40F;*/
-
-  /*background: linear-gradient(-45deg, #221c37, #b83c82, #221c37,  #b83c82);
-  background-size: 400%;
-  animation: gradientAnim;
-  animation-duration: 60s;  
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  */
+.show > .btn-secondary.dropdown-toggle {
+  color: black;
+  background-color: white;
+  border-color: white;
 }
 
-@keyframes gradientAnim {
-  0% {
-    background-position: 0% 0%;
-  }
-
-  100% {
-    background-position: 100% 100%;
-  }
-}
+/* CARDS */
 
 .card {
   background: rgba(255,255,255, 0.2);
@@ -100,19 +132,8 @@ code {
   color:white;
 }
 
+/* TABLES */
+
 .table {
   color:white;
-}
-
-a {
-  color: #34c1d6;
-}
-
-a:hover {
-  color: #fce5ec;
-}
-
-.dropdown-toggle {
-  background:white;
-  color:black;
 }
