@@ -1,6 +1,5 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
+import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
 
 const RestaurantEntry = ({ restaurant }) => {
@@ -29,7 +28,7 @@ const RestaurantEntry = ({ restaurant }) => {
             target='_blank'
             rel='noopener noreferrer'>
             <span>Website </span>
-            <FontAwesomeIcon icon={faExternalLinkAlt} />
+            <Link />
           </a>
         </p>
       }

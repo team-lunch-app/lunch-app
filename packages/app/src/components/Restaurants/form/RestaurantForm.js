@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Form, Button, ButtonToolbar, Alert, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons'
+import { HelpOutline } from '@material-ui/icons'
 import { useHistory } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
@@ -171,7 +170,7 @@ const FilterEmptyMessage = () => {
           </Tooltip>
         }
       >
-        <FontAwesomeIcon className='question-mark' icon={faQuestionCircle} />
+        <HelpOutline />
       </OverlayTrigger>
     </div>
   )
