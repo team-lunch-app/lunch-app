@@ -10,16 +10,23 @@ import './Randomizer.css'
 
 
 const Randomizer = () => {
-  const maxNumberOfRotations = 28
-  const minTimeBetweenRotations = 15  // in milliseconds
-  const maxTimeBetweenRotations = 750 // in milliseconds
+  const maxNumberOfRotations = 35
+  const minTimeBetweenRotations = 20   // in milliseconds
+  const maxTimeBetweenRotations = 1000 // in milliseconds
 
   const [restaurant, setRestaurant] = useState()
-  const [disableButton, setDisableButton] = useState(false)
+  const [isRolling, setRolling] = useState(false)
   const [filterType, setFilterType] = useState('some')
   const [filterCategories, setFilterCategories] = useState([])
   const [distance, setDistance] = useState('')
   const [showFilter, setShowFilter] = useState(false)
+
+  const [timeoutHandle, setTimeoutHandle] = useState()
+  const [nope, setNope] = useState()
+
+  useEffect(() => {
+    return () => clearTimeout(timeoutHandle)
+  }, [timeoutHandle])
 
   const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -29,30 +36,52 @@ const Randomizer = () => {
     return array;
   }
 
+  const easingFunc = (max, min, t) => {
+    //return (1 - t) * min + t * max // Linear interpolation
+    return (max - min) * Math.pow(t, 4) + min
+  }
+
   const rollNext = (iteration, restaurants) => {
     const count = restaurants.length
     const nextRestaurant = restaurants[iteration % count]
+    setRestaurant(nextRestaurant)
 
     const iterationsRemaining = maxNumberOfRotations - iteration
-    soundService.playBeep()
-    setRestaurant(nextRestaurant)
     if (iterationsRemaining === 0) {
-      soundService.playFanfare()
-      setDisableButton(false)
-    } else {
-      const delta = iteration / maxNumberOfRotations
-      const interpolatedTime = (1 - delta) * minTimeBetweenRotations + delta * maxTimeBetweenRotations // Linear interpolation
-      setTimeout(() => rollNext(iteration + 1, restaurants), interpolatedTime)
+      if (Math.random() < 0.025) {
+        setNope(true)
+        setTimeoutHandle(setTimeout(() => rollNext(Math.ceil(maxNumberOfRotations / 2), shuffle(restaurants)), minTimeBetweenRotations))
+        return
+      } else {
+        soundService.playFanfare()
+        setRolling(false)
+        setTimeoutHandle()
+        return
+      }
     }
+
+    if (iterationsRemaining < Math.ceil(maxNumberOfRotations / 2) - 5) {
+      setNope(false)
+    }
+
+    soundService.playBeep()
+
+    const t = iteration / maxNumberOfRotations
+    let interpolatedTime = easingFunc(maxTimeBetweenRotations, minTimeBetweenRotations, t)
+    if (iterationsRemaining === 1) {
+      interpolatedTime += 1000
+    }
+
+    setTimeoutHandle(setTimeout(() => rollNext(iteration + 1, restaurants), interpolatedTime))
   }
 
   const handleRoll = async (event) => {
     event.preventDefault()
     try {
-      setDisableButton(true)
-      const restaurants = await restaurantService.getAllMatches(filterType, filterCategories, distance)
+      setRolling(true)
+      const restaurants = shuffle(await restaurantService.getAllMatches(filterType, filterCategories, distance))
       if (restaurants.length > 1) {
-        setTimeout(() => rollNext(0, restaurants), maxTimeBetweenRotations)
+        setTimeoutHandle(setTimeout(() => rollNext(0, restaurants), maxTimeBetweenRotations))
       } else {
         setRestaurant(restaurants[0])
         soundService.playFanfare()
@@ -61,12 +90,12 @@ const Randomizer = () => {
       const error = errorResponse.response.data
       setRestaurant({ name: error.error, showMap: false })
       soundService.playTrombone()
-      setDisableButton(false)
+      setRolling(false)
     }
   }
 
   const restaurantElement = restaurant
-    ? <RestaurantEntry restaurant={restaurant} />
+    ? <RestaurantEntry restaurant={restaurant} disabled={isRolling} />
     : <h1 data-testid='randomizer-resultLabel'>Hungry? Press the button!</h1>
 
   const mapVisible = restaurant && restaurant.showMap
@@ -74,8 +103,11 @@ const Randomizer = () => {
   return (
     <div data-testid='randomizer' className='randomizer'>
       {mapVisible && <Confetti />}
-      {restaurantElement}
-      <Button data-testid='randomizer-randomizeButton' onClick={handleRoll} variant='success' size='lg' disabled={disableButton}>
+      {nope && <h1>NOPE</h1>}
+      {(isRolling && restaurant)
+        ? <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
+        : restaurantElement}
+      <Button data-testid='randomizer-randomizeButton' onClick={handleRoll} variant='success' size='lg' disabled={isRolling}>
         {mapVisible
           ? 'Gimme another one!'
           : `I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`
