@@ -22,19 +22,19 @@ const NavBar = ({ loggedIn }) => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link as={Link} href='#' data-testid='addForm-link' to='/add'>
-            {isLoggedIn 
-            ? 'Add a Restaurant' 
-            : 'Suggest a Restaurant'
-            }   
+            {isLoggedIn
+              ? 'Add a Restaurant'
+              : 'Suggest a Restaurant'
+            }
           </Nav.Link>
           <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
-          {isLoggedIn 
-            ? 'Edit Restaurants' 
-            : 'Suggest Editing Restaurants'
-            } 
+            {isLoggedIn
+              ? 'Edit Restaurants'
+              : 'Suggest Editing Restaurants'
+            }
           </Nav.Link>
-      </Nav>
-      <Nav className="ml-auto">  
+        </Nav>
+        <Nav className="ml-auto">
           {loggedIn &&
             <>
               <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
