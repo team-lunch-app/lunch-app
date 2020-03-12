@@ -17,7 +17,7 @@ restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
   url: 'www.pizza.fi',
   id: 1,
-  coordinates: {latitude: 60.17, longitude: 24.94}
+  coordinates: { latitude: 60.17, longitude: 24.94 }
 }])
 window.HTMLMediaElement.prototype.play = () => { }
 
@@ -33,39 +33,79 @@ locationService.getLeg.mockResolvedValue({
 
 
 test('new restaurant button exists', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   const buttonElement = queryByTestId('randomizer-randomizeButton')
   expect(buttonElement).toBeInTheDocument()
 })
 
 test('restaurant result label exists', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   const labelElement = queryByTestId('randomizer-resultLabel')
   expect(labelElement).toBeInTheDocument()
 })
 
 test('restaurant result label is not empty initially', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   const labelElement = queryByTestId('randomizer-resultLabel')
   expect(labelElement).not.toBeEmpty()
 })
 
 test('restaurant url is not rendered initially (no restaurant is shown)', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   const url = queryByTestId('randomizer-restaurantUrl')
   expect(url).not.toBeInTheDocument()
 })
 
 test('restaurant url is rendered after a restaurant is drawn', async () => {
-  const { queryByTestId, getByTestId } = await actRender(<Randomizer />)
-  await act(async () => {
-    fireEvent.click(queryByTestId('randomizer-randomizeButton'))
-    await wait(() => expect(getByTestId('randomizer-restaurantUrl')).toBeInTheDocument())
-  })
+  const { queryByTestId, getByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
+  await act(async () => fireEvent.click(queryByTestId('randomizer-randomizeButton')))
+  expect(getByTestId('randomizer-restaurantUrl')).toBeInTheDocument()
 })
 
 test('pressing the button calls the restaurant service', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   await act(async () => {
     fireEvent.click(queryByTestId('randomizer-randomizeButton'))
     await wait(() => expect(restaurantService.getAllMatches).toBeCalled())
@@ -73,18 +113,31 @@ test('pressing the button calls the restaurant service', async () => {
 })
 
 test('pressing the button changes the text', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   const restaurantNameElement = queryByTestId('randomizer-resultLabel')
   const originalText = restaurantNameElement.textContent
-  await act(async () => {
-    fireEvent.click(queryByTestId('randomizer-randomizeButton'))
-    await wait(() => expect(restaurantNameElement.textContent).not.toBe(originalText))
-  })
-  expect(restaurantNameElement.textContent).not.toBe(originalText)
+  await act(async () => fireEvent.click(queryByTestId('randomizer-randomizeButton')))
+
+  const newLabelElement = queryByTestId('randomizer-resultLabel')
+  expect(newLabelElement).not.toHaveTextContent(originalText)
 })
 
 test('user is not redirected to an external website if not confirmed', async () => {
-  const { queryByTestId, getByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId, getByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   window.confirm = jest.fn(() => false)
   await act(async () => {
     fireEvent.click(queryByTestId('randomizer-randomizeButton'))
@@ -95,12 +148,26 @@ test('user is not redirected to an external website if not confirmed', async () 
 })
 
 test('map is not shown by default', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   expect(queryByTestId('map')).not.toBeInTheDocument()
 })
 
 test('map is shown after roll', async () => {
-  const { queryByTestId } = await actRender(<Randomizer />)
+  const { queryByTestId } = await actRender(
+    <Randomizer
+      maxNumberOfRotations={10}
+      maxTimeBetweenRotations={1}
+      minTimeBetweenRotations={0}
+      resultWaitTime={0}
+    />
+  )
   await act(async () => {
     fireEvent.click(queryByTestId('randomizer-randomizeButton'))
     await wait(() => expect(queryByTestId('map')).toBeInTheDocument())

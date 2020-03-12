@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
 import { ExpandMore, ExpandLess } from '@material-ui/icons'
+import PropTypes from 'prop-types'
 import Filter from '../Filter/Filter/Filter'
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import soundService from '../../services/sound'
@@ -9,11 +10,7 @@ import Confetti from '../Confetti/Confetti'
 import './Randomizer.css'
 
 
-const Randomizer = () => {
-  const maxNumberOfRotations = 35
-  const minTimeBetweenRotations = 20   // in milliseconds
-  const maxTimeBetweenRotations = 1000 // in milliseconds
-
+const Randomizer = ({ maxNumberOfRotations = 35, minTimeBetweenRotations = 25, maxTimeBetweenRotations = 1000, resultWaitTime = 1250 }) => {
   const [restaurant, setRestaurant] = useState()
   const [isRolling, setRolling] = useState(false)
   const [filterType, setFilterType] = useState('some')
@@ -31,9 +28,9 @@ const Randomizer = () => {
   const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [array[i], array[j]] = [array[j], array[i]]
     }
-    return array;
+    return array
   }
 
   const easingFunc = (max, min, t) => {
@@ -69,7 +66,7 @@ const Randomizer = () => {
     const t = iteration / maxNumberOfRotations
     let interpolatedTime = easingFunc(maxTimeBetweenRotations, minTimeBetweenRotations, t)
     if (iterationsRemaining === 1) {
-      interpolatedTime += 1000
+      interpolatedTime += resultWaitTime
     }
 
     setTimeoutHandle(setTimeout(() => rollNext(iteration + 1, restaurants), interpolatedTime))
@@ -78,15 +75,17 @@ const Randomizer = () => {
   const handleRoll = async (event) => {
     event.preventDefault()
     try {
-      setRolling(true)
       const restaurants = shuffle(await restaurantService.getAllMatches(filterType, filterCategories, distance))
+      //const restaurants = [restaurantsA[0]]
       if (restaurants.length > 1) {
+        setRolling(true)
         setTimeoutHandle(setTimeout(() => rollNext(0, restaurants), maxTimeBetweenRotations))
       } else {
         setRestaurant(restaurants[0])
         soundService.playFanfare()
       }
     } catch (errorResponse) {
+      console.log(errorResponse)
       const error = errorResponse.response.data
       setRestaurant({ name: error.error, showMap: false })
       soundService.playTrombone()
@@ -95,17 +94,17 @@ const Randomizer = () => {
   }
 
   const restaurantElement = restaurant
-    ? <RestaurantEntry restaurant={restaurant} disabled={isRolling} />
+    ? <RestaurantEntry restaurant={restaurant} showMap={!isRolling} />
     : <h1 data-testid='randomizer-resultLabel'>Hungry? Press the button!</h1>
 
-  const mapVisible = restaurant && restaurant.showMap
+  const mapVisible = restaurant && !isRolling
 
   return (
     <div data-testid='randomizer' className='randomizer'>
       {mapVisible && <Confetti />}
       {nope && <h1>NOPE</h1>}
       {(isRolling && restaurant)
-        ? <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
+        ? <h1 data-testid='roll-label'>{restaurant.name}</h1>
         : restaurantElement}
       <Button data-testid='randomizer-randomizeButton' onClick={handleRoll} variant='success' size='lg' disabled={isRolling}>
         {mapVisible
@@ -141,6 +140,10 @@ const Randomizer = () => {
 }
 
 Randomizer.propTypes = {
+  maxNumberOfRotations: PropTypes.number,
+  minTimeBetweenRotations: PropTypes.number,
+  maxTimeBetweenRotations: PropTypes.number,
+  resultWaitTime: PropTypes.number,
 }
 
 export default Randomizer
