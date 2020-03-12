@@ -7,6 +7,8 @@ import authService from '../services/authentication'
 
 const NavBar = ({ loggedIn }) => {
   const history = useHistory()
+  const token = authService.getToken()
+  const isLoggedIn = token !== undefined
 
   const logout = () => {
     authService.logout()
@@ -20,21 +22,29 @@ const NavBar = ({ loggedIn }) => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link as={Link} href='#' data-testid='addForm-link' to='/add'>
-            Add a Restaurant
+            {isLoggedIn
+              ? 'Add a Restaurant'
+              : 'Suggest a Restaurant'
+            }
           </Nav.Link>
           <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
-            List Restaurants
+            {isLoggedIn
+              ? 'Edit Restaurants'
+              : 'Suggest Editing Restaurants'
+            }
           </Nav.Link>
+        </Nav>
+        <Nav className="ml-auto">
           {loggedIn &&
             <>
               <Nav.Link as={Link} href='#' data-testid='categoriesList-link' to='/admin/categories'>
-                List Categories
+                Edit Categories
               </Nav.Link>
               <Nav.Link as={Link} href='#' data-testid='suggestionList-link' to='/admin/suggestions'>
-                Pending Suggestions
+                Manage Pending Suggestions
               </Nav.Link>
               <Nav.Link as={Link} href='#' data-testid='userList-link' to='/admin/users'>
-                Users
+                Manage Users
               </Nav.Link>
             </>
           }
