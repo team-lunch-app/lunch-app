@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import { ExpandMore, ExpandLess } from '@material-ui/icons'
 import Filter from '../Filter/Filter/Filter'
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import soundService from '../../services/sound'
@@ -62,8 +61,8 @@ const Randomizer = () => {
           : 'Set filter '
         }
         {showFilter 
-          ? <FontAwesomeIcon icon={faAngleUp}/>
-          : <FontAwesomeIcon icon={faAngleDown}/>
+          ? <ExpandLess />
+          : <ExpandMore />
         }
       </button>
       <Filter

@@ -6,8 +6,7 @@ import PropTypes from 'prop-types'
 import suggestionService from '../../services/suggestion'
 import restaurantService from '../../services/restaurant'
 import categoryService from '../../services/category'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
+import { Link as LinkIcon } from '@material-ui/icons'
 
 import './SuggestionList.css'
 
@@ -111,9 +110,9 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
                 </tr>
                 <tr>
                   <td>URL</td>
-                  <td><a href={restaurant.url}><span>{restaurant.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span></a></td>
+                  <td><a href={restaurant.url}><span>{restaurant.url} <LinkIcon /></span></a></td>
                   {updatedRestaurant &&
-                    <td data-testid='suggestionEntry-updated-restaurantUrl'><a href={updatedRestaurant.url}><span>{updatedRestaurant.url} <FontAwesomeIcon icon={faExternalLinkAlt} /></span></a></td>}
+                    <td data-testid='suggestionEntry-updated-restaurantUrl'><a href={updatedRestaurant.url}><span>{updatedRestaurant.url} <LinkIcon /></span></a></td>}
                 </tr>
                 <tr>
                   <td>Categories</td>
