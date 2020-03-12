@@ -3,18 +3,28 @@ import { fireEvent, act, wait } from '@testing-library/react'
 import { actRender } from '../../test/utilities'
 import Randomizer from './Randomizer'
 import restaurantService from '../../services/restaurant'
+import locationService from '../../services/location'
 import categoryService from '../../services/category'
 
 jest.mock('../../services/restaurant.js')
+jest.mock('../../services/location.js')
 restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
   url: 'www.pizza.fi',
-  id: 1
+  id: 1,
+  coordinates: {latitude: 60.17, longitude: 24.94}
 }])
 window.HTMLMediaElement.prototype.play = () => { }
 
 jest.mock('../../services/category.js')
 categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
+locationService.getLeg.mockResolvedValue({
+  duration: 1660,
+  distance: 1956.084,
+  legGeometry: { length: 114, points: 'o}fnJ{ofwCM?K@Q@e@Vk@pA?V@z@S@@j@@f@?BA@oBpAEJ…s@t@G?IHIHALeAfAAAGFEFEDGFIJ{AjBaB|Bw@hAw@lAU^Ym@' },
+  from: { lat: 60.17, lon: 24.941944 },
+  to: { lat: 60.182315, lon: 24.922893 }
+})
 
 
 test('new restaurant button exists', async () => {
@@ -77,4 +87,17 @@ test('user is not redirected to an external website if not confirmed', async () 
     fireEvent.click(getByTestId('randomizer-restaurantUrl'))
   })
   expect(queryByTestId('randomizer-restaurantUrl')).toBeInTheDocument()
+})
+
+test('map is not shown by default', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  expect(queryByTestId('map')).not.toBeInTheDocument()
+})
+
+test('map is shown after roll', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  await act(async () => {
+    fireEvent.click(queryByTestId('randomizer-randomizeButton'))
+    await wait(() => expect(queryByTestId('map')).toBeInTheDocument())
+  })
 })

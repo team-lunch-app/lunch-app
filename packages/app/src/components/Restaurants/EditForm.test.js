@@ -23,6 +23,13 @@ beforeEach(() => {
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
   locationService.getCoordinates.mockResolvedValue({ latitude: 69, longitude: 42 })
   locationService.getDistance.mockResolvedValue(1234)
+  locationService.getLeg.mockResolvedValue({
+    duration: 1660,
+    distance: 1956.084,
+    legGeometry: { length: 114, points: 'o}fnJ{ofwCM?K@Q@e@Vk@pA?V@z@S@@j@@f@?BA@oBpAEJ…s@t@G?IHIHALeAfAAAGFEFEDGFIJ{AjBaB|Bw@hAw@lAU^Ym@' },
+    from: { lat: 60.17, lon: 24.941944 },
+    to: { lat: 60.182315, lon: 24.922893 }
+  })
 })
 
 test('form is not rendered if restaurant cannot be found', async () => {
@@ -46,6 +53,7 @@ test('form is pre-filled if a restaurant is found with the given id parameter', 
       url: 'www.pizza.fi',
       id: 1,
       categories: [],
+      coordinates: {latitude: 60, longitude: 24}
     }
   )
 
@@ -67,6 +75,7 @@ describe('when logged in', () => {
       name: 'Luigin pitseria',
       url: 'www.pitsa.fi',
       categories: [],
+      coordinates: {latitude: 69, longitude: 42}
     }
 
     authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
@@ -77,6 +86,7 @@ describe('when logged in', () => {
         url: 'www.pizza.fi',
         id: 1,
         categories: [],
+        coordinates: {latitude: 60, longitude: 24}
       }
     )
 
@@ -111,6 +121,7 @@ describe('when not logged in', () => {
       url: 'www.pitsa.fi',
       id: 1,
       categories: [],
+      coordinates: {latitude: 69, longitude: 42}
     }
 
     restaurantService.add.mockResolvedValue({ ...edited })
@@ -121,6 +132,7 @@ describe('when not logged in', () => {
         url: 'www.pizza.fi',
         id: 1,
         categories: [],
+        coordinates: {latitude: 60, longitude: 24}
       }
     )
 
@@ -144,3 +156,56 @@ describe('when not logged in', () => {
     expect(suggestionService.editRestaurant).toBeCalledWith(expect.objectContaining({ ...edited }))
   })
 })
+
+test('map is shown by default in the edit form', async () => {
+  restaurantService.getOneById.mockResolvedValue(
+    {
+      name: 'Luigi\'s pizza',
+      url: 'www.pizza.fi',
+      id: 1,
+      categories: [],
+      coordinates: { latitude: 60, longitude: 24 }
+    }
+  )
+  const { queryByTestId } = await actRender(<EditForm id={1} />)
+  expect(queryByTestId('map')).toBeInTheDocument()
+})
+
+test('map is not shown if the address is changed', async () => {
+  restaurantService.getOneById.mockResolvedValue(
+    {
+      name: 'Luigi\'s pizza',
+      url: 'www.pizza.fi',
+      id: 1,
+      categories: [],
+      coordinates: { latitude: 60, longitude: 24 }
+    }
+  )
+  const { queryByTestId, getByTestId } = await actRender(<EditForm id={1} />)
+  const form = getByTestId(/restaurant-form/i)
+  const addressField = within(form).getByTestId(/address-field/i)
+  const addressElement = within(addressField).getByRole(/textbox/i)
+  fireEvent.change(addressElement, { target: { value: 'Joku toinen katu 24' } })
+  expect(queryByTestId('map')).not.toBeInTheDocument()
+})
+
+test('map is shown if the address is changed and checked', async () => {
+  restaurantService.getOneById.mockResolvedValue(
+    {
+      name: 'Luigi\'s pizza',
+      url: 'www.pizza.fi',
+      id: 1,
+      categories: [],
+      coordinates: { latitude: 60, longitude: 24 }
+    }
+  )
+  const { queryByTestId, getByTestId } = await actRender(<EditForm id={1} />)
+  const form = getByTestId(/restaurant-form/i)
+  const addressField = within(form).getByTestId(/address-field/i)
+  const addressElement = within(addressField).getByRole(/textbox/i)
+  fireEvent.change(addressElement, { target: { value: 'Joku toinen katu 24' } })
+  const checkButton = within(form).getByTestId(/check-button/i)
+  await act(async () => fireEvent.click(checkButton))
+  expect(queryByTestId('map')).toBeInTheDocument()
+})
+

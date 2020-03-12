@@ -33,6 +33,7 @@ const EditForm = ({ id }) => {
             name: fetched.name || '',
             url: fetched.url || '',
             categories: fetched.categories || [],
+            showMap: true
           })
           setError()
         })

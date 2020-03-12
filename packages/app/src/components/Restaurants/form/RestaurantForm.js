@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
 
 import Filter from '../../Filter/Filter/Filter'
+import RouteMap from '../../RouteMap/RouteMap'
 
 import locationService from '../../../services/location'
 
@@ -22,7 +23,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
   let history = useHistory()
 
   const handleAddressChange = (address) => {
-    setRestaurant({ ...restaurant, address })
+    setRestaurant({ ...restaurant, address, coordinates: undefined, showMap:false })
     setValidated(false)
   }
 
@@ -30,11 +31,12 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
     try {
       const coordinates = await locationService.getCoordinates(restaurant.address)
       const distance = await locationService.getDistance(coordinates.latitude, coordinates.longitude)
-      setRestaurant({ ...restaurant, distance, coordinates })
+      setRestaurant({ ...restaurant, distance, coordinates, showMap: true })
       setValidated(true)
       setError()
     } catch (error) {
       setError('Could not find that location or address.')
+      setRestaurant({ ...restaurant, coordinates: undefined, showMap:false })
       setValidated(false)
     }
   }
@@ -44,6 +46,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
 
     try {
       if (onSubmit) {
+        delete restaurant.showMap
         await onSubmit({
           ...restaurant,
           categories: restaurant.categories.map(category => category.id)
@@ -111,6 +114,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
               onChange={(event) => handleAddressChange(event.target.value)}
             />
           </Form.Group>
+          {restaurant.showMap && <RouteMap restaurant={restaurant} />}
           <Filter
             dropdownText='Categories'
             emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
@@ -131,25 +135,23 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
             >
               Check
             </Button>
-            <div>
-              <OverlayTrigger
-                placement='right'
-                overlay={
-                  <Tooltip >
-                    {suggestTooltip}
-                  </Tooltip>
-                }
+            <OverlayTrigger
+              placement='right'
+              overlay={
+                <Tooltip >
+                  {suggestTooltip}
+                </Tooltip>
+              }
+            >
+              <Button
+                data-testid='submit-button'
+                type='submit'
+                variant='primary'
+                disabled={!validated}
               >
-                <Button
-                  data-testid='submit-button'
-                  type='submit'
-                  variant='primary'
-                  disabled={!validated}
-                >
-                  {submitMessage}
-                </Button>
-              </OverlayTrigger>
-            </div>
+                {submitMessage}
+              </Button>
+            </OverlayTrigger>
           </ButtonToolbar>
         </Form>}
     </div>
@@ -182,7 +184,12 @@ RestaurantForm.propTypes = {
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     categories: PropTypes.array,
-    address: PropTypes.string
+    address: PropTypes.string,
+    coordinates: PropTypes.shape({
+      latitude: PropTypes.number.isRequired,
+      longitude: PropTypes.number.isRequired
+    }),
+    showMap: PropTypes.bool.isRequired
   }),
   onSubmit: PropTypes.func,
   setRestaurant: PropTypes.func.isRequired,

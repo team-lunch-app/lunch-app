@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
+import RouteMap from '../RouteMap/RouteMap'
 
 const RestaurantEntry = ({ restaurant }) => {
 
@@ -32,6 +33,10 @@ const RestaurantEntry = ({ restaurant }) => {
           </a>
         </p>
       }
+      {
+        restaurant.showMap && <RouteMap restaurant={restaurant} />
+      }
+
     </>
 
   )

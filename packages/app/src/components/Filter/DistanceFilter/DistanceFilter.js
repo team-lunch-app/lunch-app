@@ -15,6 +15,7 @@ const DistanceFilter = ({ distance, setDistance }) => {
       >
         <Form.Control
           className='distance-form-input-control'
+          role='textbox'
           type='number'
           name='distance'
           min={0}

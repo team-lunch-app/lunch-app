@@ -11,11 +11,8 @@ const AddForm = () => {
     url: '',
     categories: [],
     address: '',
-    coordinates: {
-      latitude: 60,
-      longitude: 24
-    },
-    distance: 1000
+    distance: 1000,
+    showMap: false
   })
 
   const token = authService.getToken()
