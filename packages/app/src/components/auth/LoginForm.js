@@ -27,6 +27,7 @@ const LoginForm = () => {
         <Form.Group data-testid='loginform-usernameField'>
           <Form.Label >Username</Form.Label>
           <Form.Control
+            role='textbox'
             type='text'
             onChange={(event) => setUsername(event.target.value)}
             placeholder='Your Username' />
@@ -34,6 +35,7 @@ const LoginForm = () => {
         <Form.Group data-testid='loginform-passwordField'>
           <Form.Label>Password</Form.Label>
           <Form.Control
+            role='textbox'
             type='password'
             onChange={(event) => { setPassword(event.target.value) }}
             placeholder='****************' />

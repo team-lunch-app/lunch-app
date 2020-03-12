@@ -10,13 +10,20 @@ import { actRender } from '../../../test/utilities'
 jest.mock('../../../services/category.js')
 jest.mock('../../../services/location.js')
 
-const createEmptyRestaurant = () => ({ name: '', url: '', categories: [] })
+const createEmptyRestaurant = () => ({ name: '', url: '', categories: [], showMap: false})
 
 beforeEach(() => {
   jest.clearAllMocks()
   categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
   locationService.getCoordinates.mockResolvedValue({ latitude: 69, longitude: 42 })
   locationService.getDistance.mockResolvedValue(1234)
+  locationService.getLeg.mockResolvedValue({
+    duration: 1660,
+    distance: 1956.084,
+    legGeometry: { length: 114, points: 'o}fnJ{ofwCM?K@Q@e@Vk@pA?V@z@S@@j@@f@?BA@oBpAEJ…s@t@G?IHIHALeAfAAAGFEFEDGFIJ{AjBaB|Bw@hAw@lAU^Ym@' },
+    from: { lat: 60.17, lon: 24.941944 },
+    to: { lat: 60.182315, lon: 24.922893 }
+  })
 })
 
 describe('form alerts', () => {
@@ -113,7 +120,7 @@ test('name field accepts text input', async () => {
   const nameElement = within(nameField).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
 
-  expect(mockSetRestaurant).toBeCalledWith({ name: 'Lidl City Center', url: '', categories: [] })
+  expect(mockSetRestaurant).toBeCalledWith({ name: 'Lidl City Center', url: '', categories: [], showMap: false })
 })
 
 test('url field accepts text input', async () => {
@@ -134,7 +141,7 @@ test('url field accepts text input', async () => {
   const nameElement = within(urlField).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'https://www.lidl.fi/' } })
 
-  expect(mockSetRestaurant).toBeCalledWith({ name: '', url: 'https://www.lidl.fi/', categories: [] })
+  expect(mockSetRestaurant).toBeCalledWith({ name: '', url: 'https://www.lidl.fi/', categories: [], showMap:false })
 })
 
 test('address field accepts text input', async () => {
@@ -167,6 +174,7 @@ test('pressing cancel hides the component', async () => {
         name: 'Lidl City Center',
         url: 'https://www.lidl.fi/',
         categories: [],
+        showMap: false
       }}
       setRestaurant={jest.fn()}
       error={''}
@@ -197,7 +205,8 @@ test('pressing check when address can be resolved calls setRestaurant with coord
         coordinates: {
           latitude: 60,
           longitude: 24,
-        }
+        },
+        showMap: false
       }}
       setRestaurant={mockSetRestaurant}
       error={''}
@@ -208,18 +217,19 @@ test('pressing check when address can be resolved calls setRestaurant with coord
   const form = getByTestId(/restaurant-form/i)
   const checkButton = within(form).getByTestId(/check-button/i)
 
-  await act(async () => {fireEvent.click(checkButton)})
+  await act(async () => { fireEvent.click(checkButton) })
 
-  expect(mockSetRestaurant).toBeCalledWith(expect.objectContaining({ 
-    name: 'Lidl City Center', 
-    url: 'https://www.lidl.fi/', 
+  expect(mockSetRestaurant).toBeCalledWith(expect.objectContaining({
+    name: 'Lidl City Center',
+    url: 'https://www.lidl.fi/',
     categories: [],
     address: 'Jokukatu 42',
-    coordinates : {
+    coordinates: {
       latitude: 69,
       longitude: 42,
     },
-    distance: 1234
+    distance: 1234,
+    showMap: true
   }))
 })
 
@@ -239,7 +249,8 @@ describe('when restaurant is not validated', () => {
           coordinates: {
             latitude: 69,
             longitude: 42,
-          }
+          },
+          showMap: false
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -250,14 +261,14 @@ describe('when restaurant is not validated', () => {
     const form = getByTestId(/restaurant-form/i)
     const buttonElement = within(form).getByTestId(/submit-button/i)
 
-    await act(async () => {fireEvent.click(buttonElement)})
+    await act(async () => { fireEvent.click(buttonElement) })
 
     expect(mockSubmit).not.toBeCalled()
   })
 
   test('a check with an invalid address displays an error message', async () => {
     window.alert = jest.fn(() => true)
-    locationService.getCoordinates.mockRejectedValue({error: 'Boo!'})
+    locationService.getCoordinates.mockRejectedValue({ error: 'Boo!' })
 
     const { getByTestId } = await actRender(
       <RestaurantForm
@@ -270,7 +281,8 @@ describe('when restaurant is not validated', () => {
           coordinates: {
             latitude: 69,
             longitude: 42,
-          }
+          },
+          showMap: true
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -281,7 +293,7 @@ describe('when restaurant is not validated', () => {
     const form = getByTestId(/restaurant-form/i)
     const checkButton = within(form).getByTestId(/check-button/i)
 
-    await act(async () => {fireEvent.click(checkButton)})
+    await act(async () => { fireEvent.click(checkButton) })
 
     expect(within(form).getByTestId(/error-msg-generic/i)).toBeInTheDocument()
   })
@@ -303,7 +315,8 @@ describe('when restaurant is validated', () => {
           coordinates: {
             latitude: 69,
             longitude: 42,
-          }
+          },
+          showMap: false
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -315,15 +328,15 @@ describe('when restaurant is validated', () => {
     const buttonElement = within(form).getByTestId(/submit-button/i)
     const checkButton = within(form).getByTestId(/check-button/i)
 
-    await act(async () => {fireEvent.click(checkButton)})
-    await act(async () => {fireEvent.click(buttonElement)})
+    await act(async () => { fireEvent.click(checkButton) })
+    await act(async () => { fireEvent.click(buttonElement) })
 
-    expect(mockSubmit).toBeCalledWith(expect.objectContaining({ 
-      name: 'Lidl City Center', 
-      url: 'https://www.lidl.fi/', 
+    expect(mockSubmit).toBeCalledWith(expect.objectContaining({
+      name: 'Lidl City Center',
+      url: 'https://www.lidl.fi/',
       categories: [],
       address: 'Jokukatu 42',
-      coordinates : {
+      coordinates: {
         latitude: 69,
         longitude: 42,
       },
@@ -346,7 +359,8 @@ describe('when restaurant is validated', () => {
           coordinates: {
             latitude: 69,
             longitude: 42,
-          }
+          },
+          showMap: false
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -381,6 +395,7 @@ describe('when restaurant is validated', () => {
           url: 'https://www.lidl.fi/',
           address: 'Jokukatu 42',
           categories: [],
+          showMap: false
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -397,4 +412,45 @@ describe('when restaurant is validated', () => {
 
     expect(getPath().pathname).toBe('/')
   })
+})
+
+test('map is not shown when the restaurant has showMap false)', async () => {
+  const { queryByTestId } = await actRender(
+    <RestaurantForm
+      restaurant={{
+        name: 'Lidl City Center',
+        url: 'https://www.lidl.fi/',
+        address: 'Jokukatu 42',
+        categories: [],
+        distance: 1234,
+        coordinates: {latitude: 60, longitude: 24},
+        showMap: false
+      }}
+      setRestaurant={jest.fn()}
+      error={''}
+      setError={jest.fn()}
+      onSubmit={jest.fn()}
+    />)
+  expect(queryByTestId('map')).not.toBeInTheDocument()
+})
+
+
+test('map is shown when the restaurant has showMap true (i.e. when editing an existing restaurant, or after successful address check)', async () => {
+  const { queryByTestId } = await actRender(
+    <RestaurantForm
+      restaurant={{
+        name: 'Lidl City Center',
+        url: 'https://www.lidl.fi/',
+        address: 'Jokukatu 42',
+        categories: [],
+        distance: 1234,
+        coordinates: { latitude: 60.182315, longitude: 24.922893 },
+        showMap: true
+      }}
+      setRestaurant={jest.fn()}
+      error={''}
+      setError={jest.fn()}
+      onSubmit={jest.fn()}
+    />)
+  expect(queryByTestId('map')).toBeInTheDocument()
 })

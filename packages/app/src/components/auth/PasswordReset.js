@@ -39,6 +39,7 @@ const PasswordReset = ({ reset = false }) => {
         <Form.Group data-testid='old-password-field'>
           <Form.Label >Old Password</Form.Label>
           <Form.Control
+            role='textbox'
             type='password'
             value={oldPassword}
             onChange={(event) => setOldPassword(event.target.value)}
@@ -47,6 +48,7 @@ const PasswordReset = ({ reset = false }) => {
         <Form.Group data-testid='new-password-field'>
           <Form.Label>New Password</Form.Label>
           <Form.Control
+            role='textbox'
             type='password'
             value={newPassword}
             onChange={(event) => { setNewPassword(event.target.value) }}

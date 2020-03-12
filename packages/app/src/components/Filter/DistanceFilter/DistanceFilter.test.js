@@ -22,7 +22,7 @@ test('distance field renders the distance value', async () => {
       <DistanceFilter distance={distance} setDistance={mockSetDistance} />
     )
 
-  const form = getByTestId(/distance-form/i)
+  const form = getByTestId('distance-form')
   const distanceField = within(form).getByTestId(/distance-field/i)
   // Input test data
   const distanceElement = within(distanceField).getByRole(/textbox/i)
@@ -38,7 +38,7 @@ test('distance field calls setDistance with the correct arguments', async () => 
       <DistanceFilter distance={distance} setDistance={mockSetDistance} />
     )
 
-  const form = getByTestId(/distance-form/i)
+  const form = getByTestId('distance-form')
   const distanceField = within(form).getByTestId(/distance-field/i)
   // Input test data
   const distanceElement = within(distanceField).getByRole(/textbox/i)

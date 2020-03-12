@@ -32,16 +32,17 @@ const Randomizer = () => {
         for (let rotations = 0; rotations <= maxNumberOfRotations; rotations++) {
           await sleep(rotations * minTimeBetweenRotations)
           restaurantIndex = (restaurantIndex + 1) > (restaurants.length - 1) ? 0 : restaurantIndex + 1
-          setRestaurant(restaurants[restaurantIndex])
+          setRestaurant({ ...restaurants[restaurantIndex], showMap: false })
           soundService.playBeep()
         }
+        setRestaurant({ ...restaurants[restaurantIndex], showMap: true })
       } else {
-        setRestaurant(restaurants[0])
+        setRestaurant({ ...restaurants[0], showMap: true })
       }
       soundService.playFanfare()
     } catch (errorResponse) {
       const error = errorResponse.response.data
-      setRestaurant({ name: error.error })
+      setRestaurant({ name: error.error, showMap: false })
       soundService.playTrombone()
     }
     setDisableButton(false)
@@ -51,13 +52,16 @@ const Randomizer = () => {
     <div data-testid='randomizer' className='randomizer'>
       {restaurant && <RestaurantEntry restaurant={restaurant} />}
       <Button data-testid='randomizer-randomizeButton' onClick={roll} variant='success' size='lg' disabled={disableButton}>
-        {`I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`}
+        {restaurant.showMap
+          ? 'Gimme another one!'
+          : `I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`
+        }
       </Button>
-      <button 
-        className='randomizer-showFilterButton' 
+      <button
+        className='randomizer-showFilterButton'
         onClick={() => setShowFilter(!showFilter)}>
         {showFilter
-          ? 'Hide filter ' 
+          ? 'Hide filter '
           : 'Set filter '
         }
         {showFilter 
@@ -70,9 +74,9 @@ const Randomizer = () => {
         setFilterCategories={setFilterCategories}
         filterCategories={filterCategories}
         filterType={filterType}
-        setFilterType={setFilterType} 
+        setFilterType={setFilterType}
         distance={distance}
-        setDistance={setDistance} 
+        setDistance={setDistance}
         showFilter={showFilter}
         setShowFilter={setShowFilter}
       />

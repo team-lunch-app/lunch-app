@@ -1,4 +1,5 @@
 import axios from 'axios'
+import poly from '@mapbox/polyline'
 
 const unityLat = 60.170000
 const unityLon = 24.941944
@@ -12,6 +13,7 @@ const createDistanceQuery = (targetLat, targetLon) => {
             from: { lat: ${unityLat}, lon: ${unityLon} }
             to: { lat: ${targetLat}, lon: ${targetLon} }
           numItineraries: 1
+          transportModes: [{mode: WALK}]
         ) {
             itineraries {
                 legs {
@@ -29,37 +31,24 @@ const createItineraryQuery = (targetLat, targetLon) => {
         plan(
             from: { lat: ${unityLat}, lon: ${unityLon} }
           to: { lat: ${targetLat}, lon: ${targetLon} }
-          numItineraries: 3
+          numItineraries: 1
+          transportModes: [{mode: WALK}]
         ) {
             itineraries {
                 legs {
-                    startTime
-                    endTime
-                    mode
-                    trip {
-                        routeShortName
-                    }
                     duration
                     distance
-                    from {
-                        name
-                        lat
-                        lon
-                        stop {
-                            name
-                        }
-                    }
-                    to {
-                        name
-                        lat
-                        lon
-                        stop {
-                            name
-                        }
-                    }
                     legGeometry {
                         length
                         points
+                    }
+                    from {
+                        lat
+                        lon
+                    }
+                    to {
+                        lat
+                        lon
                     }
                 }
             }
@@ -68,15 +57,16 @@ const createItineraryQuery = (targetLat, targetLon) => {
   )
 }
 
-const getItineraries = async (lat, lon) => {
+const getLeg = async (lat, lon) => {
   const response = await axios.post(
     `${baseUrl}/routing/v1/routers/hsl/index/graphql`,
     createItineraryQuery(lat, lon),
     {
       headers: { 'Content-Type': 'application/graphql' },
     })
-  const fetchedItineraries = response.data.data.plan.itineraries
-  return fetchedItineraries
+  const fetchedItinerary = response.data.data.plan.itineraries[0]
+  const leg = fetchedItinerary.legs[0]
+  return leg
 }
 
 const getDistance = async (lat, lon) => {
@@ -97,4 +87,15 @@ const getCoordinates = async (text) => {
   return { latitude: coordinates[1], longitude: coordinates[0] }
 }
 
-export default { getCoordinates, getDistance, getItineraries }
+const decodeRoute = (legGeometry) => {
+  return poly.decode(legGeometry)
+}
+
+const calculateBounds = (leg) => {
+  return [
+    [Math.max(leg.from.lat, leg.to.lat), Math.min(leg.from.lon, leg.to.lon)],
+    [Math.min(leg.from.lat, leg.to.lat), Math.max(leg.from.lon, leg.to.lon)]
+  ]
+}
+
+export default { getCoordinates, getDistance, getLeg, decodeRoute, calculateBounds, unityLat, unityLon }
