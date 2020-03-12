@@ -1,3 +1,8 @@
-.confetti-canvas {
-    position: absolute
+.confetti-canvas > .p5Canvas {
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10 !important;
+    pointer-events: none;
 }

@@ -5,6 +5,7 @@ import Filter from '../Filter/Filter/Filter'
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import soundService from '../../services/sound'
 import restaurantService from '../../services/restaurant'
+import Confetti from '../Confetti/Confetti'
 import './Randomizer.css'
 
 
@@ -50,6 +51,7 @@ const Randomizer = () => {
 
   return (
     <div data-testid='randomizer' className='randomizer'>
+      {restaurant.showMap && <Confetti />}
       {restaurant && <RestaurantEntry restaurant={restaurant} />}
       <Button data-testid='randomizer-randomizeButton' onClick={roll} variant='success' size='lg' disabled={disableButton}>
         {restaurant.showMap
