@@ -73,7 +73,7 @@ test('pressing the delete button calls the provided callback', async () => {
   expect(mockOnRemove).toBeCalledWith(testItem)
 })
 
-test('pressing the delete button calls the provided callback', async () => {
+test('pressing the edit button calls the provided callback', async () => {
   const mockOnEdit = jest.fn()
   const { getByTestId } = await actRender(
     <ListEntry item={testItem} onClickEdit={mockOnEdit} />,
