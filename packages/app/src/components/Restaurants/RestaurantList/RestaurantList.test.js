@@ -43,22 +43,6 @@ test('page title is rendered', async () => {
   expect(title).toBeInTheDocument()
 })
 
-test('back button is rendered', async () => {
-  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
-  const backButton = await queryByTestId('restaurantList-backButton')
-  expect(backButton).toBeInTheDocument()
-})
-
-test('back button returns to the home page', async () => {
-  const { queryByTestId, getPath } = await actRender(<RestaurantList />, ['/restaurants'])
-
-  // Press the back button
-  const buttonElement = queryByTestId('restaurantList-backButton')
-  fireEvent.click(buttonElement)
-
-  expect(getPath().pathname).toBe('/')
-})
-
 test('pressing the delete button calls the service to remove the restaurant if OK is pressed', async () => {
   authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
 

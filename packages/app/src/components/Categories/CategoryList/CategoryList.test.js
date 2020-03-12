@@ -17,20 +17,6 @@ test('page title is rendered', async () => {
   expect(title).toBeInTheDocument()
 })
 
-test('back button is rendered', async () => {
-  const { queryByTestId } = await actRender(<CategoryList />, ['/admin/categories'])
-  const backButton = await queryByTestId('categoryList-backButton')
-  expect(backButton).toBeInTheDocument()
-})
-
-test('back button returns to the home page', async () => {
-  const { queryByTestId, getPath } = await actRender(<CategoryList />, ['/admin/categories'])
-
-  const buttonElement = queryByTestId('categoryList-backButton')
-  fireEvent.click(buttonElement)
-  await wait(() => expect(getPath().pathname).toBe('/admin'))
-})
-
 test('pressing the delete button calls the service to remove the category if OK is pressed', async () => {
   categoryService.getAll.mockResolvedValue([{
     name: 'Pizza',

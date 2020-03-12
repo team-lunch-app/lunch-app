@@ -105,6 +105,7 @@ describe('when logged in', () => {
 
 describe('when not logged in', () => {
   test('pressing submit makes call to suggestion service', async () => {
+    window.alert = jest.fn(() => true)
     const edited = {
       name: 'Luigin pitseria',
       url: 'www.pitsa.fi',

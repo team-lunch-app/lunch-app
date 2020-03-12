@@ -31,11 +31,10 @@ const CategoryList = () => {
 
   return (
     <div data-testid='categoryList' className='categoryList'>
+      <h1 data-testid='categoryList-title' className='categoryList-title'>Categories</h1>
       <div className='categoryList-buttonGroup'>
-        <Link to='/admin' className='categoryList-backButton'><Button data-testid='categoryList-backButton'>Back</Button></Link>
         <Link to='/admin/categories/add' className='categoryList-addButton'><Button className="add-category-button" data-testid='categoryList-addButton' variant='success'>Add a new category</Button></Link>
       </div>
-      <h1 data-testid='categoryList-title' className='categoryList-title'>Categories</h1>
       <List
         entries={categories}
         renderNoEntries={() => <Alert variant='warning'>Sorry, No categories available :C</Alert>}

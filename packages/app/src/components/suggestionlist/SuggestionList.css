@@ -3,6 +3,11 @@
     color: #2b2b2b;
 }
 
+.suggestionList-title {
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
 .suggestion-entry > .buttons > button {
     margin-right: 0.4em;
 }
