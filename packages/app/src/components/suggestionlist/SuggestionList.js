@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import List from '../List/List'
 import { Button, Alert, Card, Table } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import suggestionService from '../../services/suggestion'
 import restaurantService from '../../services/restaurant'
@@ -29,8 +28,7 @@ export const SuggestionList = () => {
 
   return (
     <div data-testid='suggestionList'>
-      <Link to='/'><Button data-testid='suggestionList-backButton'>Back</Button></Link>
-      <h1 data-testid='suggestionList-title'>Pending Suggestions</h1>
+      <h1 data-testid='suggestionList-title' className='suggestionList-title'>Pending Suggestions</h1>
       <List
         entries={suggestions}
         renderNoEntries={() => <Alert data-testid='suggestionList-alertMessage' variant='warning'>Sorry, No suggestions available :C</Alert>}

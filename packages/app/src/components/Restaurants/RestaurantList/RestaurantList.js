@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Alert } from 'react-bootstrap'
-import { Link, useHistory } from 'react-router-dom'
+import { Alert } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
 import restaurantService from '../../../services/restaurant'
 import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
@@ -43,7 +43,6 @@ const RestaurantList = () => {
 
   return (
     <div data-testid='restaurantList' className="restaurantList">
-      <Link to='/' className="restaurantList-backButton"><Button data-testid='restaurantList-backButton'>Back</Button></Link>
       <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
       <List
         entries={restaurants}
