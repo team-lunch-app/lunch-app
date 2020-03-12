@@ -115,7 +115,7 @@ test('if no suggestions are listed an alert message is rendered', async () => {
   expect(alertMessage).toBeInTheDocument()
 })
 
-test.only('Suggestions related to a restaurant are removed when a REMOVE suggestion is approved', async () => {
+test('Suggestions related to a restaurant are removed when a REMOVE suggestion is approved', async () => {
   suggestionService.getAll.mockResolvedValue([testSuggestions[2], {...testSuggestions[2], id: 7}, {...testSuggestions[2], type: 'EDIT', id: 22}])
 
   const { queryAllByTestId } = await actRender(<SuggestionList />, ['/admin/suggestions'])
@@ -129,7 +129,7 @@ test.only('Suggestions related to a restaurant are removed when a REMOVE suggest
   expect(suggestions.length).toBe(0)
 })
 
-test.only('Suggestions related to a restaurant are removed when an EDIT suggestion is approved', async () => {
+test('Suggestions related to a restaurant are removed when an EDIT suggestion is approved', async () => {
   suggestionService.getAll.mockResolvedValue([{...testSuggestions[2], type: 'EDIT', id: 22}, testSuggestions[2], {...testSuggestions[2], id: 7}])
 
   const { queryAllByTestId } = await actRender(<SuggestionList />, ['/admin/suggestions'])

@@ -160,7 +160,7 @@ test('getAllMatches request with a category id returns all restaurants belonging
 
   const contents = response.body
   expect(contents.length).toBe(2)
-  expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id)))
+  expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id))).toBe(true)
 })
 
 test('getAllMatches request with two category ids returns all restaurants that belong to both of the categories', async () => {
@@ -173,7 +173,7 @@ test('getAllMatches request with two category ids returns all restaurants that b
 
   const contents = response.body
   expect(contents.length).toBe(1)
-  expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id) && restaurant.categories.includes(categories[1].id)))
+  expect(contents.every(restaurant => restaurant.categories.includes(categories[0].id) && restaurant.categories.includes(categories[1].id))).toBe(true)
 })
 
 test('getAllMatches request with type none returns no restaurants in those categories', async () => {
@@ -184,7 +184,7 @@ test('getAllMatches request with type none returns no restaurants in those categ
     .send({ categories: [categories[1].id], type: 'none', distance: 500 })
 
   const contents = response.body
-  expect(contents.every(restaurant => !restaurant.categories.includes(categories[1].id)))
+  expect(contents.every(restaurant => !restaurant.categories.includes(categories[1].id))).toBe(true)
 })
 
 test('getAllMatches request with distance returns only restaurants with less than or equal the given distance', async () => {
@@ -195,7 +195,7 @@ test('getAllMatches request with distance returns only restaurants with less tha
     .expect('Content-Type', /json/)
     .expect(200)
   const contents = response.body
-  expect(contents.every(restaurant => restaurant.distance <= testdistance))
+  expect(contents.every(restaurant => restaurant.distance <= testdistance)).toBe(true)
 })
 
 
