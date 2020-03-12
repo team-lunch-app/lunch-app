@@ -3,6 +3,9 @@ module.exports = {
     'es6': true,
     'jest': true
   },
+  'plugins': [
+    'jest'
+  ],
   'parserOptions': {
     'ecmaVersion': 2018,
   },
@@ -30,6 +33,10 @@ module.exports = {
     ],
     'eol-last': [
       'warn'
-    ]
+    ],
+    'jest/no-disabled-tests': 'warn',
+    'jest/no-focused-tests': 'error',
+    'jest/no-identical-title': 'error',
+    'jest/valid-expect': 'error',
   }
 }
