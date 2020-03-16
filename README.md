@@ -93,5 +93,5 @@ Sad Trombone by benboncan ( https://freesound.org/people/Benboncan/sounds/73581/
    
 Licensing
 ---------
-`TODO: What license should we use?`
+This project is licensed under the terms of the MIT license.
 
