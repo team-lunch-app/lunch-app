@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import './App.css'
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch, Redirect, useHistory, Link } from 'react-router-dom'
 import Randomizer from './components/Randomizer/Randomizer'
 import AddForm from './components/Restaurants/AddForm'
 import EditForm from './components/Restaurants/EditForm'
 import NotFound from './components/error/NotFound'
+import Attributions from './components/Attributions/Attributions'
 import PasswordReset from './components/auth/PasswordReset'
 import RestaurantList from './components/Restaurants/RestaurantList/RestaurantList'
 import LoginForm from './components/auth/LoginForm'
@@ -53,6 +54,7 @@ const App = () => {
       <section className='main-container'>
         <Switch>
           <Route exact path="/error/404" render={() => <NotFound />} />
+          <Route exact path="/attributions" render={() => <Attributions />} />
           <Route exact path="/admin/password-reset" render={() => <PasswordReset reset />} />
           <Route exact path="/admin/change-password" render={() => <PasswordReset />} />
 
@@ -68,6 +70,9 @@ const App = () => {
           <Route path="*" render={() => <Redirect to='/error/404' />} />
         </Switch>
       </section>
+      <footer className='main-footer'>
+        <Link to='/attributions'>About</Link>
+      </footer>
     </>
   )
 }
