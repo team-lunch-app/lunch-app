@@ -10,6 +10,7 @@ import '../../services/confetti'
 jest.mock('p5')
 
 jest.mock('../../services/restaurant.js')
+jest.mock('../../services/sound.js')
 jest.mock('../../services/location.js')
 jest.mock('../../services/confetti.js')
 
@@ -17,6 +18,7 @@ restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
   url: 'www.pizza.fi',
   id: 1,
+  distance: 1000,
   coordinates: { latitude: 60.17, longitude: 24.94 }
 }])
 window.HTMLMediaElement.prototype.play = () => { }
@@ -32,25 +34,25 @@ locationService.getLeg.mockResolvedValue({
 })
 
 
-test('new restaurant button exists', async () => {
+test('button for starting the raffle exists', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
-  const buttonElement = queryByTestId('randomizer-randomizeButton')
+  const buttonElement = queryByTestId(/randomizer-randomizeButton/i)
   expect(buttonElement).toBeInTheDocument()
 })
 
 test('restaurant result label exists', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -61,9 +63,9 @@ test('restaurant result label exists', async () => {
 test('restaurant result label is not empty initially', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -74,9 +76,9 @@ test('restaurant result label is not empty initially', async () => {
 test('restaurant url is not rendered initially (no restaurant is shown)', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -87,22 +89,22 @@ test('restaurant url is not rendered initially (no restaurant is shown)', async 
 test('restaurant url is rendered after a restaurant is drawn', async () => {
   const { queryByTestId, getByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
-  await act(async () => fireEvent.click(queryByTestId('randomizer-randomizeButton')))
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   expect(getByTestId('randomizer-restaurantUrl')).toBeInTheDocument()
 })
 
 test('pressing the button calls the restaurant service', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -115,9 +117,9 @@ test('pressing the button calls the restaurant service', async () => {
 test('pressing the button changes the text', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -132,9 +134,9 @@ test('pressing the button changes the text', async () => {
 test('user is not redirected to an external website if not confirmed', async () => {
   const { queryByTestId, getByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -150,9 +152,9 @@ test('user is not redirected to an external website if not confirmed', async () 
 test('map is not shown by default', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
@@ -162,9 +164,9 @@ test('map is not shown by default', async () => {
 test('map is shown after roll', async () => {
   const { queryByTestId } = await actRender(
     <Randomizer
-      maxNumberOfRotations={10}
-      maxTimeBetweenRotations={1}
-      minTimeBetweenRotations={0}
+      maxNumberOfRolls={10}
+      maxTimeBetweenRolls={1}
+      minTimeBetweenRolls={0}
       resultWaitTime={0}
     />
   )
