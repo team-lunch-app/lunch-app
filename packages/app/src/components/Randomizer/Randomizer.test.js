@@ -5,9 +5,14 @@ import Randomizer from './Randomizer'
 import restaurantService from '../../services/restaurant'
 import locationService from '../../services/location'
 import categoryService from '../../services/category'
+import '../../services/confetti'
+
+jest.mock('p5')
 
 jest.mock('../../services/restaurant.js')
 jest.mock('../../services/location.js')
+jest.mock('../../services/confetti.js')
+
 restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
   url: 'www.pizza.fi',
@@ -99,5 +104,18 @@ test('map is shown after roll', async () => {
   await act(async () => {
     fireEvent.click(queryByTestId('randomizer-randomizeButton'))
     await wait(() => expect(queryByTestId('map')).toBeInTheDocument())
+  })
+})
+
+test('confetti component is not shown by default', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  expect(queryByTestId('confetti')).not.toBeInTheDocument()
+})
+
+test('confetti component is shown after roll', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  await act(async () => {
+    fireEvent.click(queryByTestId('randomizer-randomizeButton'))
+    await wait(() => expect(queryByTestId('confetti')).toBeInTheDocument())
   })
 })
