@@ -26,7 +26,7 @@ const Randomizer = ({
 }) => {
   const [restaurant, setRestaurant] = useState()
   const [iteration, setIteration] = useState(maxNumberOfRolls)
-  const isRolling = iteration < maxNumberOfRolls
+  const [isRolling, setRolling] = useState(false)
 
   const [filter, setFilter] = useState({
     type: 'some',
@@ -75,6 +75,7 @@ const Randomizer = ({
       setRestaurant(restaurants[0])
       soundService.playFanfare()
     } else {
+      setRolling(true)
       rollAfterTimeout(0, maxTimeBetweenRolls, shuffle(restaurants))
     }
   }
@@ -92,6 +93,7 @@ const Randomizer = ({
     if (rollsRemaining === 0) {
       soundService.playFanfare()
       setTimeoutHandle(undefined)
+      setRolling(false)
     } else {
       const timeout = calculateTimeForNthRoll(roll)
       rollAfterTimeout(roll + 1, timeout, restaurants)
@@ -103,7 +105,8 @@ const Randomizer = ({
       return <h1 data-testid='randomizer-resultLabel'>{restaurant.error}</h1>
     }
 
-    return restaurant
+    const hasRestaurant = !!restaurant
+    return hasRestaurant
       ? isRolling
         ? <h1 data-testid='roll-label'>{restaurant.name}</h1>
         : <>
@@ -115,21 +118,19 @@ const Randomizer = ({
 
   const rollsRemaining = maxNumberOfRolls - iteration
   const isPicky = filter.categories.length > 0
-  const buttonLabel = isRolling
-    ? rollsRemaining > maxNumberOfRolls / 3
-      ? 'Rolling!'
-      : 'Wait for it...'
-    : restaurant
-      ? 'Gimme another one!'
-      : `I'm feeling ${isPicky ? 'lucky' : 'picky'}!`
-
   return (
     <div data-testid='randomizer' className='randomizer'>
       {nope.active && <h1>NOPE</h1>}
       {selectRestaurantElement()}
-      <RandomizerButton onClick={startRolling} setError={setError} disabled={isRolling}>
-        {buttonLabel}
-      </RandomizerButton>
+      <RandomizerButton
+        onClick={startRolling}
+        setError={setError}
+        isPicky={isPicky}
+        isRolling={isRolling}
+        hasResult={restaurant !== undefined && !isRolling}
+        maxNumberOfRolls={maxNumberOfRolls}
+        rollsRemaining={rollsRemaining}
+      />
       <button
         className='randomizer-showFilterButton'
         onClick={() => setFilter({ ...filter, visible: !filter.visible })}>
@@ -150,7 +151,15 @@ const Randomizer = ({
   )
 }
 
-const RandomizerButton = ({ onClick, setError, disabled, children }) => {
+const RandomizerButton = ({
+  onClick,
+  setError,
+  isRolling,
+  isPicky,
+  hasResult,
+  rollsRemaining,
+  maxNumberOfRolls,
+}) => {
   const handleClick = async (event) => {
     event.preventDefault()
     try {
@@ -161,14 +170,22 @@ const RandomizerButton = ({ onClick, setError, disabled, children }) => {
     }
   }
 
+  const label = isRolling
+    ? rollsRemaining > maxNumberOfRolls / 3
+      ? 'Rolling!'
+      : 'Wait for it...'
+    : hasResult
+      ? 'Gimme another one!'
+      : `I'm feeling ${isPicky ? 'lucky' : 'picky'}!`
+
   return (
     <Button
       data-testid='randomizer-randomizeButton'
       onClick={handleClick}
       variant='success'
       size='lg'
-      disabled={disabled}>
-      {children}
+      disabled={isRolling}>
+      {label}
     </Button>
   )
 }
@@ -176,8 +193,11 @@ const RandomizerButton = ({ onClick, setError, disabled, children }) => {
 RandomizerButton.propTypes = {
   onClick: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
-  children: PropTypes.node,
+  isRolling: PropTypes.bool.isRequired,
+  isPicky: PropTypes.bool.isRequired,
+  hasResult: PropTypes.bool.isRequired,
+  rollsRemaining: PropTypes.number,
+  maxNumberOfRolls: PropTypes.number,
 }
 
 Randomizer.propTypes = {
