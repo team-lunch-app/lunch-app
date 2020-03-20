@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import confettiScript from '../../services/confetti'
+import confettiScript from '../../scripts/confetti'
 import p5 from 'p5'
 
 import './Confetti.css'

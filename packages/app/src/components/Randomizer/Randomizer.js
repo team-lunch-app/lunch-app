@@ -6,12 +6,14 @@ import { ExpandMore, ExpandLess } from '@material-ui/icons'
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import Filter from '../Filter/Filter/Filter'
 import Confetti from '../Confetti/Confetti'
+import FoodModel from '../FoodModel/FoodModel'
 
 import { useNopeEasterEgg } from './nopeEasterEgg'
 import { shuffle } from '../../util/shuffle'
 
 import soundService from '../../services/sound'
 import restaurantService from '../../services/restaurant'
+
 import './Randomizer.css'
 
 const easingFunc = (max, min, t) => {
@@ -129,6 +131,7 @@ const Randomizer = ({
   const isPicky = filter.categories.length > 0
   return (
     <div data-testid='randomizer' className='randomizer'>
+      <FoodModel />
       {nope.active && <h1>NOPE</h1>}
       {selectRestaurantElement()}
       <RandomizerButton

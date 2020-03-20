@@ -28,6 +28,7 @@ app.use('/api/categories', categoriesRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/suggestions', suggestionRouter)
 app.use('/api/places', placesRouter)
+app.use('/static', express.static(path.join(__dirname, 'public')))
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(config.staticDir, 'index.html'))
