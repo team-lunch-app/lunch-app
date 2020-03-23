@@ -50,9 +50,6 @@ placesRouter.get('/autocomplete/:name', async (request, response, next) => {
     const text = request.params.name
 
     const predictions = await google.autocomplete(text)
-    if (predictions === null) {
-      return response.status(404).send({ error: 'No places found with given name' })
-    }
 
     const result = predictions
       .map(prediction => ({

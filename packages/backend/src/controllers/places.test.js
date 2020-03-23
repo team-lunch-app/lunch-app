@@ -226,6 +226,14 @@ test('successful details query returns with status 200', async () => {
     .expect(200)
 })
 
+test('failed details query returns with status 404', async () => {
+  google.findDetails.mockResolvedValue(null)
+
+  await server
+    .get(`/api/places/details/${detailsQuery}`)
+    .expect(404)
+})
+
 test('over query limit details query returns with status 503', async () => {
   const mockReject = new google.QueryLimitError('Monthly quota exceeded!')
   mockReject.name = 'QueryLimit'
