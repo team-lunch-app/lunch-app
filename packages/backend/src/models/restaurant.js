@@ -42,7 +42,7 @@ const restaurantSchema = new mongoose.Schema({
       ref: 'Category'
     }
   ],
-  placeid: {
+  placeId: {
     type: String,
     required: features.googleApi,
   },
