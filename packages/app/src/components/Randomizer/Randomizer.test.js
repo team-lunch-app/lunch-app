@@ -79,15 +79,15 @@ test('pressing the button calls the restaurant service', async () => {
 
 test('pressing the button calls the restaurant service to increase resultAmount', async () => {
   const { queryByTestId } = await actRender(<Randomizer />)
-    await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
-    expect(restaurantService.increaseResultAmount).toBeCalled()
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  expect(restaurantService.increaseResultAmount).toBeCalled()
 })
 
 test('pressing the button a second time calls the restaurant service to increase notSelectedAmount', async () => {
   const { queryByTestId } = await actRender(<Randomizer />)
-    await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
-    await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
-    expect(restaurantService.increaseNotSelectedAmount).toBeCalled() 
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  expect(restaurantService.increaseNotSelectedAmount).toBeCalled()
 })
 
 test('pressing the button changes the text', async () => {
