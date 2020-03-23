@@ -131,7 +131,9 @@ const Randomizer = ({
   const isPicky = filter.categories.length > 0
   return (
     <div data-testid='randomizer' className='randomizer'>
-      <FoodModel />
+      <div className='foodmodel' style={{display: `${(restaurant && !isRolling) ? 'none' : 'inline'}`}}>
+        <FoodModel rolling={isRolling} />
+      </div>
       {nope.active && <h1>NOPE</h1>}
       {selectRestaurantElement()}
       <RandomizerButton
