@@ -5,14 +5,16 @@ import Randomizer from './Randomizer'
 import restaurantService from '../../services/restaurant'
 import locationService from '../../services/location'
 import categoryService from '../../services/category'
-import '../../services/confetti'
+import '../../scripts/confetti'
+import '../../scripts/food'
 
 jest.mock('p5')
 
 jest.mock('../../services/restaurant.js')
 jest.mock('../../services/sound.js')
 jest.mock('../../services/location.js')
-jest.mock('../../services/confetti.js')
+jest.mock('../../scripts/confetti.js')
+jest.mock('../../scripts/food.js')
 
 restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
@@ -128,4 +130,28 @@ test('confetti component is shown after roll', async () => {
   const { queryByTestId } = await actRender(<TestRandomizer />)
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   expect(queryByTestId(/confetti/i)).toBeInTheDocument()
+})
+
+test('3d food component exists', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  expect(queryByTestId(/foodmodel-container/i)).toBeInTheDocument()
+})
+
+test('3d food is displayed by default', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  expect(queryByTestId(/foodmodel-container/i)).not.toHaveStyle('display: none')
+})
+
+test('3d food is shown when rolling', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  await act(async () => {
+    fireEvent.click(queryByTestId(/randomizer-randomizeButton/i))
+    expect(queryByTestId(/foodmodel-container/i)).not.toHaveStyle('display: none')
+  })
+})
+
+test('3d food is not shown when roll results are displayed', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  expect(queryByTestId(/foodmodel-container/i)).toHaveStyle('display: none')
 })

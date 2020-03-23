@@ -1,4 +1,4 @@
-.confetti-canvas > .p5Canvas {
+.confetti > * > .p5Canvas {
     position: absolute !important;
     top: 50%;
     left: 50%;

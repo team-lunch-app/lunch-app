@@ -5,8 +5,8 @@ import { ExpandMore, ExpandLess } from '@material-ui/icons'
 
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
 import Filter from '../Filter/Filter/Filter'
-import Confetti from '../Confetti/Confetti'
-import FoodModel from '../FoodModel/FoodModel'
+import Confetti from '../p5Components/Confetti/Confetti'
+import FoodModel from '../p5Components/FoodModel/FoodModel'
 
 import { useNopeEasterEgg } from './nopeEasterEgg'
 import { shuffle } from '../../util/shuffle'
@@ -131,7 +131,7 @@ const Randomizer = ({
   const isPicky = filter.categories.length > 0
   return (
     <div data-testid='randomizer' className='randomizer'>
-      <div className='foodmodel' style={{display: `${(restaurant && !isRolling) ? 'none' : 'inline'}`}}>
+      <div data-testid='foodmodel-container' className='foodmodel' style={{display: `${(restaurant && !isRolling) ? 'none' : 'inline'}`}}>
         <FoodModel rolling={isRolling} />
       </div>
       {nope.active && <h1>NOPE</h1>}
