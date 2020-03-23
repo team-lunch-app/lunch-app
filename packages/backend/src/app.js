@@ -7,6 +7,7 @@ const { restaurantsRouter } = require('./controllers/restaurants')
 const categoriesRouter = require('./controllers/categories')
 const authRouter = require('./controllers/auth')
 const suggestionRouter = require('./controllers/suggestions')
+const placesRouter = require('./controllers/places')
 
 const config = require('./config')
 
@@ -26,6 +27,7 @@ app.use('/api/restaurants', restaurantsRouter)
 app.use('/api/categories', categoriesRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/suggestions', suggestionRouter)
+app.use('/api/places', placesRouter)
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(config.staticDir, 'index.html'))
@@ -40,7 +42,10 @@ app.use((error, request, response, next) => {
     return response.status(400).send({ error: error.message })
   } else if (error.name === 'PasswordExpired') {
     return response.status(403).send({ error: error.message })
+  } else if (error.name === 'QueryLimit') {
+    return response.status(503).send({ error: error.message })
   }
+
   next(error)
 })
 

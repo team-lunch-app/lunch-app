@@ -23,6 +23,9 @@ const bcryptSaltRounds = process.env.NODE_ENV === 'test'
   ? 4
   : process.env.SALT_ROUNDS || 10
 
+const originLatitude = 60.170000
+const originLongitude = 24.941944
+
 if (dbUrl === null || dbUrl === undefined) {
   throw new Error('Database URL is not defined! Environment variable MONGODB_URI was empty. Either define it manually or add it to your .env')
 }
@@ -42,5 +45,7 @@ module.exports = {
   dbName,
   jwtSecret,
   bcryptSaltRounds,
-  googleApiKey
+  googleApiKey,
+  originLatitude,
+  originLongitude
 }
