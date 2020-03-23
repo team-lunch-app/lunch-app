@@ -401,6 +401,8 @@ describe('when logged in', () => {
       categories: [],
       address: 'Senaatintori',
       coordinates: { latitude: 60, longitude: 24 },
+      notSelectedAmount: 0,
+      resultAmount: 0,
       distance: 1000
     })
   })

@@ -170,6 +170,30 @@ restaurantsRouter.put('/:id', async (request, response, next) => {
   }
 })
 
+// increase resultAmount
+restaurantsRouter.put('/increaseResult/:id', async (request, response, next) => {
+  try {
+    const restaurant = await Restaurant.findById(request.params.id)
+    restaurant.resultAmount = restaurant.resultAmount + 1
+    await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+    return response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
+// increase notSelectedAmount
+restaurantsRouter.put('/increaseNotSelected/:id', async (request, response, next) => {
+  try {
+    const restaurant = await Restaurant.findById(request.params.id)
+    restaurant.notSelectedAmount = restaurant.notSelectedAmount + 1
+    await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+    return response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
 // delete
 restaurantsRouter.delete('/:id', async (request, response, next) => {
   try {

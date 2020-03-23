@@ -24,6 +24,7 @@ const Randomizer = ({
   maxTimeBetweenRolls = 1000,
   resultWaitTime = 1250
 }) => {
+  let resId = null
   const [restaurant, setRestaurant] = useState()
   const [iteration, setIteration] = useState(maxNumberOfRolls)
   const [isRolling, setRolling] = useState(false)
@@ -69,10 +70,16 @@ const Randomizer = ({
   }
 
   const startRolling = async () => {
+    if (restaurant && restaurant.id) {
+
+      await restaurantService.increaseNotSelectedAmount(restaurant.id)
+    }
     const restaurants = await restaurantService.getAllMatches(filter.type, filter.categories, filter.distance)
 
     if (restaurants.length === 1) {
       setRestaurant(restaurants[0])
+      resId = restaurants[0].id
+      await restaurantService.increaseResultAmount(resId)
       soundService.playFanfare()
     } else {
       setRolling(true)
@@ -80,8 +87,9 @@ const Randomizer = ({
     }
   }
 
-  const rollNext = (roll, restaurants) => {
+  const rollNext = async (roll, restaurants) => {
     setRestaurant(restaurants[roll % restaurants.length])
+    resId = restaurants[roll % restaurants.length].id
     const rollsRemaining = maxNumberOfRolls - roll
 
     const easterEggDidTrigger = nope.updateAndTryTrigger(restaurants, rollsRemaining)
@@ -91,6 +99,7 @@ const Randomizer = ({
 
     setIteration(roll)
     if (rollsRemaining === 0) {
+      await restaurantService.increaseResultAmount(resId)
       soundService.playFanfare()
       setTimeoutHandle(undefined)
       setRolling(false)
@@ -137,6 +146,8 @@ const Randomizer = ({
         {filter.visible ? 'Hide filter ' : 'Set filter '}
         {filter.visible ? <ExpandLess /> : <ExpandMore />}
       </button>
+      {restaurant && <p>Approval% : {(restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100}  </p>}
+
       <Filter
         emptyMessage={<strong>#IEatAnything</strong>}
         filterCategories={filter.categories}
