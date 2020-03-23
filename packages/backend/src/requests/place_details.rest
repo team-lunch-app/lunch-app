@@ -1,0 +1,1 @@
+GET http://localhost:3001/api/places/details/ChIJLxuNHssLkkYRE4g89GmS8_0 HTTP/1.1

@@ -1,3 +1,5 @@
+const features = require('../../../util/features')
+
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
@@ -39,7 +41,11 @@ const restaurantSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category'
     }
-  ]
+  ],
+  placeId: {
+    type: String,
+    required: features.googleApi,
+  },
 })
 
 restaurantSchema.set('toJSON', {
