@@ -1,92 +1,210 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { Button } from 'react-bootstrap'
 import { ExpandMore, ExpandLess } from '@material-ui/icons'
-import Filter from '../Filter/Filter/Filter'
+
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
+import Filter from '../Filter/Filter/Filter'
+import Confetti from '../Confetti/Confetti'
+
+import { useNopeEasterEgg } from './nopeEasterEgg'
+import { shuffle } from '../../util/shuffle'
+
 import soundService from '../../services/sound'
 import restaurantService from '../../services/restaurant'
-import Confetti from '../Confetti/Confetti'
 import './Randomizer.css'
 
+const easingFunc = (max, min, t) => {
+  return (max - min) * Math.pow(t, 4) + min
+}
 
-const Randomizer = () => {
-  const maxNumberOfRotations = 28
-  const minTimeBetweenRotations = 15 // in milliseconds
-  const [restaurant, setRestaurant] = useState({ name: 'Press the button' })
-  const [disableButton, setDisableButton] = useState(false)
-  const [filterType, setFilterType] = useState('some')
-  const [filterCategories, setFilterCategories] = useState([])
-  const [distance, setDistance] = useState('')
-  const [showFilter, setShowFilter] = useState(false)
+const Randomizer = ({
+  maxNumberOfRolls = 35,
+  minTimeBetweenRolls = 25,
+  maxTimeBetweenRolls = 1000,
+  resultWaitTime = 1250
+}) => {
+  const [restaurant, setRestaurant] = useState()
+  const [iteration, setIteration] = useState(maxNumberOfRolls)
+  const [isRolling, setRolling] = useState(false)
 
-  const sleep = async (duration) => {
-    return new Promise(r => setTimeout(r, duration))
+  const [filter, setFilter] = useState({
+    type: 'some',
+    categories: [],
+    distance: '',
+    visible: false
+  })
+
+  const [timeoutHandle, setTimeoutHandle] = useState()
+  useEffect(() => () => clearTimeout(timeoutHandle), [timeoutHandle])
+
+  const rollAfterTimeout = (roll, timeout, restaurants) => {
+    soundService.playBeep()
+
+    const handle = setTimeout(() => rollNext(roll, restaurants), timeout)
+    setTimeoutHandle(handle)
   }
 
-  const roll = async (event) => {
-    event.preventDefault()
-    setDisableButton(true)
-    try {
-      const restaurants = await restaurantService.getAllMatches(filterType, filterCategories, distance)
-      if (restaurants.length > 1) {
-        let restaurantIndex = Math.floor(Math.random() * restaurants.length)
-        for (let rotations = 0; rotations <= maxNumberOfRotations; rotations++) {
-          await sleep(rotations * minTimeBetweenRotations)
-          restaurantIndex = (restaurantIndex + 1) > (restaurants.length - 1) ? 0 : restaurantIndex + 1
-          setRestaurant({ ...restaurants[restaurantIndex], showMap: false })
-          soundService.playBeep()
-        }
-        setRestaurant({ ...restaurants[restaurantIndex], showMap: true })
-      } else {
-        setRestaurant({ ...restaurants[0], showMap: true })
-      }
-      soundService.playFanfare()
-    } catch (errorResponse) {
-      const error = errorResponse.response.data
-      setRestaurant({ name: error.error, showMap: false })
-      soundService.playTrombone()
+  const nope = useNopeEasterEgg(rollAfterTimeout, {
+    triggerChance: 0.025,
+    numberOfRolls: Math.ceil(maxNumberOfRolls / 2)
+  })
+
+  const setError = (error) => {
+    setRestaurant({ error: error })
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle)
+      setTimeoutHandle()
     }
-    setDisableButton(false)
   }
 
+
+  const calculateTimeForNthRoll = (n) => {
+    const t = n / maxNumberOfRolls
+    const time = easingFunc(maxTimeBetweenRolls, minTimeBetweenRolls, t)
+
+    return n === maxNumberOfRolls - 1
+      ? time + resultWaitTime
+      : time
+  }
+
+  const startRolling = async () => {
+    const restaurants = await restaurantService.getAllMatches(filter.type, filter.categories, filter.distance)
+
+    if (restaurants.length === 1) {
+      setRestaurant(restaurants[0])
+      soundService.playFanfare()
+    } else {
+      setRolling(true)
+      rollAfterTimeout(0, maxTimeBetweenRolls, shuffle(restaurants))
+    }
+  }
+
+  const rollNext = (roll, restaurants) => {
+    setRestaurant(restaurants[roll % restaurants.length])
+    const rollsRemaining = maxNumberOfRolls - roll
+
+    const easterEggDidTrigger = nope.updateAndTryTrigger(restaurants, rollsRemaining)
+    if (easterEggDidTrigger) {
+      return
+    }
+
+    setIteration(roll)
+    if (rollsRemaining === 0) {
+      soundService.playFanfare()
+      setTimeoutHandle(undefined)
+      setRolling(false)
+    } else {
+      const timeout = calculateTimeForNthRoll(roll)
+      rollAfterTimeout(roll + 1, timeout, restaurants)
+    }
+  }
+
+  const selectRestaurantElement = () => {
+    if (restaurant && restaurant.error) {
+      return <h1 data-testid='randomizer-resultLabel'>{restaurant.error}</h1>
+    }
+
+    const hasRestaurant = !!restaurant
+    return hasRestaurant
+      ? isRolling
+        ? <h1 data-testid='roll-label'>{restaurant.name}</h1>
+        : <>
+          <Confetti />
+          <RestaurantEntry restaurant={restaurant} showMap />
+        </>
+      : <h1 data-testid='randomizer-resultLabel'>Hungry? Press the button!</h1>
+  }
+
+  const rollsRemaining = maxNumberOfRolls - iteration
+  const isPicky = filter.categories.length > 0
   return (
     <div data-testid='randomizer' className='randomizer'>
-      {restaurant.showMap && <Confetti />}
-      {restaurant && <RestaurantEntry restaurant={restaurant} />}
-      <Button data-testid='randomizer-randomizeButton' onClick={roll} variant='success' size='lg' disabled={disableButton}>
-        {restaurant.showMap
-          ? 'Gimme another one!'
-          : `I'm feeling ${filterCategories.length === 0 ? 'lucky' : 'picky'}!`
-        }
-      </Button>
+      {nope.active && <h1>NOPE</h1>}
+      {selectRestaurantElement()}
+      <RandomizerButton
+        onClick={startRolling}
+        setError={setError}
+        isPicky={isPicky}
+        isRolling={isRolling}
+        hasResult={restaurant !== undefined && !isRolling}
+        maxNumberOfRolls={maxNumberOfRolls}
+        rollsRemaining={rollsRemaining}
+      />
       <button
         className='randomizer-showFilterButton'
-        onClick={() => setShowFilter(!showFilter)}>
-        {showFilter
-          ? 'Hide filter '
-          : 'Set filter '
-        }
-        {showFilter 
-          ? <ExpandLess />
-          : <ExpandMore />
-        }
+        onClick={() => setFilter({ ...filter, visible: !filter.visible })}>
+        {filter.visible ? 'Hide filter ' : 'Set filter '}
+        {filter.visible ? <ExpandLess /> : <ExpandMore />}
       </button>
       <Filter
         emptyMessage={<strong>#IEatAnything</strong>}
-        setFilterCategories={setFilterCategories}
-        filterCategories={filterCategories}
-        filterType={filterType}
-        setFilterType={setFilterType}
-        distance={distance}
-        setDistance={setDistance}
-        showFilter={showFilter}
-        setShowFilter={setShowFilter}
+        filterCategories={filter.categories}
+        setFilterCategories={(value) => setFilter({ ...filter, categories: value })}
+        filterType={filter.type}
+        setFilterType={(value) => setFilter({ ...filter, type: value })}
+        distance={filter.distance}
+        setDistance={(value) => setFilter({ ...filter, distance: value })}
+        showFilter={filter.visible}
       />
     </div>
   )
 }
 
+const RandomizerButton = ({
+  onClick,
+  setError,
+  isRolling,
+  isPicky,
+  hasResult,
+  rollsRemaining,
+  maxNumberOfRolls,
+}) => {
+  const handleClick = async (event) => {
+    event.preventDefault()
+    try {
+      await onClick()
+    } catch (errorResponse) {
+      setError(errorResponse.response.data.error)
+      soundService.playTrombone()
+    }
+  }
+
+  const label = isRolling
+    ? rollsRemaining > maxNumberOfRolls / 3
+      ? 'Rolling!'
+      : 'Wait for it...'
+    : hasResult
+      ? 'Gimme another one!'
+      : `I'm feeling ${isPicky ? 'lucky' : 'picky'}!`
+
+  return (
+    <Button
+      data-testid='randomizer-randomizeButton'
+      onClick={handleClick}
+      variant='success'
+      size='lg'
+      disabled={isRolling}>
+      {label}
+    </Button>
+  )
+}
+
+RandomizerButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  setError: PropTypes.func.isRequired,
+  isRolling: PropTypes.bool.isRequired,
+  isPicky: PropTypes.bool.isRequired,
+  hasResult: PropTypes.bool.isRequired,
+  rollsRemaining: PropTypes.number,
+  maxNumberOfRolls: PropTypes.number,
+}
+
 Randomizer.propTypes = {
+  maxNumberOfRolls: PropTypes.number,
+  minTimeBetweenRolls: PropTypes.number,
+  maxTimeBetweenRolls: PropTypes.number,
+  resultWaitTime: PropTypes.number,
 }
 
 export default Randomizer

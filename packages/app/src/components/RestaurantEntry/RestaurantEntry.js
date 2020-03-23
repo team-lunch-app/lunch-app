@@ -3,7 +3,7 @@ import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
 import RouteMap from '../RouteMap/RouteMap'
 
-const RestaurantEntry = ({ restaurant }) => {
+const RestaurantEntry = ({ restaurant, showMap }) => {
 
   const confirmLeave = (event) => {
     if (!window.confirm(`This URL is user-submitted content that leads to an external website. 
@@ -34,7 +34,7 @@ const RestaurantEntry = ({ restaurant }) => {
         </p>
       }
       {
-        restaurant.showMap && <RouteMap restaurant={restaurant} />
+        showMap && <RouteMap restaurant={restaurant} />
       }
 
     </>
@@ -43,7 +43,8 @@ const RestaurantEntry = ({ restaurant }) => {
 }
 
 RestaurantEntry.propTypes = {
-  restaurant: PropTypes.object.isRequired
+  restaurant: PropTypes.object.isRequired,
+  showMap: PropTypes.bool
 }
 
 export default RestaurantEntry

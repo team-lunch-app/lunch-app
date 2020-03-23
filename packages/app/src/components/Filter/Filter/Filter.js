@@ -77,8 +77,7 @@ Filter.propTypes = {
   setFilterType: PropTypes.func,
   distance: PropTypes.string,
   setDistance: PropTypes.func,
-  showFilter: PropTypes.bool,
-  setShowFilter: PropTypes.func
+  showFilter: PropTypes.bool
 }
 
 export default Filter
