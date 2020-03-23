@@ -61,11 +61,28 @@ placesRouter.get('/details/reviews/:place_id', async (request, response, next) =
   }
 })
 
+placesRouter.get('/details/addform/:place_id', async (request, response, next) => {
+  try {
+    const fields = 'formatted_address,name,place_id,geometry,website'
+    const placeId = request.params.place_id
+    const details = await google.findDetails(placeId, fields)
+    if (details === null) {
+      return response.status(404).send({ error: 'No places found with the given place id' })
+    }
+
+    return response.status(200).send(details)
+  } catch (error) {
+    next(error)
+  }
+})
+
 placesRouter.get('/autocomplete/:name', async (request, response, next) => {
   try {
+    const foodTypes = ['food', 'restaurant', 'bar', 'cafe', 'casino', 'meal_delivery', 'meal_takeaway']
+    const servesFood = (type) => foodTypes.includes(type)
     const text = request.params.name
-
-    const predictions = await google.autocomplete(text)
+    let predictions = await google.autocomplete(text)   
+    predictions = predictions.filter(prediction => prediction.types.some(servesFood))
 
     const result = predictions
       .map(prediction => ({

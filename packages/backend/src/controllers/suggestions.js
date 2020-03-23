@@ -29,7 +29,8 @@ const parseSuggestion = (body, type) => {
   const url = trimAndUndefineIfEmpty(body.url)
   const categories = body.categories || []
   const _id = body._id
-  const parsed = { type, data: { _id, name, url, categories, address, coordinates, distance } }
+  const placeId = body.placeId || undefined
+  const parsed = { type, data: { _id, name, url, categories, address, coordinates, distance, placeId } }
   return parsed
 }
 

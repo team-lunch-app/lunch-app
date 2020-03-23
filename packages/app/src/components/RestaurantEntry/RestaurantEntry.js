@@ -34,7 +34,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
             <span>Website </span>
             <Link />
           </a>
-        </p>
+        </p> 
       }
       {
         showMap && <RouteMap restaurant={restaurant} />

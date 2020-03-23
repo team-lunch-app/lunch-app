@@ -47,6 +47,26 @@ const autocompleteResponse = [
       { offset: 38, value: 'Finland' }
     ],
     types: ['restaurant', 'food', 'point_of_interest', 'establishment']
+  },
+  {
+    description: 'Fuku Headquarters we serve no food here, Leppävaarankatu, Espoo, Finland',
+    distance_meters: 9055,
+    id: '937f4f00caa140a670c32de544a30614d219ee6f',
+    matched_substrings: [{ length: 4, offset: 0 }],
+    place_id: 'ChIJxZrtjHj2jUYRUnc7prDjZaI',
+    reference: 'ChIJxZrtjHj2jUYRUnc7prDjZaI',
+    structured_formatting: {
+      main_text: 'Fuku Supreme',
+      main_text_matched_substrings: [{ length: 4, offset: 0 }],
+      secondary_text: 'Leppävaarankatu, Espoo, Finland'
+    },
+    terms: [
+      { offset: 0, value: 'Fuku Supreme' },
+      { offset: 14, value: 'Leppävaarankatu' },
+      { offset: 31, value: 'Espoo' },
+      { offset: 38, value: 'Finland' }
+    ],
+    types: ['point_of_interest', 'establishment']
   }
 ]
 
@@ -168,7 +188,8 @@ const detailsResponse = {
         'width': 3968
       },
     ],
-    'place_id': 'ChIJLxuNHssLkkYRE4g89GmS8_0'
+    'place_id': 'ChIJLxuNHssLkkYRE4g89GmS8_0',
+    'website': 'www.fukuhelsinki.com'
   }
 }
 
@@ -225,6 +246,15 @@ test('over query limit autocomplete returns with status 503', async () => {
   await server
     .get(`/api/places/autocomplete/${autocompleteQuery}`)
     .expect(503)
+})
+
+test('autocomplete filters out non-restaurants', async () => {
+  google.autocomplete.mockResolvedValue(autocompleteResponse)
+
+  const { body: contents } = await server
+    .get(`/api/places/autocomplete/${autocompleteQuery}`)
+
+  expect(contents.length).toBe(2)
 })
 
 test('autocomplete parses the information correctly', async () => {
@@ -325,3 +355,31 @@ test('a successfull photo query returns meaningful data', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toBeDefined()
 })
+test('details/addform query calls googleservice with the correct placeId and fields arguments', async () => {
+  google.findDetails.mockResolvedValue(detailsResponse)
+  await server
+    .get(`/api/places/details/addform/${detailsQuery}`)
+    .expect(200)
+  expect(google.findDetails).toHaveBeenCalledWith(detailsQuery, 'formatted_address,name,place_id,geometry,website')
+})
+
+test('details/addform query returns correct data', async () => {
+  google.findDetails.mockResolvedValue(detailsResponse)
+
+  const { body: contents } = await server
+    .get(`/api/places/details/${detailsQuery}`)
+
+  expect(contents.result).toMatchObject({
+    name: expect.stringMatching('Fuku Helsinki'),
+    website: expect.stringMatching('www.fukuhelsinki.com'),
+    formatted_address: expect.stringMatching(/.*Mannerheimintie 18.*Helsinki.*/i),
+    place_id: 'ChIJLxuNHssLkkYRE4g89GmS8_0',
+    geometry: expect.objectContaining({
+      location: {
+        lat: 60.16920340000001,
+        lng: 24.9389156
+      }
+    }),
+  })
+})
+

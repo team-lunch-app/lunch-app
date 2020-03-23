@@ -1,16 +1,24 @@
 import React from 'react'
-import { fireEvent, within, act } from '@testing-library/react'
+import { fireEvent, within, wait } from '@testing-library/react'
 import RestaurantForm from './RestaurantForm'
 
 import categoryService from '../../../services/category'
 import locationService from '../../../services/location'
+import placeService from '../../../services/places'
+
+import testdata from '../../../util/testData'
+
+import { act } from 'react-dom/test-utils'
 
 import { actRender } from '../../../test/utilities'
 
 jest.mock('../../../services/category.js')
 jest.mock('../../../services/location.js')
+jest.mock('../../../services/places.js')
 
-const createEmptyRestaurant = () => ({ name: '', url: '', categories: [], showMap: false})
+
+
+const createEmptyRestaurant = () => ({ name: '', url: '', categories: [] })
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -24,6 +32,8 @@ beforeEach(() => {
     from: { lat: 60.17, lon: 24.941944 },
     to: { lat: 60.182315, lon: 24.922893 }
   })
+  placeService.getSuggestions.mockResolvedValue(testdata.getSuggestions())
+  placeService.getRestaurant.mockResolvedValue(testdata.getRestaurant())
 })
 
 describe('form alerts', () => {
@@ -83,7 +93,7 @@ describe('form alerts', () => {
   test('invalid url input displays an error message', async () => {
     const { getByTestId } = await actRender(
       <RestaurantForm
-        restaurant={createEmptyRestaurant()}
+        restaurant={{ ...createEmptyRestaurant(), url: 'bb' }}
         setRestaurant={jest.fn()}
         error={''}
         setError={jest.fn()}
@@ -120,9 +130,8 @@ test('name field accepts text input', async () => {
   const nameElement = within(nameField).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
 
-  expect(mockSetRestaurant).toBeCalledWith({ name: 'Lidl City Center', url: '', categories: [], showMap: false })
+  expect(mockSetRestaurant).toBeCalledWith({ name: 'Lidl City Center', url: '', categories: [] })
 })
-
 test('url field accepts text input', async () => {
   const mockSetRestaurant = jest.fn()
   const { getByTestId } = await actRender(
@@ -141,7 +150,7 @@ test('url field accepts text input', async () => {
   const nameElement = within(urlField).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'https://www.lidl.fi/' } })
 
-  expect(mockSetRestaurant).toBeCalledWith({ name: '', url: 'https://www.lidl.fi/', categories: [], showMap:false })
+  expect(mockSetRestaurant).toBeCalledWith({ name: '', url: 'https://www.lidl.fi/', categories: [] })
 })
 
 test('address field accepts text input', async () => {
@@ -174,7 +183,6 @@ test('pressing cancel hides the component', async () => {
         name: 'Lidl City Center',
         url: 'https://www.lidl.fi/',
         categories: [],
-        showMap: false
       }}
       setRestaurant={jest.fn()}
       error={''}
@@ -202,11 +210,7 @@ test('pressing check when address can be resolved calls setRestaurant with coord
         address: 'Jokukatu 42',
         categories: [],
         distance: 1000,
-        coordinates: {
-          latitude: 60,
-          longitude: 24,
-        },
-        showMap: false
+        coordinates: undefined
       }}
       setRestaurant={mockSetRestaurant}
       error={''}
@@ -229,7 +233,6 @@ test('pressing check when address can be resolved calls setRestaurant with coord
       longitude: 42,
     },
     distance: 1234,
-    showMap: true
   }))
 })
 
@@ -246,11 +249,7 @@ describe('when restaurant is not validated', () => {
           address: 'Jokukatu 42',
           categories: [],
           distance: 1234,
-          coordinates: {
-            latitude: 69,
-            longitude: 42,
-          },
-          showMap: false
+          coordinates: undefined
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -278,11 +277,7 @@ describe('when restaurant is not validated', () => {
           address: 'Jokukatu 42',
           categories: [],
           distance: 1234,
-          coordinates: {
-            latitude: 69,
-            longitude: 42,
-          },
-          showMap: true
+          coordinates: undefined
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -312,11 +307,7 @@ describe('when restaurant is validated', () => {
           address: 'Jokukatu 42',
           categories: [],
           distance: 1234,
-          coordinates: {
-            latitude: 69,
-            longitude: 42,
-          },
-          showMap: false
+          coordinates: undefined
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -336,10 +327,7 @@ describe('when restaurant is validated', () => {
       url: 'https://www.lidl.fi/',
       categories: [],
       address: 'Jokukatu 42',
-      coordinates: {
-        latitude: 69,
-        longitude: 42,
-      },
+      coordinates: undefined,
       distance: 1234
     }))
   })
@@ -356,11 +344,7 @@ describe('when restaurant is validated', () => {
           address: 'Jokukatu 42',
           categories: [],
           distance: 1234,
-          coordinates: {
-            latitude: 69,
-            longitude: 42,
-          },
-          showMap: false
+          coordinates: undefined
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -394,8 +378,7 @@ describe('when restaurant is validated', () => {
           name: 'Lidl City Center',
           url: 'https://www.lidl.fi/',
           address: 'Jokukatu 42',
-          categories: [],
-          showMap: false
+          categories: []
         }}
         setRestaurant={jest.fn()}
         error={''}
@@ -414,7 +397,7 @@ describe('when restaurant is validated', () => {
   })
 })
 
-test('map is not shown when the restaurant has showMap false)', async () => {
+test('map is not shown when the restaurant has no coordinates)', async () => {
   const { queryByTestId } = await actRender(
     <RestaurantForm
       restaurant={{
@@ -423,8 +406,7 @@ test('map is not shown when the restaurant has showMap false)', async () => {
         address: 'Jokukatu 42',
         categories: [],
         distance: 1234,
-        coordinates: {latitude: 60, longitude: 24},
-        showMap: false
+        coordinates: undefined
       }}
       setRestaurant={jest.fn()}
       error={''}
@@ -435,7 +417,7 @@ test('map is not shown when the restaurant has showMap false)', async () => {
 })
 
 
-test('map is shown when the restaurant has showMap true (i.e. when editing an existing restaurant, or after successful address check)', async () => {
+test('map is shown when the restaurant has coordinates true (i.e. when editing an existing restaurant, or after successful address check)', async () => {
   const { queryByTestId } = await actRender(
     <RestaurantForm
       restaurant={{
@@ -445,7 +427,6 @@ test('map is shown when the restaurant has showMap true (i.e. when editing an ex
         categories: [],
         distance: 1234,
         coordinates: { latitude: 60.182315, longitude: 24.922893 },
-        showMap: true
       }}
       setRestaurant={jest.fn()}
       error={''}
@@ -453,4 +434,71 @@ test('map is shown when the restaurant has showMap true (i.e. when editing an ex
       onSubmit={jest.fn()}
     />)
   expect(queryByTestId('map')).toBeInTheDocument()
+})
+
+
+test('name field text input calls placeService.getSuggestions() TOIMII', async () => {
+  const mockSetRestaurant = jest.fn()
+  const { getByTestId } = await actRender(
+    <RestaurantForm
+      restaurant={createEmptyRestaurant()}
+      setRestaurant={mockSetRestaurant}
+      error={''}
+      setError={jest.fn()}
+      onSubmit={jest.fn()}
+    />)
+  jest.useFakeTimers()
+  const form = getByTestId(/restaurant-form/i)
+  const nameField = within(form).getByTestId(/name-field/i)
+  const nameElement = within(nameField).getByRole(/textbox/i)
+  fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  jest.runAllTimers()
+  await wait(() => expect(placeService.getSuggestions).toBeCalledWith('Lidl City Center'))
+})
+
+test.skip('name field text input leads to suggestions being rendered EI TOIMI', async () => {
+  const mockSetRestaurant = jest.fn()
+  const { getByTestId, queryByTestId } = await actRender(
+    <RestaurantForm
+      restaurant={createEmptyRestaurant()}
+      setRestaurant={mockSetRestaurant}
+      error={''}
+      setError={jest.fn()}
+      onSubmit={jest.fn()}
+    />)
+  jest.useFakeTimers()
+  const form = getByTestId(/restaurant-form/i)
+  const nameField = within(form).getByTestId(/name-field/i)
+  const nameElement = within(nameField).getByRole(/textbox/i)
+  fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  jest.runAllTimers()
+  await wait(() => expect(placeService.getSuggestions).toBeCalledWith('Lidl City Center'))
+  act(() => nameElement.focus())
+  console.log(document.activeElement)
+  expect(queryByTestId('autocomplete-list')).toBeInTheDocument()
+  await wait(() => expect(queryByTestId('autocomplete-entry')).toBeInTheDocument())
+})
+
+test.skip('clicking on a suggestion calls placeService.getRestaurant EI TOIMI', async () => {
+  const mockSetRestaurant = jest.fn()
+  const { getByTestId, queryByTestId } = await actRender(
+    <RestaurantForm
+      restaurant={createEmptyRestaurant()}
+      setRestaurant={mockSetRestaurant}
+      error={''}
+      setError={jest.fn()}
+      onSubmit={jest.fn()}
+    />)
+  jest.useFakeTimers()
+  const form = getByTestId(/restaurant-form/i)
+  const nameField = within(form).getByTestId(/name-field/i)
+  const nameElement = within(nameField).getByRole(/textbox/i)
+  fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  jest.runAllTimers()
+  await wait(() => expect(placeService.getSuggestions).toBeCalledWith('Lidl City Center'))
+  await wait(() => expect(queryByTestId('autocomplete-list')).toBeInTheDocument())
+  await wait(() => expect(queryByTestId('autocomplete-entry')).toBeInTheDocument())
+  const suggestionElement = getByTestId('autocomplete-entry')
+  fireEvent.click(suggestionElement)
+  await wait(() => expect(placeService.getRestaurant).toBeCalledWith('ChIJgWk_zoQJkkYRr0Ye0Tk7DF4'))
 })

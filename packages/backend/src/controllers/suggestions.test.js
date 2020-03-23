@@ -59,7 +59,8 @@ const getAdditionalSuggestions = () => [
       latitude: 26,
       longitude: 62
     },
-    distance: 1002
+    distance: 1002,
+    placeId: 'ChIJLxuNHssLkkYRE4g89GmS8_0'
   }
 ]
 

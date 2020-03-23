@@ -7,6 +7,9 @@ import suggestionService from '../../services/suggestion'
 import categoryService from '../../services/category'
 import authService from '../../services/authentication'
 import locationService from '../../services/location'
+import placeService from '../../services/places'
+
+import testdata from '../../util/testData'
 
 import { actRender } from '../../test/utilities'
 import { act } from 'react-dom/test-utils'
@@ -16,6 +19,9 @@ jest.mock('../../services/suggestion.js')
 jest.mock('../../services/category.js')
 jest.mock('../../services/location.js')
 jest.mock('../../services/authentication.js')
+jest.mock('../../services/places.js')
+
+jest.useFakeTimers()
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -30,6 +36,8 @@ beforeEach(() => {
     from: { lat: 60.17, lon: 24.941944 },
     to: { lat: 60.182315, lon: 24.922893 }
   })
+  placeService.getSuggestions.mockResolvedValue(testdata.getSuggestions())
+  placeService.getRestaurant.mockResolvedValue(testdata.getRestaurant())
 })
 
 test('form is not rendered if restaurant cannot be found', async () => {
@@ -51,9 +59,10 @@ test('form is pre-filled if a restaurant is found with the given id parameter', 
     {
       name: 'Luigi\'s pizza',
       url: 'www.pizza.fi',
+      address: 'Kotikatu 1 a',
       id: 1,
       categories: [],
-      coordinates: {latitude: 60, longitude: 24}
+      coordinates: { latitude: 60, longitude: 24 }
     }
   )
 
@@ -73,9 +82,10 @@ describe('when logged in', () => {
   test('pressing submit makes call to restaurant service', async () => {
     const edited = {
       name: 'Luigin pitseria',
+      address: 'kotikatu 1 a',
       url: 'www.pitsa.fi',
       categories: [],
-      coordinates: {latitude: 69, longitude: 42}
+      coordinates: { latitude: 60, longitude: 24 }
     }
 
     authService.getToken.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNDUzYmFlNjZiYjNkMjUxZGMwM2U5YyIsInVzZXJuYW1lIjoiTWFrZSIsImlhdCI6MTU4MTU5OTg5MX0.0BDsns4hxWvMguZq8llaB3gMTvPNDkDhPkl7mCYl928')
@@ -83,10 +93,11 @@ describe('when logged in', () => {
     restaurantService.getOneById.mockResolvedValue(
       {
         name: 'Luigi\'s pizza',
+        address: 'kotikatu 1 a',
         url: 'www.pizza.fi',
         id: 1,
         categories: [],
-        coordinates: {latitude: 60, longitude: 24}
+        coordinates: { latitude: 60, longitude: 24 }
       }
     )
 
@@ -102,9 +113,7 @@ describe('when logged in', () => {
     fireEvent.change(nameField, { target: { value: edited.name } })
     fireEvent.change(urlField, { target: { value: edited.url } })
 
-    const checkElement = within(form).getByTestId(/check-button/i)
     const buttonElement = within(form).getByTestId(/submit-button/i)
-    await act(async () => fireEvent.click(checkElement))
     await act(async () => fireEvent.click(buttonElement))
 
     expect(restaurantService.update).toBeCalledWith(expect.objectContaining({
@@ -119,9 +128,10 @@ describe('when not logged in', () => {
     const edited = {
       name: 'Luigin pitseria',
       url: 'www.pitsa.fi',
+      address: 'kotikatu 1 a',
       id: 1,
       categories: [],
-      coordinates: {latitude: 69, longitude: 42}
+      coordinates: { latitude: 60, longitude: 24 }
     }
 
     restaurantService.add.mockResolvedValue({ ...edited })
@@ -130,9 +140,10 @@ describe('when not logged in', () => {
       {
         name: 'Luigi\'s pizza',
         url: 'www.pizza.fi',
+        address: 'kotikatu 1 a',
         id: 1,
         categories: [],
-        coordinates: {latitude: 60, longitude: 24}
+        coordinates: { latitude: 60, longitude: 24 }
       }
     )
 
@@ -148,9 +159,7 @@ describe('when not logged in', () => {
     fireEvent.change(nameField, { target: { value: edited.name } })
     fireEvent.change(urlField, { target: { value: edited.url } })
 
-    const checkElement = within(form).getByTestId(/check-button/i)
     const buttonElement = within(form).getByTestId(/submit-button/i)
-    await act(async () => fireEvent.click(checkElement))
     await act(async () => fireEvent.click(buttonElement))
 
     expect(suggestionService.editRestaurant).toBeCalledWith(expect.objectContaining({ ...edited }))
@@ -162,6 +171,7 @@ test('map is shown by default in the edit form', async () => {
     {
       name: 'Luigi\'s pizza',
       url: 'www.pizza.fi',
+      address: 'kotikatu 1 a',
       id: 1,
       categories: [],
       coordinates: { latitude: 60, longitude: 24 }
@@ -176,6 +186,7 @@ test('map is not shown if the address is changed', async () => {
     {
       name: 'Luigi\'s pizza',
       url: 'www.pizza.fi',
+      address: 'kotikatu 1 a',
       id: 1,
       categories: [],
       coordinates: { latitude: 60, longitude: 24 }
@@ -194,6 +205,7 @@ test('map is shown if the address is changed and checked', async () => {
     {
       name: 'Luigi\'s pizza',
       url: 'www.pizza.fi',
+      address: 'kotikatu 1 a',
       id: 1,
       categories: [],
       coordinates: { latitude: 60, longitude: 24 }

@@ -1,0 +1,9 @@
+.list-group-item {
+    color:black;
+    padding: 0.5em 1em;
+}
+
+.list-group-item:hover {
+    transform: scale(1.025);
+    cursor: pointer;
+}

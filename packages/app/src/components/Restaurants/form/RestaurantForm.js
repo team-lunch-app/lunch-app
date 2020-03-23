@@ -1,90 +1,161 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Button, ButtonToolbar, Alert, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { HelpOutline } from '@material-ui/icons'
 import { useHistory } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
 import PropTypes from 'prop-types'
 
 import Filter from '../../Filter/Filter/Filter'
 import RouteMap from '../../RouteMap/RouteMap'
+import AutocompleteList from '../AutocompleteList/AutocompleteList'
 
 import locationService from '../../../services/location'
+import placeService from '../../../services/places'
+
+import customHooks from '../../../util/customHooks'
 
 import './RestaurantForm.css'
 
-const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = 'Suggest', suggestTooltip = 'Create suggestion' }) => {
-  const { register, handleSubmit, errors } = useForm()
-  const [validated, setValidated] = useState(false)
-  const [error, setError] = useState()
-  const setName = (name) => setRestaurant({ ...restaurant, name })
-  const setUrl = (url) => setRestaurant({ ...restaurant, url })
+
+
+const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = 'Suggest', suggestTooltip = 'Create suggestion', autocompleteDelay = 1000 }) => {
+  const [validated, setValidated] = useState((restaurant.coordinates !== undefined))
+  const [errors, setErrors] = useState({})
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
+  const [timeoutHandle, setTimeoutHandle] = useState()
+  const [suggestions, setSuggestions] = useState()
+  const focused = customHooks.useActiveElement()
 
   let history = useHistory()
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutHandle)
+    }
+  }, [timeoutHandle])
+
   const handleAddressChange = (address) => {
-    setRestaurant({ ...restaurant, address, coordinates: undefined, showMap:false })
+    setRestaurant({ ...restaurant, address, coordinates: undefined })
     setValidated(false)
+  }
+
+  const handleUrlChange = (url) => {
+    setRestaurant({ ...restaurant, url })
+    setErrors({ ...errors, url: undefined })
+  }
+
+  const fetchSuggestions = async (name) => {
+    const suggestions = await placeService.getSuggestions(name)
+    setSuggestions(suggestions)
+  }
+
+  const handleNameChange = (name) => {
+    setRestaurant({
+      ...restaurant,
+      name,
+      placeId: undefined
+    })
+    setErrors({ ...errors, name: undefined })
+    clearTimeout(timeoutHandle)
+    setTimeoutHandle((setTimeout(() => {
+      name
+        ? fetchSuggestions(name)
+        : setSuggestions()
+    }, autocompleteDelay)))
+  }
+
+  const fetchRestaurant = async (suggestion) => {
+    try {
+      const fetchedRestaurant = await placeService.getRestaurant(suggestion.placeId)
+      clearTimeout(timeoutHandle)
+      setSuggestions()
+      setRestaurant({
+        ...restaurant,
+        url: fetchedRestaurant.website || '',
+        name: fetchedRestaurant.name,
+        address: fetchedRestaurant.formatted_address,
+        placeId: fetchedRestaurant.place_id,
+        coordinates: {
+          latitude: fetchedRestaurant.geometry.location.lat,
+          longitude: fetchedRestaurant.geometry.location.lng
+        },
+        distance: suggestion.distance
+      })
+      setValidated(true)
+      setErrors({})
+    } catch (error) {
+      setErrors({ ...errors, general: error })
+      setValidated(false)
+    }
   }
 
   const checkAddress = async () => {
     try {
       const coordinates = await locationService.getCoordinates(restaurant.address)
       const distance = await locationService.getDistance(coordinates.latitude, coordinates.longitude)
-      setRestaurant({ ...restaurant, distance, coordinates, showMap: true })
+      setRestaurant({ ...restaurant, distance, coordinates })
       setValidated(true)
-      setError()
+      setErrors({ ...errors, address: undefined })
     } catch (error) {
-      setError('Could not find that location or address.')
-      setRestaurant({ ...restaurant, coordinates: undefined, showMap:false })
+      setErrors({ ...errors, address: 'Could not find that location or address.' })
+      setRestaurant({ ...restaurant, coordinates: undefined })
       setValidated(false)
     }
   }
 
-  const saveRestaurant = async (data, event) => {
+  const handleSubmit = (event, callback) => {
     event.preventDefault()
+    let accepted = true
+    let nameError = undefined
+    let urlError = undefined
+    if (!restaurant.name || restaurant.name.length < 3 || restaurant.name.length > 240) {
+      nameError = 'The name needs to be between 3 and 240 characters'
+      accepted = false
+    }
+    if (restaurant.url && (restaurant.url.length < 3 || restaurant.url.length > 240)) {
+      urlError = 'The website url needs to be between 3 and 240 characters'
+      accepted = false
+    }
+    setErrors({ ...errors, name: nameError, url: urlError })
+    accepted && callback()
+  }
 
+  const saveRestaurant = async () => {
     try {
       if (onSubmit) {
-        delete restaurant.showMap
         await onSubmit({
           ...restaurant,
           categories: restaurant.categories.map(category => category.id)
         })
       }
-      setError('')
+      setErrors({})
       history.push('/')
     }
     catch (e) {
-      setError(e.response.data.error)
+      setErrors({ ...errors, general: e.response.data.error })
     }
   }
 
-  const renderedError = error &&
-    <Alert data-testid='error-msg-generic' variant='danger'>{error}</Alert>
+  const renderError = (error) => <Alert data-testid='error-msg-generic' variant='danger'> {error}</Alert>
 
   return (
     <div data-testid='restaurant-form'>
-      {renderedError}
+      {errors.general && renderError(errors.general)}
       {!restaurant
         ? 'Loading...'
-        : <Form onSubmit={handleSubmit(saveRestaurant)} className='add-form'>
-          <Form.Group data-testid='name-field'>
+        : <Form onSubmit={(event) => handleSubmit(event, saveRestaurant)} className='add-form'>
+          <Form.Group data-testid='name-field' className="name-field">
             <Form.Label>Restaurant Name</Form.Label>
             <Form.Control
+              role="textbox"
+              id="nameinput"
+              autoComplete="off"
               disabled={!restaurant}
               type='text'
               name='name'
-              defaultValue={restaurant.name}
-              onChange={(event) => setName(event.target.value)}
-              ref={register({ required: true, minLength: 3, maxLength: 240 })} />
-            {errors.name &&
-              <Alert variant='danger'>
-                {errors.name.type === 'required' && <li>Name cannot be empty!</li>}
-                {errors.name.type === 'minLength' && <li>Must be at least 3 characters</li>}
-                {errors.name.type === 'maxLength' && <li>Must be shorter than 240 characters</li>}
-              </Alert>
-            }
+              value={restaurant.name}
+              onChange={(event) => handleNameChange(event.target.value)} />
+            {(suggestions && focused.id === 'nameinput') && <AutocompleteList suggestions={suggestions} handleClick={fetchRestaurant} />}
+            {errors.name && renderError(errors.name)}
           </Form.Group>
 
           <Form.Group data-testid='url-field'>
@@ -93,28 +164,43 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
               disabled={!restaurant}
               type='text'
               name='url'
-              defaultValue={restaurant.url}
-              onChange={(event) => setUrl(event.target.value)}
-              ref={register({ required: true, minLength: 3, maxLength: 240 })} />
-            {errors.url &&
-              <Alert variant='danger'>
-                {errors.url.type === 'required' && <li>URL cannot be empty!</li>}
-                {errors.url.type === 'minLength' && <li>Must be at least 3 characters</li>}
-                {errors.url.type === 'maxLength' && <li>Must be shorter than 240 characters</li>}
-              </Alert>
-            }
+              value={restaurant.url}
+              onChange={(event) => handleUrlChange(event.target.value)} />
+            {errors.url && renderError(errors.url)}
           </Form.Group>
+
           <Form.Group data-testid='address-field'>
             <Form.Label>Restaurant Address</Form.Label>
-            <Form.Control
-              disabled={!restaurant}
-              type='text'
-              name='address'
-              defaultValue={restaurant.address}
-              onChange={(event) => handleAddressChange(event.target.value)}
-            />
+            <div className="address-field">
+              <Form.Control
+                disabled={!restaurant}
+                type='text'
+                name='address'
+                value={restaurant.address}
+                onChange={(event) => handleAddressChange(event.target.value)}
+              />
+              {!validated &&
+                <OverlayTrigger
+                  placement='right'
+                  overlay={
+                    <Tooltip >
+                      {'Check that the address can be found before uploading'}
+                    </Tooltip>
+                  }>
+                  <Button
+                    data-testid='check-button'
+                    onClick={checkAddress}
+                    variant='success'>
+                    Check
+                  </Button>
+                </OverlayTrigger>
+              }
+            </div>
+            {errors.address && renderError(errors.address)}
           </Form.Group>
-          {restaurant.showMap && <RouteMap restaurant={restaurant} />}
+
+          {restaurant.coordinates && <RouteMap restaurant={restaurant} />}
+
           <Filter
             dropdownText='Categories'
             emptyMessage={<FilterEmptyMessage />} /* Private subcomponent - can be found below */
@@ -128,33 +214,24 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
             >
               Cancel
             </Button>
-            <Button
-              data-testid='check-button'
-              onClick={checkAddress}
-              variant='success'
-            >
-              Check
-            </Button>
             <OverlayTrigger
               placement='right'
               overlay={
                 <Tooltip >
                   {suggestTooltip}
                 </Tooltip>
-              }
-            >
+              }>
               <Button
                 data-testid='submit-button'
                 type='submit'
                 variant='primary'
-                disabled={!validated}
-              >
+                disabled={!validated}>
                 {submitMessage}
               </Button>
             </OverlayTrigger>
           </ButtonToolbar>
         </Form>}
-    </div>
+    </div >
   )
 }
 
@@ -162,7 +239,6 @@ const FilterEmptyMessage = () => {
   return (
     <div className='empty-message'>
       <Alert variant='warning'><span>Please select at least one! </span>
-
       </Alert>
       <OverlayTrigger
         placement='right'
@@ -188,13 +264,13 @@ RestaurantForm.propTypes = {
     coordinates: PropTypes.shape({
       latitude: PropTypes.number.isRequired,
       longitude: PropTypes.number.isRequired
-    }),
-    showMap: PropTypes.bool.isRequired
+    })
   }),
   onSubmit: PropTypes.func,
   setRestaurant: PropTypes.func.isRequired,
   suggestTooltip: PropTypes.string,
   submitMessage: PropTypes.string,
+  autocompleteDelay: PropTypes.number
 }
 
 export default RestaurantForm

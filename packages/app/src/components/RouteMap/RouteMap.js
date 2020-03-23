@@ -11,14 +11,18 @@ const RouteMap = ({ restaurant }) => {
   const [positions, setPositions] = useState()
 
   useEffect(() => {
+    let mounted = true
     const getMapData = async () => {
       const leg = await locationService.getLeg(restaurant.coordinates.latitude, restaurant.coordinates.longitude)
-      setStart([locationService.unityLat, locationService.unityLon])
-      setEnd([restaurant.coordinates.latitude, restaurant.coordinates.longitude])
-      setBounds(locationService.calculateBounds(leg))
-      setPositions(locationService.decodeRoute(leg.legGeometry.points))
+      if (mounted) {
+        setStart([locationService.unityLat, locationService.unityLon])
+        setEnd([restaurant.coordinates.latitude, restaurant.coordinates.longitude])
+        setBounds(locationService.calculateBounds(leg))
+        setPositions(locationService.decodeRoute(leg.legGeometry.points))
+      }
     }
     getMapData()
+    return () => mounted = false
   }, [restaurant])
 
   return (
@@ -72,7 +76,7 @@ RouteMap.propTypes = {
   restaurant: PropTypes.shape({
     id: PropTypes.any,
     name: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
+    url: PropTypes.string,
     categories: PropTypes.array,
     address: PropTypes.string,
     coordinates: PropTypes.shape({

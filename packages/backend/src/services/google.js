@@ -8,7 +8,7 @@ const SEARCH_RADIUS = 10000 // in meters
 const LATITUDE = config.originLatitude
 const LONGITUDE = config.originLongitude
 
-const FIELDS = 'formatted_address,name,photos,opening_hours,permanently_closed,place_id,geometry'
+const FIELDS = 'formatted_address,name,photos,opening_hours,permanently_closed,place_id,geometry,website'
 
 /**
  * Thrown to indicate that the API key has exhausted its monthly quota.
