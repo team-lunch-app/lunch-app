@@ -25,7 +25,11 @@ a:hover {
 #root {
   min-height: 100vh;
   height: 100%;
+<<<<<<< HEAD
   background-color: rgba(199, 151, 197, 1);
+=======
+  background-color:rgba(199, 151, 197, 1);
+>>>>>>> 7fa2a8d... Update background & link colors
   color: white;
   /*background-color: #F1C40F;*/
 
