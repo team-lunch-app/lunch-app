@@ -1,31 +1,9 @@
-// import axios from 'axios'
-// const baseUrl = '/api/comments'
+import axios from 'axios'
+const baseUrl = '/api/places/details/reviews'
 
-// result.rating
-// result.reviews.text
-// result.reviews.rating
-// result.reviews.author_name
-
-const commentsForRestaurant = {
-  rating: 1.5,
-  reviews: [
-    {
-      rating: 2,
-      author_name: 'Arska',
-      text: 'Perunat oli jäässä ja sain ripulin.'
-    },
-    {
-      rating: 1,
-      author_name: 'Kake',
-      text: 'Muuten olisin antanut viisi tähteä, mutta naapuripöydän hymyilevä seurue pilasi ravintolaelämyksen.'
-    },
-  ]
-} 
-
-const getCommentsForRestaurant = ( place_id ) => {
-  // place_id is restaurant id for google API
-  // response includes up to five (5) reviews and a rating
-  return commentsForRestaurant
+const getCommentsForRestaurant = async (placeId) => {
+  const response = await axios.get(`${baseUrl}/${placeId}`)
+  return response.data.result  
 }
 
 export default { getCommentsForRestaurant }

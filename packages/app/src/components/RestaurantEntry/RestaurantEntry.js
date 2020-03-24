@@ -18,8 +18,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
     return hasPrefix ? url : `//${url}`
   }
 
-  // Comments tarvitsee restaurant.place_id:n
-  //restaurant.place_id = 'abc123'
+  const id = restaurant.placeId
 
   return (
     <>
@@ -41,9 +40,8 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
         showMap && <RouteMap restaurant={restaurant} />
       }
       {
-        restaurant.showMap && <Comments place_id={'abc123'}/>
+        showMap && <Comments placeId={'ChIJ1RRuq10KkkYRjnEI9JY4AQE'}/>
       }
-
     </>
 
   )

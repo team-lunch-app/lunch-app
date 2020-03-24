@@ -45,6 +45,20 @@ placesRouter.get('/details/:place_id', async (request, response, next) => {
   }
 })
 
+placesRouter.get('/details/reviews/:place_id', async (request, response, next) => {
+  try {
+    const placeId = request.params.place_id
+    const details = await google.findDetails(placeId)
+    if (details === null) {
+      return response.status(404).send({ error: 'No places found with the given place id' })
+    }
+
+    return response.status(200).send(details)
+  } catch (error) {
+    next(error)
+  }
+})
+
 placesRouter.get('/autocomplete/:name', async (request, response, next) => {
   try {
     const text = request.params.name

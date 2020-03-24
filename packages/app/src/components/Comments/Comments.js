@@ -1,14 +1,30 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import commentService from '../../services/comment'
 import './Comments.css'
 import { FormatQuote } from '@material-ui/icons'
 
-const Comments = ( place_id ) => {
+const Comments = ({ placeId }) => {
+  const [restaurantReviews, setReviews] = useState()
+  const [showReviews, setShowReviews] = useState()
 
-  const restaurantReviews = commentService.getCommentsForRestaurant(place_id)
-  const showReviews = restaurantReviews.rating !== undefined
-  
+  useEffect(() => {
+    const getReviews = async () => {
+      if (placeId) {
+        try {
+          const reviews = await commentService.getCommentsForRestaurant(placeId)
+          setReviews(reviews)
+          setShowReviews(reviews.rating !== undefined)
+        } catch (error) {
+          setShowReviews(false)
+        }
+      } else {
+        setShowReviews(false)
+      }
+    } 
+    getReviews()
+  }, [placeId])
+
   return (
     <div data-testid='review-component' className='review-component'>
       {showReviews &&
@@ -18,13 +34,13 @@ const Comments = ( place_id ) => {
           <p key={rev.text}><FormatQuote />{rev.text} &mdash;&nbsp;{rev.author_name}</p>)}
       </>
       }
-      {!showReviews && <h5 data-testid='no-reviews'>No reviews yet.</h5>}
+      {!showReviews && <h5 data-testid='no-reviews'>No reviews yet...</h5>}
     </div>
   )
 }
 
 Comments.propTypes = {
-  place_id: PropTypes.string.isRequired
+  placeId: PropTypes.string
 }
 
 export default Comments

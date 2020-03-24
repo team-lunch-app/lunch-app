@@ -26,17 +26,17 @@ beforeEach(() => {
 })
 
 test('comment component renders', async () => {
-  commentService.getCommentsForRestaurant.mockReturnValue(mockReviews)
-  const { queryByTestId } = await actRender(<Comments place_id={'abc'}/>)
+  commentService.getCommentsForRestaurant.mockResolvedValue(mockReviews)
+  const { queryByTestId } = await actRender(<Comments placeId={'abc'}/>)
   const reviews = queryByTestId('review-component')
   expect(reviews).toBeInTheDocument()
 })
 
-test('if no comments are found ...', async () => {
+test('if no comments are found, a message is shown', async () => {
   commentService.getCommentsForRestaurant.mockReturnValue({
-    place_id: 'abc123'
+    placeId: 'abc123'
   })
-  const { queryByTestId } = await actRender(<Comments place_id={'abc'}/>)
+  const { queryByTestId } = await actRender(<Comments placeId={'abc123'}/>)
   const msg = queryByTestId('no-reviews')
   expect(msg).toBeInTheDocument()
 
