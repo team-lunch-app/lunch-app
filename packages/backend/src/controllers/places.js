@@ -34,7 +34,8 @@ const tryGuessName = (prediction) => {
 placesRouter.get('/details/:place_id', async (request, response, next) => {
   try {
     const placeId = request.params.place_id
-    const details = await google.findDetails(placeId)
+    const fields = 'formatted_address,name,photos,opening_hours,permanently_closed,place_id,geometry'
+    const details = await google.findDetails(placeId, fields)
     if (details === null) {
       return response.status(404).send({ error: 'No places found with the given place id' })
     }
@@ -48,7 +49,8 @@ placesRouter.get('/details/:place_id', async (request, response, next) => {
 placesRouter.get('/details/reviews/:place_id', async (request, response, next) => {
   try {
     const placeId = request.params.place_id
-    const details = await google.findDetails(placeId)
+    const fields = 'rating,reviews'
+    const details = await google.findDetails(placeId, fields)
     if (details === null) {
       return response.status(404).send({ error: 'No places found with the given place id' })
     }

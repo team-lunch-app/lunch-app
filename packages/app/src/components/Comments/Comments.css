@@ -3,12 +3,10 @@
   .review-component {
     display: flex;
     flex-direction: column;
-    justify-content: top;
-    align-items: center;
     font-size: 11px;
     padding-right: 5px;
+    height: 400px;
     width: 360px;
-    height: 50%;
     position: absolute;
     right: 1em;
     overflow-y: scroll;

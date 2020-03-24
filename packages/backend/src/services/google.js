@@ -8,7 +8,7 @@ const SEARCH_RADIUS = 10000 // in meters
 const LATITUDE = config.originLatitude
 const LONGITUDE = config.originLongitude
 
-const FIELDS = 'formatted_address,name,photos,opening_hours,permanently_closed,place_id,geometry,rating,reviews'
+const FIELDS = 'formatted_address,name,photos,opening_hours,permanently_closed,place_id,geometry'
 
 /**
  * Thrown to indicate that the API key has exhausted its monthly quota.
@@ -52,12 +52,13 @@ const findPlaceByKeyword = async (keyword) => {
  * If the result contains an array of HTML attributions, they must be shown to the user due to legal reasons.
  * 
  * @param {string} placeId The Google Place ID to search for
+ * @param {string} fields The desired fields from Google Place result (for example 'formatted_address,name,photos,rating')
  * 
  * @returns null if place was not found, the object containing the details otherwise
  */
-const findDetails = async (placeId) => {
+const findDetails = async (placeId, fields) => {
   const outputFormat = 'json'   // 'json' | 'xml'
-  const response = await axios.get(`${baseUrl}/place/details/${outputFormat}?key=${API_KEY}&place_id=${placeId}&fields=${FIELDS}`)
+  const response = await axios.get(`${baseUrl}/place/details/${outputFormat}?key=${API_KEY}&place_id=${placeId}&fields=${fields}`)
   switch (response.data.status) {
     case 'ZERO_RESULTS':          // Place ID was valid but removed/hidden
     case 'NOT_FOUND':             // Place ID does not exist

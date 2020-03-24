@@ -18,7 +18,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
     return hasPrefix ? url : `//${url}`
   }
 
-  const id = restaurant.placeId
+  const placeId = restaurant.placeId
 
   return (
     <>
@@ -40,7 +40,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
         showMap && <RouteMap restaurant={restaurant} />
       }
       {
-        showMap && <Comments placeId={'ChIJ1RRuq10KkkYRjnEI9JY4AQE'}/>
+        showMap && <Comments placeId={placeId}/>
       }
     </>
 
