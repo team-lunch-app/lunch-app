@@ -176,7 +176,7 @@ restaurantsRouter.put('/increaseResult/:id', async (request, response, next) => 
     const restaurant = await Restaurant.findById(request.params.id)
     restaurant.resultAmount = restaurant.resultAmount + 1
     await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
-    return response.status(204).end()
+    return response.status(200).end()
   } catch (error) {
     next(error)
   }
@@ -188,7 +188,7 @@ restaurantsRouter.put('/increaseNotSelected/:id', async (request, response, next
     const restaurant = await Restaurant.findById(request.params.id)
     restaurant.notSelectedAmount = restaurant.notSelectedAmount + 1
     await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
-    return response.status(204).end()
+    return response.status(200).end()
   } catch (error) {
     next(error)
   }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'react-bootstrap'
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { ExpandMore, ExpandLess } from '@material-ui/icons'
 
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
@@ -146,8 +146,16 @@ const Randomizer = ({
         {filter.visible ? 'Hide filter ' : 'Set filter '}
         {filter.visible ? <ExpandLess /> : <ExpandMore />}
       </button>
-      {restaurant && <p>Approval% : {(restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100}  </p>}
-
+      {restaurant !== undefined && !isRolling && <OverlayTrigger
+        placement='right'
+        overlay={
+          <Tooltip >
+            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times.' + restaurant.name + ' was not chosen ' + restaurant.notSelectedAmount + ' times.'}
+          </Tooltip>
+        }
+      >
+        <p>Approval% : {(restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100}  </p>
+      </OverlayTrigger>}
       <Filter
         emptyMessage={<strong>#IEatAnything</strong>}
         filterCategories={filter.categories}

@@ -56,6 +56,34 @@ Response body contains the requested *restaurant*.
  - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
 
 
+`PUT /api/restaurants/increaseResult/:id`
+--------------------------
+Endpoint for increasing resultAmount; Given an ID, increases value resultAmount of corresponding *restaurant*.
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+### Errors
+ - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
+
+`PUT /api/restaurants/increaseNotSelected/:id`
+--------------------------
+Endpoint for increasing notSelectedAmount; Given an ID, increases value notSelected of corresponding *restaurant*.
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+### Errors
+ - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
+
+
+
 `POST /api/restaurants/allMatches`
 ------------------------------
 Returns a list of restaurants matching given filter criteria.
