@@ -176,7 +176,7 @@ const RandomizerButton = ({
       : 'Wait for it...'
     : hasResult
       ? 'Gimme another one!'
-      : `I'm feeling ${isPicky ? 'lucky' : 'picky'}!`
+      : `I'm feeling ${isPicky ? 'picky' : 'lucky'}!`
 
   return (
     <Button
