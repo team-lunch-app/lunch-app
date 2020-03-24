@@ -1,4 +1,13 @@
-let assetPath = 'static/assets'
+import bowl from '../data/assets/bowl.obj'
+import bowlRim from '../data/assets/bowlrim.obj'
+import soup from '../data/assets/soup.obj'
+import salad from '../data/assets/salad.obj'
+import noodles from '../data/assets/noodles-lowpoly.obj'
+import chopsticks from '../data/assets/chopsticks.obj'
+import eggWhite from '../data/assets/eggwhite.obj'
+import eggYolk from '../data/assets/eggyellow.obj'
+import tofu from '../data/assets/tofu.obj'
+
 let spinning = false
 let spinningTime = 0
 let rotation = 0
@@ -47,15 +56,15 @@ export const foodScript = (sketch) => {
      * waste of development time.
      */
 
-    customLoadModel('bowl', `${assetPath}/bowl.obj`)
-    customLoadModel('bowlRim', `${assetPath}/bowlrim.obj`)
-    customLoadModel('soup', `${assetPath}/soup.obj`)
-    customLoadModel('salad', `${assetPath}/salad.obj`)
-    customLoadModel('noodles', `${assetPath}/noodles-lowpoly.obj`)
-    customLoadModel('chopsticks', `${assetPath}/chopsticks.obj`)
-    customLoadModel('eggWhite', `${assetPath}/eggwhite.obj`)
-    customLoadModel('eggYolk', `${assetPath}/eggyellow.obj`)
-    customLoadModel('tofu', `${assetPath}/tofu.obj`)
+    customLoadModel('bowl', bowl)
+    customLoadModel('bowlRim', bowlRim)
+    customLoadModel('soup', soup)
+    customLoadModel('salad', salad)
+    customLoadModel('noodles', noodles)
+    customLoadModel('chopsticks', chopsticks)
+    customLoadModel('eggWhite', eggWhite)
+    customLoadModel('eggYolk', eggYolk)
+    customLoadModel('tofu', tofu)
 
     materials = {
       white: () => materialFunc(242, 242, 242, true),
@@ -122,7 +131,6 @@ export const foodScript = (sketch) => {
       sketch.shininess(20)
 
       /* Draw the different parts of the model*/
-
       drawModel('bowl', materials.white)
       drawModel('bowlRim', materials.blue)
       drawModel('soup', materials.soup)
