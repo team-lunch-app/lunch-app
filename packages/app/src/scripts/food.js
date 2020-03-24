@@ -166,8 +166,8 @@ export const foodScript = (sketch) => {
    * to be displayed. This could also be done synchronously with
    * p5's preload(), but this way we can create our own
    * loading animation.
-   * @param {*} name | The desired key for the model when it is placed in a map
-   * @param {*} path | The path to load the model from
+   * @param {*} name | The desired key for the model when it is placed in a map
+   * @param {*} path | The path to load the model from
    */
   const customLoadModel = (name, path) => {
     const modelLoaded = (model) => {
@@ -182,7 +182,7 @@ export const foodScript = (sketch) => {
    * @param {*} r | The amount of red the color has
    * @param {*} g | The amount of green the color has
    * @param {*} b | The amount of blue the color has
-   * @param {*} specular | Whether the material is specular or not
+   * @param {*} specular | Whether the material is specular or not
    */
   const materialFunc = (r, g, b, specular) => {
 
@@ -205,7 +205,7 @@ export const foodScript = (sketch) => {
  * If false, the model is in a passive state,
  * alternating between a slight rotation
  * clockwise and counter-clockwise. 
- * @param {*} newStatus | The desired spinning state
+ * @param {*} newStatus | The desired spinning state
  */
 export const setSpin = (newStatus) => {
   spinning = newStatus
