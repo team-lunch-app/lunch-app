@@ -151,15 +151,15 @@ const Randomizer = ({
         {filter.visible ? 'Hide filter ' : 'Set filter '}
         {filter.visible ? <ExpandLess /> : <ExpandMore />}
       </button>
-      {restaurant !== undefined && !isRolling && <OverlayTrigger
+      {restaurant !== undefined && restaurant.notSelectedAmount > 0 && !isRolling && <OverlayTrigger
         placement='right'
         overlay={
           <Tooltip >
-            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times.' + restaurant.name + ' was not chosen ' + restaurant.notSelectedAmount + ' times.'}
+            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. ' + restaurant.name + ' was not chosen ' + restaurant.notSelectedAmount + ' times.'}
           </Tooltip>
         }
       >
-        <p>Approval% : {(restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100}  </p>
+        <p>Approval% : {Math.round((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}  </p>
       </OverlayTrigger>}
       <Filter
         emptyMessage={<strong>#IEatAnything</strong>}
