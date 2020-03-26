@@ -172,6 +172,25 @@ const detailsResponse = {
   }
 }
 
+const reviewsResponse = {
+  'attributions': [],
+  'result': {
+    'rating': 4.2,
+    'reviews': [
+      {
+        'author_name' : 'Mr. X',
+        'author_url' : 'https://www.google.com',
+        'language' : 'en',
+        'profile_photo_url' : 'https://.googleusercontent.com/photo.jpg',
+        'rating' : 5,
+        'relative_time_description' : 'a month ago',
+        'text' : 'Me likes much.',
+        'time' : 1491144016
+      }
+    ]
+  }
+}
+
 let server
 beforeEach(() => {
   jest.clearAllMocks()
@@ -260,5 +279,22 @@ test('find details returns some relevant information', async () => {
         lng: 24.9389156
       }
     }),
+  })
+})
+
+test('details/reviews endpoint returns a rating and reviews for a restaurant', async () => {
+  google.findDetails.mockResolvedValue(reviewsResponse)
+  console.log('test')
+  const { body: contents } = await server
+    .get(`/api/places/details/reviews/${detailsQuery}`)
+  
+  expect(contents.attributions).toHaveLength(0)
+  expect(contents.result).toMatchObject({
+    rating: 4.2,
+    reviews: [
+      {
+        author_name: 'Mr. X'
+      }
+    ]
   })
 })

@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/places/autocomplete/fuku HTTP/1.1
+GET http://localhost:3001/api/places/autocomplete/persilja HTTP/1.1

@@ -11,5 +11,8 @@
 }
 
 .main-footer {
-    padding: 1em;
+    padding: 0.5em;
+    position: fixed;
+    bottom: 0;
 }
+ 

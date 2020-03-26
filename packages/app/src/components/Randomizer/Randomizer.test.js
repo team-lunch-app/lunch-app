@@ -7,6 +7,7 @@ import locationService from '../../services/location'
 import categoryService from '../../services/category'
 import '../../scripts/confetti'
 import '../../scripts/food'
+import commentService from '../../services/comment'
 
 jest.mock('p5')
 
@@ -15,6 +16,7 @@ jest.mock('../../services/sound.js')
 jest.mock('../../services/location.js')
 jest.mock('../../scripts/confetti.js')
 jest.mock('../../scripts/food.js')
+jest.mock('../../services/comment.js')
 
 restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
@@ -24,6 +26,17 @@ restaurantService.getAllMatches.mockResolvedValue([{
   coordinates: { latitude: 60.17, longitude: 24.94 }
 }])
 window.HTMLMediaElement.prototype.play = () => { }
+
+commentService.getCommentsForRestaurant.mockResolvedValue({
+  rating: 1,
+  reviews: [
+    {
+      rating: 1,
+      author_name: 'Kake',
+      text: 'Muuten olisin antanut viisi tähteä, mutta naapuripöydän hymyilevä seurue pilasi illan.'
+    },
+  ]
+})
 
 jest.mock('../../services/category.js')
 categoryService.getAll.mockResolvedValue([{ id: 3, name: 'salads' }])
@@ -154,4 +167,15 @@ test('3d food is not shown when roll results are displayed', async () => {
   const { queryByTestId } = await actRender(<TestRandomizer />)
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   expect(queryByTestId(/foodmodel-container/i)).toHaveStyle('display: none')
+})
+
+test('review component is not shown by default', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  expect(queryByTestId(/review-component/i)).not.toBeInTheDocument()
+})
+
+test('review component is shown after roll', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  expect(queryByTestId(/review-component/i)).toBeInTheDocument()
 })
