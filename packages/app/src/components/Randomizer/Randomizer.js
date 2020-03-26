@@ -159,7 +159,7 @@ const Randomizer = ({
           </Tooltip>
         }
       >
-        <p>Approval% : {Math.ceil((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}  </p>
+        <p>Approval% : {Math.round((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}  </p>
       </OverlayTrigger>}
       <Filter
         emptyMessage={<strong>#IEatAnything</strong>}
