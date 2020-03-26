@@ -33,11 +33,24 @@ const getAllMatches = async (filterType, filterCategories, distance) => {
   return response.data
 }
 
+const increaseResultAmount = async (id) => {
+  const response = await axios.put(`${baseUrl}/increaseResult/${id}`)
+  return response.data
+}
+
+const increaseNotSelectedAmount = async (id) => {
+  const response = await axios.put(`${baseUrl}/increaseNotSelected/${id}`)
+  return response.data
+}
+
 export default {
   getAll,
   getOneById,
   add,
   remove,
   getAllMatches,
-  update
+  update,
+  increaseNotSelectedAmount,
+  increaseResultAmount
+
 }

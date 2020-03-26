@@ -141,6 +141,29 @@ test('get request to a specific id returns the correct restaurant', async () => 
   })
 })
 
+test('put request to increaseResult increases resultAmount', async () => {
+  const testRestaurantId = restaurants[0].id
+  const res = await Restaurant.findById(testRestaurantId)
+  const resultAmount = res.resultAmount
+
+  const response = await server
+    .put(`/api/restaurants/increaseResult/${testRestaurantId}`)
+  const resAfter = await Restaurant.findById(testRestaurantId)
+  expect(resAfter.resultAmount).toBe(resultAmount + 1)
+
+})
+test('put request to increaseNotSelected increases notSelected', async () => {
+  const testRestaurantId = restaurants[0].id
+  const res = await Restaurant.findById(testRestaurantId)
+  const notSelectedAmount = res.notSelectedAmount
+
+  const response = await server
+    .put(`/api/restaurants/increaseNotSelected/${testRestaurantId}`)
+  const resAfter = await Restaurant.findById(testRestaurantId)
+  expect(resAfter.notSelectedAmount).toBe(notSelectedAmount + 1)
+
+})
+
 test('getAllMatches request without category ids or distance returns all restaurants', async () => {
   const response = await server
     .post('/api/restaurants/allMatches')
@@ -401,6 +424,8 @@ describe('when logged in', () => {
       categories: [],
       address: 'Senaatintori',
       coordinates: { latitude: 60, longitude: 24 },
+      notSelectedAmount: 0,
+      resultAmount: 0,
       distance: 1000
     })
   })
