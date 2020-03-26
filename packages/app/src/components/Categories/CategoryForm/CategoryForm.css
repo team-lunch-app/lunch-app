@@ -16,3 +16,9 @@
 .add-form > div > .alert {
     margin-top: 0.5em;
 }
+
+.category-form {
+    background: rgba(0,0,0,0.5);
+    padding: 2em;
+    border-radius: 1em;
+}

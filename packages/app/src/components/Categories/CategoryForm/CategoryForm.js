@@ -50,7 +50,7 @@ const CategoryForm = ({ onSubmit, id }) => {
   
 
   return (
-    <div data-testid='categoryForm'>
+    <div data-testid='categoryForm' className='category-form'>
       {error && <Alert data-testid='categoryForm-errorMessage' variant='danger'>{error}</Alert>}
       {category ?
         <Form onSubmit={handleSubmit(saveCategory)} className='add-form'>
