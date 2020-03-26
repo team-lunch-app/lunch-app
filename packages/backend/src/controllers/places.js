@@ -81,4 +81,15 @@ placesRouter.get('/autocomplete/:name', async (request, response, next) => {
   }
 })
 
+placesRouter.get('/details/photos/:place_id', async (request, response, next) => {
+  const placeId = request.params.place_id
+  
+  try {
+    const urls = await google.getPhotoUrls(placeId)
+    return response.status(200).send(urls)
+  } catch (error){
+    next(error)
+  }
+})
+
 module.exports = placesRouter

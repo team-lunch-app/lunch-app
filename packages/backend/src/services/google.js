@@ -103,10 +103,31 @@ const autocomplete = async (text) => {
   }
 }
 
+const getPhotoUrls = async (placeId) => {
+  try {
+    const fields = 'photos'
+    const details = await findDetails(placeId, fields)
+   
+    // details.result.photos -> taulukko photoja (height, html_attributions[],
+    // photo_reference, width)
+    
+    const photos = details.result.photos
+    const firstRef = photos[0].photo_reference
+
+    const result = await axios.get(`${baseUrl}/place/photo?maxwidth=400&photoreference=${firstRef}&key=${API_KEY}`)
+    const photoUrl = result.request._redirectable._options.href
+    return photoUrl
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 
 module.exports = {
   findPlaceByKeyword,
   autocomplete,
   findDetails,
   QueryLimitError,
+  getPhotoUrls
 }
