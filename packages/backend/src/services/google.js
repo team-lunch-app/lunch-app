@@ -103,31 +103,47 @@ const autocomplete = async (text) => {
   }
 }
 
-const getPhotoUrls = async (placeId) => {
-  try {
-    const fields = 'photos'
-    const details = await findDetails(placeId, fields)
-   
-    // details.result.photos -> taulukko photoja (height, html_attributions[],
-    // photo_reference, width)
-    
-    const photos = details.result.photos
-    const firstRef = photos[0].photo_reference
+/**
+ * Finds all (10 at the most) photos for a place with a valid Google Place ID. Then fetches
+ * the url:s for the photos with a little help from the helper function getUrl().
+ * 
+ * Returns an array of photos with fields width, height, photo_reference, html_attributions[]
+ * and url.
+ * 
+ * @param {string} placeId The Google Place ID to search for
+ */
+const getAllPhotos = async (placeId) => {
+  const fields = 'photos'
+  const details = await findDetails(placeId, fields)
+  const photoObjects = details.result.photos
 
-    const result = await axios.get(`${baseUrl}/place/photo?maxwidth=400&photoreference=${firstRef}&key=${API_KEY}`)
-    const photoUrl = result.request._redirectable._options.href
-    return photoUrl
-
-  } catch (error) {
-    console.log(error)
-  }
+  const modifiedList = await Promise.all(photoObjects.map(async photo => {
+    return {...photo, url: await getUrl(photo.photo_reference)}
+  }))
+  
+  return modifiedList
 }
 
+/**
+ * Fetches a url for a photo from the Google Places Place Photos API. Returns a string containing the url.
+ * 
+ * The maxwidth parameter in the search url defines the maximum width for the photo. In this case, 
+ * photos wider than 400 pixels will be scaled to match the width while keeping its original aspect ratio.
+ * The number must be between 1 and 1600. This parameter is also required for the request.
+ * 
+ * @param {string} reference The photo_reference attribute of the photo
+ */
+const getUrl = async (reference) => {
+  const width = 400
+  const result = await axios.get(`${baseUrl}/place/photo?maxwidth=${width}&photoreference=${reference}&key=${API_KEY}`)
+  const photoUrl = result.request._redirectable._options.href
+  return photoUrl
+}
 
 module.exports = {
   findPlaceByKeyword,
   autocomplete,
   findDetails,
   QueryLimitError,
-  getPhotoUrls
+  getAllPhotos
 }

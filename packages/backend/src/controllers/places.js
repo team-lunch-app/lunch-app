@@ -85,8 +85,11 @@ placesRouter.get('/details/photos/:place_id', async (request, response, next) =>
   const placeId = request.params.place_id
   
   try {
-    const urls = await google.getPhotoUrls(placeId)
-    return response.status(200).send(urls)
+    const photos = await google.getAllPhotos(placeId)
+    if (photos === null) {
+      return response.status(404).send({ error: 'No photos found.' })
+    }
+    return response.status(200).send(photos)
   } catch (error){
     next(error)
   }
