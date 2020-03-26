@@ -7,6 +7,8 @@ import categoryService from './services/category'
 import authService from './services/authentication'
 import suggestionService from './services/suggestion'
 
+jest.mock('p5')
+
 jest.mock('./services/restaurant.js')
 jest.mock('./services/authentication.js')
 jest.mock('./services/category.js')
