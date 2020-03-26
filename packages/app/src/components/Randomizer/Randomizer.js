@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { ExpandMore, ExpandLess } from '@material-ui/icons'
 
 import RestaurantEntry from '../RestaurantEntry/RestaurantEntry'
@@ -131,11 +131,11 @@ const Randomizer = ({
   const isPicky = filter.categories.length > 0
   return (
     <div data-testid='randomizer' className='randomizer'>
+      {nope.active && <h1>NOPE</h1>}
+      {selectRestaurantElement()}
       <div data-testid='foodmodel-container' className='foodmodel' style={{display: `${(restaurant && !isRolling) ? 'none' : 'inline'}`}}>
         <FoodModel rolling={isRolling} />
       </div>
-      {nope.active && <h1>NOPE</h1>}
-      {selectRestaurantElement()}
       <RandomizerButton
         onClick={startRolling}
         setError={setError}
@@ -151,16 +151,6 @@ const Randomizer = ({
         {filter.visible ? 'Hide filter ' : 'Set filter '}
         {filter.visible ? <ExpandLess /> : <ExpandMore />}
       </button>
-      {restaurant !== undefined && restaurant.notSelectedAmount > 0 && !isRolling && <OverlayTrigger
-        placement='right'
-        overlay={
-          <Tooltip >
-            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. ' + restaurant.name + ' was not chosen ' + restaurant.notSelectedAmount + ' times.'}
-          </Tooltip>
-        }
-      >
-        <p>Approval% : {Math.round((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}  </p>
-      </OverlayTrigger>}
       <Filter
         emptyMessage={<strong>#IEatAnything</strong>}
         filterCategories={filter.categories}

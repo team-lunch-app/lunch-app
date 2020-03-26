@@ -4,9 +4,12 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 4em;
+    border-radius: 1em;
 }
 
 .randomizer > h1 {
+    margin-top: 0.5em;
     text-align: center;
 }
 

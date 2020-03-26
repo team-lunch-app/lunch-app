@@ -29,7 +29,7 @@ const Comments = ({ placeId }) => {
     <div data-testid='review-component' className='review-component'>
       {showReviews &&
       <>
-        <h5 className='review-rating'>Average rating: {restaurantReviews.rating}</h5>
+        <h5 className='review-rating'>Average rating on Google: {restaurantReviews.rating}</h5>
         {restaurantReviews.reviews.map(rev => 
           <p key={rev.text}><FormatQuote />{rev.text} &mdash;&nbsp;{rev.author_name}</p>)}
       </>

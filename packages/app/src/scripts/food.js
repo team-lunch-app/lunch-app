@@ -34,7 +34,7 @@ export const foodScript = (sketch) => {
 
     sketch.createCanvas(width, height, sketch.WEBGL)
     sketch.angleMode(sketch.DEGREES)
-    bgColor = sketch.color(199, 151, 197)
+    bgColor = sketch.color(225, 206, 201, 0)
 
     /**
      * Load the different parts of the noodle bowl to
@@ -110,9 +110,18 @@ export const foodScript = (sketch) => {
 
     /* Main light source */
 
-    let lightStrength = 0.65
+    let lightStrength = 0.5
     let lightPos = sketch.createVector(width, -height, -25)
     sketch.pointLight(lightStrength * 255, lightStrength * 255, lightStrength * 255, lightPos)
+
+    /* Render a clearly fake shadow under to bowl */
+    sketch.push()
+    sketch.translate(-15, 170, 0)
+    sketch.rotateX(90)
+    sketch.fill(0, 0, 0, 180)
+    sketch.ellipse(0, 0, 100, 100)
+    sketch.pop()
+
 
     /* Set up appropriate positioning and scaling */
 
@@ -130,7 +139,7 @@ export const foodScript = (sketch) => {
     if (models.size === 9) {
       sketch.shininess(20)
 
-      /* Draw the different parts of the model*/
+      /* Draw the different parts of the model */
       drawModel('bowl', materials.white)
       drawModel('bowlRim', materials.blue)
       drawModel('soup', materials.soup)
@@ -140,6 +149,7 @@ export const foodScript = (sketch) => {
       drawModel('eggWhite', materials.white)
       drawModel('eggYolk', materials.eggYolk)
       drawModel('tofu', materials.white)
+
 
       spinning && spinningTime++
     } else {

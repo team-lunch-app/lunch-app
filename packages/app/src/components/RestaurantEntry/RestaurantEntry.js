@@ -1,9 +1,12 @@
 import React from 'react'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
 import RouteMap from '../RouteMap/RouteMap'
 import Comments from '../Comments/Comments'
 import PhotoCarousel from '../Photos/PhotoCarousel'
+
+import '../RestaurantEntry/RestaurantEntry.css'
 
 const RestaurantEntry = ({ restaurant, showMap }) => {
 
@@ -20,7 +23,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
   }
 
   const placeId = restaurant.placeId
-  
+
   return (
     <>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
@@ -35,7 +38,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
             <span>Website </span>
             <Link />
           </a>
-        </p> 
+        </p>
       }
       {
         showMap && <PhotoCarousel placeId={placeId} />
@@ -44,10 +47,19 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
         showMap && <RouteMap restaurant={restaurant} />
       }
       {
-        showMap && <Comments placeId={placeId}/>
+        showMap && <Comments placeId={placeId} />
+      }
+      {restaurant !== undefined && restaurant.notSelectedAmount > 0 && <OverlayTrigger
+        placement='right'
+        overlay={
+          <Tooltip >
+            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. ' + restaurant.name + ' was not chosen ' + restaurant.notSelectedAmount + ' times.'}
+          </Tooltip>
+        } >
+        <p className='randomizer-resultApproval'>Lunch Lottery users approved this restaurant {Math.round((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}% of the time</p>
+      </OverlayTrigger>
       }
     </>
-
   )
 }
 
