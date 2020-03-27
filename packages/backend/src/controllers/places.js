@@ -52,7 +52,7 @@ placesRouter.get('/details/reviews/:place_id', async (request, response, next) =
     const fields = 'rating,reviews'
     const details = await google.findDetails(placeId, fields)
     if (details === null) {
-      return response.status(404).send({ error: 'No places found with the given place id' })
+      return response.status(404).send({ error: 'No reviews found with the given place id' })
     }
 
     return response.status(200).send(details)

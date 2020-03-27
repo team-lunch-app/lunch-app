@@ -62,6 +62,7 @@ const findDetails = async (placeId, fields) => {
   switch (response.data.status) {
     case 'ZERO_RESULTS':          // Place ID was valid but removed/hidden
     case 'NOT_FOUND':             // Place ID does not exist
+    case 'INVALID_REQUEST':       // Malformed Place ID
       return null
     case 'OK':                    // Place found and OK
       return {
@@ -115,21 +116,25 @@ const autocomplete = async (text) => {
 const getAllPhotos = async (placeId) => {
   const fields = 'photos'
   const details = await findDetails(placeId, fields)
+  if (details === null) {
+    return null
+  }
+
   const photoObjects = details.result.photos
 
   const modifiedList = await Promise.all(photoObjects.map(async photo => {
     return {...photo, url: await getUrl(photo.photo_reference)}
   }))
-  
+
   return modifiedList
 }
 
 /**
  * Fetches a url for a photo from the Google Places Place Photos API. Returns a string containing the url.
  * 
- * The maxwidth parameter in the search url defines the maximum width for the photo. In this case, 
+ * The maxwidth parameter in the query defines the maximum width for the photo. In this case, 
  * photos wider than 400 pixels will be scaled to match the width while keeping its original aspect ratio.
- * The number must be between 1 and 1600. This parameter is also required for the request.
+ * The number must be between 1 and 1600. This parameter (or maxheight) is required for the request.
  * 
  * @param {string} reference The photo_reference attribute of the photo
  */
