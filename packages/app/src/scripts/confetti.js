@@ -8,8 +8,8 @@ import p5 from 'p5'
 
 const confetti = (sketch) => {
 
-  let width = sketch.windowWidth
-  let height = sketch.windowHeight
+  let width = sketch.windowWidth * 0.9
+  let height = sketch.windowHeight * 0.9
   let particles
   let opacity
   let gravity
