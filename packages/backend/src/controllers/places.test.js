@@ -191,6 +191,18 @@ const reviewsResponse = {
   }
 }
 
+const photoResponse = [
+  {
+    'height': 2976,
+    'html_attributions': [
+      '<a href=\"https://maps.google.com/maps/contrib/109674951059360295476\">ilir berbatovci</a>'
+    ],
+    'photo_reference': 'CmRaAAAAno2XTIAtGVwF3ZUrwSDx2jJuTiKlRCT6zSBPPmB_tn-OJ8LiFWW1C0Wj85fnbK3VHhxvGht6F81ARnMYNGv4Z3TqcANf2RlnkYv8BixkzmoLexKIkwqU_-9QkeFwUOeQEhB3HC6bJDEwqLiGnjzrjzK8GhSDYRKkaUgQMlqKLm_gTWWPN5OTzQ',
+    'width': 3968,
+    'url': 'https://lh3.googleusercontent.com/p/AF1QipNywmFsAKDlkDz1bUyz0-c1o0UTC7L-uACgEObw=s1600-w400'
+  },
+]
+
 let server
 beforeEach(() => {
   jest.clearAllMocks()
@@ -284,7 +296,6 @@ test('find details returns some relevant information', async () => {
 
 test('details/reviews endpoint returns a rating and reviews for a restaurant', async () => {
   google.findDetails.mockResolvedValue(reviewsResponse)
-  console.log('test')
   const { body: contents } = await server
     .get(`/api/places/details/reviews/${detailsQuery}`)
   
@@ -297,4 +308,20 @@ test('details/reviews endpoint returns a rating and reviews for a restaurant', a
       }
     ]
   })
+})
+
+test('failed photo query returns with status 404', async () => {
+  google.getAllPhotos.mockResolvedValue(null)
+  await server
+    .get(`/api/places/details/photos/${detailsQuery}`)
+    .expect(404)
+})
+
+test('a successfull photo query returns meaningful data', async () => {
+  google.getAllPhotos.mockResolvedValue(photoResponse)
+  const response = await server
+    .get(`/api/places/details/photos/${detailsQuery}`)
+  
+  expect(response.status).toBe(200)
+  expect(response.body).toBeDefined()
 })

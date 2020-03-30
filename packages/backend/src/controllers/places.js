@@ -52,7 +52,7 @@ placesRouter.get('/details/reviews/:place_id', async (request, response, next) =
     const fields = 'rating,reviews'
     const details = await google.findDetails(placeId, fields)
     if (details === null) {
-      return response.status(404).send({ error: 'No places found with the given place id' })
+      return response.status(404).send({ error: 'No reviews found with the given place id' })
     }
 
     return response.status(200).send(details)
@@ -77,6 +77,20 @@ placesRouter.get('/autocomplete/:name', async (request, response, next) => {
 
     return response.status(200).send(result)
   } catch (error) {
+    next(error)
+  }
+})
+
+placesRouter.get('/details/photos/:place_id', async (request, response, next) => {
+  const placeId = request.params.place_id
+  
+  try {
+    const photos = await google.getAllPhotos(placeId)
+    if (photos === null) {
+      return response.status(404).send({ error: 'No photos found.' })
+    }
+    return response.status(200).send(photos)
+  } catch (error){
     next(error)
   }
 })

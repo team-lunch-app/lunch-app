@@ -80,6 +80,31 @@ Response body contains details of the requested place, as per [Google API docume
 }
 ```
 
-### Errors
- - `Status: 500 Internal Server Error` - if malformed ID is provided. Response body contains the error message.
+ - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
+ - `Status: 503 Service Unavailable` - if the underlying Google API key has exhausted monthly quota
+
+
+`GET /api/places/details/photos/:place_id`
+--------------------------
+*"photos"* -endpoint; Given a valid Google Place ID, returns references to up to 10 photos of the corresponding place.
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+Response body contains information about the photos of the requested place. The application's google service sets the width to 400 pixels and the images will be scaled accordingly. The information includes the html attributions that have to be published with each image as well as the url for the photo. The binary data of the image is not returned. Go to [Google API documentation](https://developers.google.com/places/web-service/photos) for more information.
+
+```js
+{
+  "height": integer,
+  "html_attributions": [ /* HTML attributions */ ],
+  "photo_reference": string,
+  "width": integer,
+  "url": string 
+}
+```
+
+ - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
  - `Status: 503 Service Unavailable` - if the underlying Google API key has exhausted monthly quota
