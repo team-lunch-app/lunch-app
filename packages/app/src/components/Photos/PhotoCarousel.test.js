@@ -2,7 +2,6 @@ import React from 'react'
 import { actRender } from '../../test/utilities'
 import PhotoCarousel from './PhotoCarousel'
 import photoService from '../../services/photo'
-import photo from '../../services/photo'
 
 jest.mock('../../services/photo')
 

@@ -38,7 +38,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
         </p> 
       }
       {
-      showMap && <PhotoCarousel placeId={placeId} />
+        showMap && <PhotoCarousel placeId={placeId} />
       }
       {
         showMap && <RouteMap restaurant={restaurant} />
