@@ -7,8 +7,10 @@ import './AutocompleteEntry.css'
 
 const AutocompleteEntry = ({ suggestion, handleClick }) => {
   return (
-    <ListGroup data-testid='autocomplete-entry' className="list-group-flush">
-      <ListGroupItem onClick={() => handleClick(suggestion)}> {suggestion.address} </ListGroupItem>
+    <ListGroup className="list-group-flush">
+      <ListGroupItem data-testid='autocomplete-entry' onClick={() => handleClick(suggestion)}>
+        {suggestion.address}
+      </ListGroupItem>
     </ListGroup>
   )
 }

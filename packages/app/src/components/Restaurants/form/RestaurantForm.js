@@ -11,27 +11,25 @@ import AutocompleteList from '../AutocompleteList/AutocompleteList'
 import locationService from '../../../services/location'
 import placeService from '../../../services/places'
 
-import customHooks from '../../../util/customHooks'
-
 import './RestaurantForm.css'
-
-
 
 const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = 'Suggest', suggestTooltip = 'Create suggestion', autocompleteDelay = 1000 }) => {
   const [validated, setValidated] = useState((restaurant.coordinates !== undefined))
   const [errors, setErrors] = useState({})
   const setCategories = (categories) => setRestaurant({ ...restaurant, categories })
   const [timeoutHandle, setTimeoutHandle] = useState()
-  const [suggestions, setSuggestions] = useState()
-  const focused = customHooks.useActiveElement()
+  const [blurTimeout, setBlurTimeout] = useState()
+  const [suggestions, setSuggestions] = useState([])
+  const [focusedId, setFocusedId] = useState()
 
   let history = useHistory()
 
   useEffect(() => {
     return () => {
+      clearTimeout(blurTimeout)
       clearTimeout(timeoutHandle)
     }
-  }, [timeoutHandle])
+  }, [timeoutHandle, blurTimeout])
 
   const handleAddressChange = (address) => {
     setRestaurant({ ...restaurant, address, coordinates: undefined })
@@ -44,8 +42,8 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
   }
 
   const fetchSuggestions = async (name) => {
-    const suggestions = await placeService.getSuggestions(name)
-    setSuggestions(suggestions)
+    const fetched = await placeService.getSuggestions(name)
+    setSuggestions(fetched)
   }
 
   const handleNameChange = (name) => {
@@ -135,7 +133,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
     }
   }
 
-  const renderError = (error) => <Alert data-testid='error-msg-generic' variant='danger'> {error}</Alert>
+  const renderError = (err) => <Alert data-testid='error-msg-generic' variant='danger'>{String(err)}</Alert>
 
   return (
     <div data-testid='restaurant-form'>
@@ -146,6 +144,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
           <Form.Group data-testid='name-field' className="name-field">
             <Form.Label>Restaurant Name</Form.Label>
             <Form.Control
+              data-testid='name-input'
               role="textbox"
               id="nameinput"
               autoComplete="off"
@@ -153,8 +152,10 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
               type='text'
               name='name'
               value={restaurant.name}
+              onFocus={(event) => setFocusedId(event.target.id)}
+              onBlur={() => setBlurTimeout(setTimeout(() => setFocusedId(undefined), 100))}
               onChange={(event) => handleNameChange(event.target.value)} />
-            {(suggestions && focused.id === 'nameinput') && <AutocompleteList suggestions={suggestions} handleClick={fetchRestaurant} />}
+            {(suggestions && suggestions.length > 0 && focusedId === 'nameinput') && <AutocompleteList suggestions={suggestions} handleClick={fetchRestaurant} />}
             {errors.name && renderError(errors.name)}
           </Form.Group>
 

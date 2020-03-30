@@ -16,8 +16,6 @@ jest.mock('../../../services/category.js')
 jest.mock('../../../services/location.js')
 jest.mock('../../../services/places.js')
 
-
-
 const createEmptyRestaurant = () => ({ name: '', url: '', categories: [] })
 
 beforeEach(() => {
@@ -437,7 +435,7 @@ test('map is shown when the restaurant has coordinates true (i.e. when editing a
 })
 
 
-test('name field text input calls placeService.getSuggestions() TOIMII', async () => {
+test('name field text input calls placeService.getSuggestions()', async () => {
   const mockSetRestaurant = jest.fn()
   const { getByTestId } = await actRender(
     <RestaurantForm
@@ -456,8 +454,10 @@ test('name field text input calls placeService.getSuggestions() TOIMII', async (
   await wait(() => expect(placeService.getSuggestions).toBeCalledWith('Lidl City Center'))
 })
 
-test.skip('name field text input leads to suggestions being rendered EI TOIMI', async () => {
+test('name field text input leads to suggestions being rendered', async () => {
   const mockSetRestaurant = jest.fn()
+  placeService.getSuggestions.mockResolvedValue(testdata.getSuggestions().data)
+
   const { getByTestId, queryByTestId } = await actRender(
     <RestaurantForm
       restaurant={createEmptyRestaurant()}
@@ -465,22 +465,27 @@ test.skip('name field text input leads to suggestions being rendered EI TOIMI', 
       error={''}
       setError={jest.fn()}
       onSubmit={jest.fn()}
-    />)
+    />
+  )
+
   jest.useFakeTimers()
   const form = getByTestId(/restaurant-form/i)
   const nameField = within(form).getByTestId(/name-field/i)
   const nameElement = within(nameField).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  fireEvent.focus(nameElement)
   jest.runAllTimers()
+
+  expect(nameElement).toMatchObject(document.activeElement)
   await wait(() => expect(placeService.getSuggestions).toBeCalledWith('Lidl City Center'))
-  act(() => nameElement.focus())
-  console.log(document.activeElement)
   expect(queryByTestId('autocomplete-list')).toBeInTheDocument()
   await wait(() => expect(queryByTestId('autocomplete-entry')).toBeInTheDocument())
 })
 
-test.skip('clicking on a suggestion calls placeService.getRestaurant EI TOIMI', async () => {
+test('clicking on a suggestion calls placeService.getRestaurant', async () => {
   const mockSetRestaurant = jest.fn()
+  placeService.getSuggestions.mockResolvedValue(testdata.getSuggestions().data)
+
   const { getByTestId, queryByTestId } = await actRender(
     <RestaurantForm
       restaurant={createEmptyRestaurant()}
@@ -488,17 +493,23 @@ test.skip('clicking on a suggestion calls placeService.getRestaurant EI TOIMI', 
       error={''}
       setError={jest.fn()}
       onSubmit={jest.fn()}
-    />)
+    />
+  )
+
   jest.useFakeTimers()
   const form = getByTestId(/restaurant-form/i)
   const nameField = within(form).getByTestId(/name-field/i)
   const nameElement = within(nameField).getByRole(/textbox/i)
   fireEvent.change(nameElement, { target: { value: 'Lidl City Center' } })
+  fireEvent.focus(nameElement)
   jest.runAllTimers()
+
   await wait(() => expect(placeService.getSuggestions).toBeCalledWith('Lidl City Center'))
   await wait(() => expect(queryByTestId('autocomplete-list')).toBeInTheDocument())
-  await wait(() => expect(queryByTestId('autocomplete-entry')).toBeInTheDocument())
-  const suggestionElement = getByTestId('autocomplete-entry')
-  fireEvent.click(suggestionElement)
+  await wait(() => {
+    const suggestionElement = queryByTestId('autocomplete-entry')
+    expect(suggestionElement).toBeInTheDocument()
+    fireEvent.click(suggestionElement)
+  })
   await wait(() => expect(placeService.getRestaurant).toBeCalledWith('ChIJgWk_zoQJkkYRr0Ye0Tk7DF4'))
 })

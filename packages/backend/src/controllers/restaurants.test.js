@@ -410,7 +410,7 @@ describe('when logged in', () => {
   test('post request with a placeId creates the restaurant with a placeId', async () => {
 
     const response = await server
-      .post(`/api/restaurants/`)
+      .post('/api/restaurants/')
       .set('authorization', `bearer ${token}`)
       .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000, placeId: 'ChIJgWk_zoQJkkYRr0Ye0Tk7DF4' })
       .expect(201)
@@ -430,7 +430,7 @@ describe('when logged in', () => {
   test('post request without a placeId creates the restaurant without a placeId', async () => {
 
     const response = await server
-      .post(`/api/restaurants/`)
+      .post('/api/restaurants/')
       .set('authorization', `bearer ${token}`)
       .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000 })
       .expect(201)
