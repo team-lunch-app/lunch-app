@@ -14,4 +14,7 @@
     position: fixed;
     bottom: 0;
 }
- 
+
+.main-footer > a {
+    margin-right: 1em;
+}
