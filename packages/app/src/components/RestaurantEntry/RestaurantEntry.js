@@ -25,7 +25,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
   const placeId = restaurant.placeId
 
   return (
-    <>
+    <div className='randomizer-resultContent'>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       {restaurant.url &&
         <p>
@@ -40,15 +40,17 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
           </a>
         </p>
       }
-      {
-        showMap && <PhotoCarousel placeId={placeId} />
-      }
-      {
-        showMap && <RouteMap restaurant={restaurant} />
-      }
-      {
-        showMap && <Comments placeId={placeId} />
-      }
+      <div className="randomizer-resultDetails">
+        {
+          showMap && <PhotoCarousel placeId={placeId} />
+        }
+        {
+          showMap && <RouteMap restaurant={restaurant} />
+        }
+        {
+          showMap && <Comments placeId={placeId} />
+        }
+      </div>
       {restaurant !== undefined && restaurant.notSelectedAmount > 0 && <OverlayTrigger
         placement='right'
         overlay={
@@ -59,7 +61,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
         <p className='randomizer-resultApproval'>Lunch Lottery users approved this restaurant {Math.round((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}% of the time</p>
       </OverlayTrigger>
       }
-    </>
+    </div>
   )
 }
 

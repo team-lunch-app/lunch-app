@@ -28,6 +28,12 @@
   }
 }
 
+.randomizer-resultDetails {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
 .randomizer-resultContent > h1 {
     background: none;
 }
