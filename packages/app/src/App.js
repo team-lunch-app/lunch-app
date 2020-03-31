@@ -23,6 +23,7 @@ const App = () => {
   // HACK: Required to ensure triggering state update on every history.push(...) from components
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
+  const feedbackUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJ5xgfitDjlvHMmcasz2atmjEu1UGwKmWdgWowcpRja0xn_g/viewform'
 
   useEffect(() => authService.restoreUser(), [])
 
@@ -72,6 +73,7 @@ const App = () => {
       </section>
       <footer className='main-footer'>
         <Link to='/attributions'>About</Link>
+        <a href={feedbackUrl}> Give Feedback </a>
       </footer>
     </>
   )
