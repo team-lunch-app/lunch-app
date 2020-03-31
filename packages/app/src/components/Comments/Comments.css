@@ -4,12 +4,12 @@
     display: flex;
     flex-direction: column;
     font-size: 11px;
-    padding-right: 5px;
     height: 400px;
     width: 360px;
-    position: absolute;
     right: 1em;
-    overflow-y: scroll;
+    overflow-y: auto;
+    margin-left: 1em;
+    padding: 1em;
   }
 }
 
@@ -23,3 +23,9 @@
     }
     
   }
+
+.review-component > p {
+  border-radius: 1em;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 1em;
+}

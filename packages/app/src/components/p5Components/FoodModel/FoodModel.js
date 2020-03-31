@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import P5Wrapper from '../Wrapper/P5Wrapper'
 import { foodScript, setSpin } from '../../../scripts/food'
 
+import './FoodModel.css'
+
 const FoodModel = ({ rolling }) => {
 
   useEffect(() => {

@@ -136,7 +136,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
   const renderError = (err) => <Alert data-testid='error-msg-generic' variant='danger'>{String(err)}</Alert>
 
   return (
-    <div data-testid='restaurant-form'>
+    <div data-testid='restaurant-form' className='restaurant-form'>
       {errors.general && renderError(errors.general)}
       {!restaurant
         ? 'Loading...'

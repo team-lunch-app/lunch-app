@@ -1,0 +1,48 @@
+@media only screen and (min-width: 600px) {
+  .randomizer-resultContent {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-left: 3em;
+    padding-right: 3em;
+    padding-top: 2em;
+    margin-bottom: 1em;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 1em; 
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .randomizer-resultContent {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2em;
+    margin-bottom: 1em;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 1em; 
+  }
+}
+
+.randomizer-resultDetails {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.randomizer-resultContent > h1 {
+    background: none;
+}
+
+.randomizer-resultContent > .randomizer-resultContent-main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1em;
+}

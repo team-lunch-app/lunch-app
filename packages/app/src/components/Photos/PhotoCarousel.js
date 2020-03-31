@@ -12,7 +12,6 @@ const PhotoCarousel = ({ placeId }) => {
     const getPhotos = async () => {
       if (placeId !== undefined) {
         const photos = await photoService.getAllPhotosForRestaurant(placeId)
-        console.log(photos)
         setRestaurantPhotos(photos)
       }
     }
@@ -23,6 +22,7 @@ const PhotoCarousel = ({ placeId }) => {
     <div className='photo-component'>
       {restaurantPhotos &&
         <Carousel
+          indicators={false}
           slide='true'
           wrap='true'
           data-testid='photo-carousel' >
