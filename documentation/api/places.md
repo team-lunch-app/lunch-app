@@ -93,7 +93,7 @@ Response body contains details of the requested place, as per [Google API docume
 | `Content-Type` | `application/json` |
 | `Status Code`  | `200 OK`           |
 
-Response body contains information about the photos of the requested place. The application's google service sets the width to 400 pixels and the images will be scaled accordingly. The information includes the html attributions that have to be published with each image as well as the url for the photo. The binary data of the image is not returned. Go to [Google API documentation](https://developers.google.com/places/web-service/photos) for more information.
+Response body contains information about the photos of the requested place. The application's google service sets the maximum width and height to 360 pixels and the images will be scaled accordingly. The image will be scaled to match the smaller of the two dimensions. The information also includes the html attributions that have to be published with each image as well as the url for the photo. The binary data of the image is not returned. Go to [Google API documentation](https://developers.google.com/places/web-service/photos) for more information.
 
 ```js
 {

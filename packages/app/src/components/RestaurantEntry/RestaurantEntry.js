@@ -3,6 +3,7 @@ import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
 import RouteMap from '../RouteMap/RouteMap'
 import Comments from '../Comments/Comments'
+import PhotoCarousel from '../Photos/PhotoCarousel'
 
 const RestaurantEntry = ({ restaurant, showMap }) => {
 
@@ -19,7 +20,7 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
   }
 
   const placeId = restaurant.placeId
-
+  
   return (
     <>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
@@ -35,6 +36,9 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
             <Link />
           </a>
         </p> 
+      }
+      {
+        showMap && <PhotoCarousel placeId={placeId} />
       }
       {
         showMap && <RouteMap restaurant={restaurant} />

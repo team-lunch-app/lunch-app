@@ -1,0 +1,20 @@
+.photo-component {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 1em;
+    width: 360px;
+    height: 360px;
+    margin: auto;
+   
+}
+ 
+.carousel-inner {
+    width: 360px;
+    height: 360px;
+}
+.carousel-caption {
+    background: rgba(0,0,0,0.5)
+}

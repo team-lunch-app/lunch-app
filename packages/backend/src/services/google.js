@@ -132,15 +132,16 @@ const getAllPhotos = async (placeId) => {
 /**
  * Fetches a url for a photo from the Google Places Place Photos API. Returns a string containing the url.
  * 
- * The maxwidth parameter in the query defines the maximum width for the photo. In this case, 
- * photos wider than 400 pixels will be scaled to match the width while keeping its original aspect ratio.
+ * The maxwidth (maxheight) parameter in the query defines the maximum width (height) for the photo. In this case, 
+ * photos wider than 360 pixels will be scaled to match the width while keeping its original aspect ratio.
  * The number must be between 1 and 1600. This parameter (or maxheight) is required for the request.
  * 
  * @param {string} reference The photo_reference attribute of the photo
  */
 const getUrl = async (reference) => {
-  const width = 400
-  const result = await axios.get(`${baseUrl}/place/photo?maxwidth=${width}&photoreference=${reference}&key=${API_KEY}`)
+  const width = 360
+  const height = 360
+  const result = await axios.get(`${baseUrl}/place/photo?maxwidth=${width}&maxheight=${height}&photoreference=${reference}&key=${API_KEY}`)
   const photoUrl = result.request._redirectable._options.href
   return photoUrl
 }
