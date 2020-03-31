@@ -79,7 +79,8 @@ const parseRestaurant = (body, id) => {
   const distance = body.distance
   const url = trimAndUndefineIfEmpty(body.url)
   const categories = body.categories || []
-  return { id, name, url, categories, address, coordinates, distance }
+  const placeId = body.placeId || undefined
+  return { id, name, url, categories, address, coordinates, distance, placeId }
 }
 
 // getAll

@@ -4,12 +4,18 @@ import AddForm from './AddForm'
 
 import categoryService from '../../services/category'
 import locationService from '../../services/location'
+import placeService from '../../services/places'
+
+import testdata from '../../util/testData'
 
 import { actRender } from '../../test/utilities'
 import { act } from 'react-dom/test-utils'
 
 jest.mock('../../services/category.js')
 jest.mock('../../services/location.js')
+jest.mock('../../services/places.js')
+
+
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -23,6 +29,8 @@ beforeEach(() => {
     from: { lat: 60.17, lon: 24.941944 },
     to: { lat: 60.182315, lon: 24.922893 }
   })
+  placeService.getSuggestions.mockResolvedValue(testdata.getSuggestions())
+  placeService.getRestaurant.mockResolvedValue(testdata.getRestaurant())
 })
 
 test('map is not shown by default in the add form', async () => {

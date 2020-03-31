@@ -62,7 +62,6 @@ Response body contains details of the requested place, as per [Google API docume
 `GET /api/places/details/reviews/:place_id`
 --------------------------
 *"reviews"* -endpoint; Given a valid Google Place ID, returns a rating and reviews of the corresponding place.
-
 ### Response
 | Header         | value              |
 | -------------- | ------------------ |
@@ -108,3 +107,29 @@ Response body contains information about the photos of the requested place. The 
 
  - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
  - `Status: 503 Service Unavailable` - if the underlying Google API key has exhausted monthly quota
+
+ `GET /api/places/details/addform/:place_id`
+--------------------------
+*"Details"* -endpoint; Given a valid Google Place ID, returns the following details of the corresponding place. 'formatted_address,name,place_id,geometry,website'
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+Response body contains details of the requested place, as per [Google API documentation](https://developers.google.com/places/web-service/details#fields)
+
+```js
+{
+  "attributions": [ /* HTML attributions */ ],
+  "result": {
+    // refer to Google Places API documentation
+  }
+}
+```
+
+### Errors
+ - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
+ - `Status: 503 Service Unavailable` - if the underlying Google API key has exhausted monthly quota
+

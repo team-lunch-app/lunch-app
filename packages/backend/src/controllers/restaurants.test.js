@@ -407,13 +407,53 @@ describe('when logged in', () => {
       .expect(204)
   })
 
+  test('post request with a placeId creates the restaurant with a placeId', async () => {
+
+    const response = await server
+      .post('/api/restaurants/')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000, placeId: 'ChIJgWk_zoQJkkYRr0Ye0Tk7DF4' })
+      .expect(201)
+
+    const restaurant = response.body
+    expect(restaurant).toMatchObject({
+      name: 'Torigrilli Senaatintori',
+      url: 'https://torigrilli.fi',
+      categories: [],
+      address: 'Senaatintori',
+      coordinates: { latitude: 60, longitude: 24 },
+      distance: 1000,
+      placeId: 'ChIJgWk_zoQJkkYRr0Ye0Tk7DF4' 
+    })
+  })
+
+  test('post request without a placeId creates the restaurant without a placeId', async () => {
+
+    const response = await server
+      .post('/api/restaurants/')
+      .set('authorization', `bearer ${token}`)
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000 })
+      .expect(201)
+
+    const restaurant = response.body
+    expect(restaurant).toMatchObject({
+      name: 'Torigrilli Senaatintori',
+      url: 'https://torigrilli.fi',
+      categories: [],
+      address: 'Senaatintori',
+      coordinates: { latitude: 60, longitude: 24 },
+      distance: 1000
+    })
+    expect(restaurant.placeId).toBe(undefined)
+  })
+
   test('put request with valid data updates the restaurant', async () => {
     const testRestaurantId = restaurants[0].id
 
     await server
       .put(`/api/restaurants/${testRestaurantId}`)
       .set('authorization', `bearer ${token}`)
-      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000 })
+      .send({ name: 'Torigrilli Senaatintori', url: 'https://torigrilli.fi', categories: [], address: 'Senaatintori', coordinates: { latitude: 60, longitude: 24 }, distance: 1000, placeId: 'ChIJgWk_zoQJkkYRr0Ye0Tk7DF4' })
 
 
     const restaurant = await Restaurant.findById(testRestaurantId)
@@ -426,7 +466,8 @@ describe('when logged in', () => {
       coordinates: { latitude: 60, longitude: 24 },
       notSelectedAmount: 0,
       resultAmount: 0,
-      distance: 1000
+      distance: 1000,
+      placeId: 'ChIJgWk_zoQJkkYRr0Ye0Tk7DF4' 
     })
   })
 

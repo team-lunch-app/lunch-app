@@ -22,3 +22,12 @@
 .btn-toolbar {
     justify-content: space-between;
 }
+
+.name-field:focus {
+    margin-bottom: 0em;
+}
+
+.address-field {
+    display:flex;
+    flex-direction: row;
+}

@@ -32,8 +32,9 @@ const EditForm = ({ id }) => {
             ...fetched,
             name: fetched.name || '',
             url: fetched.url || '',
+            address: fetched.address || '',
             categories: fetched.categories || [],
-            showMap: true
+            coordinates: fetched.coordinates || undefined,
           })
           setError()
         })
@@ -63,7 +64,8 @@ const EditForm = ({ id }) => {
       setRestaurant={setRestaurant}
       onSubmit={handleSubmit}
       submitMessage={!isLoggedIn ? 'Suggest' : 'Update'}
-      suggestTooltip={'Send a suggestion to edit this restaurant'} />
+      suggestTooltip={'Send a suggestion to edit this restaurant'}
+    />
 }
 
 EditForm.propTypes = {
