@@ -26,7 +26,7 @@ const RouteMap = ({ restaurant }) => {
   }, [restaurant])
 
   return (
-    <div data-testid='map'>
+    <div data-testid='map' className='map'>
       <Map
         bounds={bounds}
         boundsOptions={{ padding: [10, 10] }}

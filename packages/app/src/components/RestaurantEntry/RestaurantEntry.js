@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
-import RouteMap from '../RouteMap/RouteMap'
+import MapModal from '../MapModal/MapModal'
 import Comments from '../Comments/Comments'
 import PhotoCarousel from '../Photos/PhotoCarousel'
 
 import '../RestaurantEntry/RestaurantEntry.css'
 
-const RestaurantEntry = ({ restaurant, showMap }) => {
+const RestaurantEntry = ({ restaurant }) => {
+
+  const [showMap, setShowMap] = useState(false)
 
   const confirmLeave = (event) => {
     if (!window.confirm(`This URL is user-submitted content that leads to an external website. 
@@ -27,8 +29,8 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
   return (
     <div className='randomizer-resultContent'>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
-      {restaurant.url &&
-        <p>
+      <p>
+        {restaurant.url &&
           <a data-testid='randomizer-restaurantUrl'
             className='restaurant-url'
             onClick={(event) => confirmLeave(event)}
@@ -38,26 +40,29 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
             <span>Website </span>
             <Link />
           </a>
-        </p>
-      }
+        }
+        <button data-testid='restaurantentry-showmap-button' onClick={() => setShowMap(!showMap)} className='restaurantentry-showmap-button'>
+          {showMap ? 'Hide Directions' : 'Get Directions'}
+        </button>
+      </p>
       <div className="randomizer-resultDetails">
         {
-          showMap && <PhotoCarousel placeId={placeId} />
+          placeId && <PhotoCarousel placeId={placeId} />
         }
         {
-          showMap && <RouteMap restaurant={restaurant} />
+          showMap && <MapModal restaurant={restaurant} showMap={showMap} setShowMap={setShowMap} />
         }
         {
-          showMap && <Comments placeId={placeId} />
+          placeId && <Comments placeId={placeId} />
         }
       </div>
       {restaurant !== undefined && restaurant.resultAmount > 0 && <OverlayTrigger
         placement='right'
         overlay={
           <Tooltip >
-            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. ' 
-            + 'It was selected ' + restaurant.selectedAmount + ' times. '
-            + '(Re-rolled ' + restaurant.notSelectedAmount + ' times)'}
+            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. '
+              + 'It was selected ' + restaurant.selectedAmount + ' times. '
+              + '(Re-rolled ' + restaurant.notSelectedAmount + ' times)'}
           </Tooltip>
         } >
         <p className='randomizer-resultApproval'>

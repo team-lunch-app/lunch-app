@@ -46,3 +46,15 @@
     justify-content: center;
     margin-bottom: 1em;
 }
+
+.restaurantentry-showmap-button {
+  margin: 0.5em;
+  background-color: Transparent;
+  outline:none;
+  color:rgba(255,255,255,0.9); 
+  border:none;
+}
+.restaurantentry-showmap-button:hover {
+  text-decoration: underline;
+  color:rgba(255,255,255,1); 
+}

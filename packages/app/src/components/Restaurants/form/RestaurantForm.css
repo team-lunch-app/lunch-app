@@ -37,3 +37,8 @@
     border-radius: 1em;
     min-width:320px;
 }
+
+.add-form > .map > .leaflet-container {
+    width: 420px;
+    height: 420px;
+}

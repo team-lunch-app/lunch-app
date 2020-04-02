@@ -1,10 +1,11 @@
 import React from 'react'
-import { fireEvent, act, wait } from '@testing-library/react'
+import { fireEvent, act, wait, within } from '@testing-library/react'
 import { actRender } from '../../test/utilities'
 import Randomizer from './Randomizer'
 import restaurantService from '../../services/restaurant'
 import locationService from '../../services/location'
 import categoryService from '../../services/category'
+import photoService from '../../services/photo'
 import '../../scripts/confetti'
 import '../../scripts/food'
 import commentService from '../../services/comment'
@@ -17,13 +18,26 @@ jest.mock('../../services/location.js')
 jest.mock('../../scripts/confetti.js')
 jest.mock('../../scripts/food.js')
 jest.mock('../../services/comment.js')
+jest.mock('../../services/photo')
+
+const mockPhotos = [
+  {
+    html_attributions: [],
+    url: 'www.url.com',
+    photo_reference: 'abcdef',
+    height: 100,
+    width: 100
+  },
+]
+photoService.getAllPhotosForRestaurant.mockResolvedValue(mockPhotos)
 
 restaurantService.getAllMatches.mockResolvedValue([{
   name: 'Luigi\'s pizza',
   url: 'www.pizza.fi',
   id: 1,
   distance: 1000,
-  coordinates: { latitude: 60.17, longitude: 24.94 }
+  coordinates: { latitude: 60.17, longitude: 24.94 },
+  placeId: 'ChIJxZrtjHj2jUYRUnc7prDjZaI'
 }])
 window.HTMLMediaElement.prototype.play = () => { }
 
@@ -145,12 +159,6 @@ test('user is not redirected to an external website if not confirmed', async () 
   await act(async () => fireEvent.click(getByTestId(/randomizer-restaurantUrl/i)))
   expect(queryByTestId(/randomizer-restaurantUrl/i)).toBeInTheDocument()
 })
-
-test('map is not shown by default', async () => {
-  const { queryByTestId } = await actRender(<TestRandomizer />)
-  expect(queryByTestId('map')).not.toBeInTheDocument()
-})
-
 test('map is shown after roll', async () => {
   const { queryByTestId } = await actRender(<TestRandomizer />)
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
@@ -201,4 +209,33 @@ test('review component is shown after roll', async () => {
   const { queryByTestId } = await actRender(<TestRandomizer />)
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   expect(queryByTestId(/review-component/i)).toBeInTheDocument()
+})
+
+
+test('map is not shown by default', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  expect(queryByTestId('map')).not.toBeInTheDocument()
+})
+
+test('map is not shown after roll by default', async () => {
+  const { queryByTestId } = await actRender(<TestRandomizer />)
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  expect(queryByTestId('map')).not.toBeInTheDocument()
+})
+
+test('map is shown after get directions is clicked', async () => {
+  const { queryByTestId, getByTestId } = await actRender(<TestRandomizer />)
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  await act(async () => fireEvent.click(getByTestId('restaurantentry-showmap-button')))
+  expect(queryByTestId('map')).toBeInTheDocument()
+})
+
+test('map is not shown after the close button is pressed', async () => {
+  const { queryByTestId, getByTestId } = await actRender(<TestRandomizer />)
+  await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  await act(async () => fireEvent.click(getByTestId('restaurantentry-showmap-button')))
+  const modalHeader = getByTestId('modal-header')
+  const closeButton = within(modalHeader).getByRole(/button/i)
+  await act(async () => fireEvent.click(closeButton))
+  expect(queryByTestId('map')).not.toBeInTheDocument()
 })
