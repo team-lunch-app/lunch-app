@@ -17,7 +17,11 @@ const RestaurantList = () => {
   const isLoggedIn = token !== undefined
 
   useEffect(() => {
-    restaurantService.getAll().then(setRestaurants)
+    restaurantService.getAll()
+      .then(fetchedRestaurants => {
+        fetchedRestaurants.sort((a, b) => a.name.localeCompare(b.name, 'fi'))
+        setRestaurants(fetchedRestaurants)
+      })
   }, [])
 
   const removeRestaurant = async (restaurant) => {
