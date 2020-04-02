@@ -69,6 +69,19 @@ Endpoint for increasing resultAmount; Given an ID, increases value resultAmount 
 ### Errors
  - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
 
+`PUT /api/restaurants/increaseSelected/:id`
+--------------------------
+Given an ID, increases the value of selectedAmount of corresponding *restaurant*. Represents the number of times users have picked this restaurant as the destination of their lunchtime excursions by clicking a button in the application.
+
+### Response
+| Header         | value              |
+| -------------- | ------------------ |
+| `Content-Type` | `application/json` |
+| `Status Code`  | `200 OK`           |
+
+### Errors
+ - `Status: 404 Not Found` - if malformed or unknown ID is provided. Response body contains the error message.
+
 `PUT /api/restaurants/increaseNotSelected/:id`
 --------------------------
 Endpoint for increasing notSelectedAmount; Given an ID, increases value notSelected of corresponding *restaurant*.
