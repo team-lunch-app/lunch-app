@@ -183,6 +183,18 @@ restaurantsRouter.put('/increaseResult/:id', async (request, response, next) => 
   }
 })
 
+// increase the amount of times the restaurant has been picked by an user
+restaurantsRouter.put('/increaseSelected/:id', async (request, response, next) => {
+  try {
+    const restaurant = await Restaurant.findById(request.params.id)
+    restaurant.selectedAmount = restaurant.selectedAmount + 1
+    await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+    return response.status(200).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
 // increase notSelectedAmount
 restaurantsRouter.put('/increaseNotSelected/:id', async (request, response, next) => {
   try {

@@ -51,14 +51,18 @@ const RestaurantEntry = ({ restaurant, showMap }) => {
           showMap && <Comments placeId={placeId} />
         }
       </div>
-      {restaurant !== undefined && restaurant.notSelectedAmount > 0 && <OverlayTrigger
+      {restaurant !== undefined && restaurant.resultAmount > 0 && <OverlayTrigger
         placement='right'
         overlay={
           <Tooltip >
-            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. ' + restaurant.name + ' was not chosen ' + restaurant.notSelectedAmount + ' times.'}
+            {restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. ' 
+            + 'It was selected ' + restaurant.selectedAmount + ' times. '
+            + '(Re-rolled ' + restaurant.notSelectedAmount + ' times)'}
           </Tooltip>
         } >
-        <p className='randomizer-resultApproval'>Lunch Lottery users approved this restaurant {Math.round((restaurant.resultAmount - restaurant.notSelectedAmount) / restaurant.resultAmount * 100)}% of the time</p>
+        <p className='randomizer-resultApproval'>
+          Lunch Lottery users picked this restaurant {Math.round((restaurant.selectedAmount / restaurant.resultAmount * 100))}% of the time
+        </p>
       </OverlayTrigger>
       }
     </div>

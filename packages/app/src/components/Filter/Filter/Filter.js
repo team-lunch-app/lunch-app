@@ -21,7 +21,7 @@ const Filter = ({ filterCategories, setFilterCategories, filterType, setFilterTy
     <>
       {
         showFilter &&
-        <Card className='filter-container'>
+        <Card data-testid='filter-container' className='filter-container'>
           <Card.Header className='filter-title'> I only want restaurants that... </Card.Header>
           <Card.Body className='filter-typeselect' >
             <InputGroup>

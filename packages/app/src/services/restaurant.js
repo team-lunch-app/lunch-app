@@ -38,6 +38,11 @@ const increaseResultAmount = async (id) => {
   return response.data
 }
 
+const increaseSelectedAmount = async (id) => {
+  const response = await axios.put(`${baseUrl}/increaseSelected/${id}`)
+  return response.data
+}
+
 const increaseNotSelectedAmount = async (id) => {
   const response = await axios.put(`${baseUrl}/increaseNotSelected/${id}`)
   return response.data
@@ -50,7 +55,7 @@ export default {
   remove,
   getAllMatches,
   update,
+  increaseSelectedAmount,
   increaseNotSelectedAmount,
   increaseResultAmount
-
 }

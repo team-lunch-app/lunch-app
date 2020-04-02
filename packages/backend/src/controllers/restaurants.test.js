@@ -150,8 +150,18 @@ test('put request to increaseResult increases resultAmount', async () => {
     .put(`/api/restaurants/increaseResult/${testRestaurantId}`)
   const resAfter = await Restaurant.findById(testRestaurantId)
   expect(resAfter.resultAmount).toBe(resultAmount + 1)
-
 })
+
+test('put request to increaseSelected increases the selectedAmount attribute by one', async () => {
+  const testRestaurantId = restaurants[0].id
+  const testRestaurant = await Restaurant.findById(testRestaurantId)
+
+  await server.put(`/api/restaurants/increaseSelected/${testRestaurantId}`)
+  
+  const updatedRestaurant = await Restaurant.findById(testRestaurantId)
+  expect(updatedRestaurant.selectedAmount).toBe(testRestaurant.selectedAmount + 1)
+})
+
 test('put request to increaseNotSelected increases notSelected', async () => {
   const testRestaurantId = restaurants[0].id
   const res = await Restaurant.findById(testRestaurantId)
@@ -161,7 +171,6 @@ test('put request to increaseNotSelected increases notSelected', async () => {
     .put(`/api/restaurants/increaseNotSelected/${testRestaurantId}`)
   const resAfter = await Restaurant.findById(testRestaurantId)
   expect(resAfter.notSelectedAmount).toBe(notSelectedAmount + 1)
-
 })
 
 test('getAllMatches request without category ids or distance returns all restaurants', async () => {
@@ -464,6 +473,7 @@ describe('when logged in', () => {
       categories: [],
       address: 'Senaatintori',
       coordinates: { latitude: 60, longitude: 24 },
+      selectedAmount: 0,
       notSelectedAmount: 0,
       resultAmount: 0,
       distance: 1000,

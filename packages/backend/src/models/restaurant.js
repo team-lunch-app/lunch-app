@@ -10,16 +10,6 @@ const restaurantSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 240
   },
-  notSelectedAmount: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  resultAmount: {
-    type: Number,
-    required: true,
-    default: 0
-  },
   url: {
     type: String,
     required: false,
@@ -56,6 +46,21 @@ const restaurantSchema = new mongoose.Schema({
     type: String,
     required: features.googleApi,
   },
+  selectedAmount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  notSelectedAmount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  resultAmount: {
+    type: Number,
+    required: true,
+    default: 0
+  }
 })
 
 restaurantSchema.set('toJSON', {

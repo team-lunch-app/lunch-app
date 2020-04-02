@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, act } from '@testing-library/react'
+import { fireEvent, act, wait } from '@testing-library/react'
 import { actRender } from '../../test/utilities'
 import Randomizer from './Randomizer'
 import restaurantService from '../../services/restaurant'
@@ -92,17 +92,40 @@ test('pressing the button calls the restaurant service', async () => {
   expect(restaurantService.getAllMatches).toBeCalled()
 })
 
-test('pressing the button calls the restaurant service to increase resultAmount', async () => {
+test('pressing the roll button calls the restaurant service to increase resultAmount', async () => {
   const { queryByTestId } = await actRender(<Randomizer />)
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   expect(restaurantService.increaseResultAmount).toBeCalled()
 })
 
-test('pressing the button a second time calls the restaurant service to increase notSelectedAmount', async () => {
+test('pressing the roll button a second time calls the restaurant service to increase notSelectedAmount', async () => {
   const { queryByTestId } = await actRender(<Randomizer />)
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   await act(async () => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
   expect(restaurantService.increaseNotSelectedAmount).toBeCalled()
+})
+
+test('the result approval button is rendered when the lottery result is shown', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  await wait(() => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  const resultApproveButton = queryByTestId(/randomizer-approveButton/i)
+  expect(resultApproveButton).toBeInTheDocument()
+})
+
+test('pressing the result approval button calls the restaurant service to increase selectedAmount', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  await wait(() => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  await wait(() => fireEvent.click(queryByTestId(/randomizer-approveButton/i)))
+  expect(restaurantService.increaseSelectedAmount).toHaveBeenCalled()
+})
+
+test('pressing the result approval button hides itself, the re-roll button and the filter', async () => {
+  const { queryByTestId } = await actRender(<Randomizer />)
+  await wait(() => fireEvent.click(queryByTestId(/randomizer-randomizeButton/i)))
+  await wait(() => fireEvent.click(queryByTestId(/randomizer-approveButton/i)))
+  expect(queryByTestId(/randomizer-randomizeButton/i)).not.toBeInTheDocument()
+  expect(queryByTestId(/randomizer-approveButton/i)).not.toBeInTheDocument()
+  expect(queryByTestId(/filter-container/i)).not.toBeInTheDocument()
 })
 
 test('pressing the button changes the text', async () => {
