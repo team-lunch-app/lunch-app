@@ -1,8 +1,14 @@
-.confetti > * > .p5Canvas {
+.confetti {
     position: absolute !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 10 !important;
+    pointer-events: none;
+}
+
+.confetti > * > .p5Canvas {
+    position: relative !important;
     z-index: 10 !important;
     pointer-events: none;
 }
