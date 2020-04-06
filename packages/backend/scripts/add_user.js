@@ -2,8 +2,8 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const config = require('../server/config')
-const User = require('../server/models/user')
+const config = require('../src/config')
+const User = require('../src/models/user')
 
 const connectToDb = async () => {
   try {
@@ -23,6 +23,7 @@ const addUser = async (username, password) => {
   return new User({
     username: username,
     password: passwordHash,
+    passwordExpired: true,
   }).save()
 }
 
