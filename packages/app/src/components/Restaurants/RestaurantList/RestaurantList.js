@@ -6,11 +6,14 @@ import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
 import List from '../../List/List'
 import ListEntry from '../../List/ListEntry'
+import SearchField from './SearchField'
 
 import './RestaurantList.css'
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
+  const [searchString, setSearchString] = useState('')
+  const [filteredRestaurants, setFilteredRestaurants] = useState()
   const history = useHistory()
 
   const token = authService.getToken()
@@ -21,8 +24,15 @@ const RestaurantList = () => {
       .then(fetchedRestaurants => {
         fetchedRestaurants.sort((a, b) => a.name.localeCompare(b.name, 'fi'))
         setRestaurants(fetchedRestaurants)
+        setFilteredRestaurants(fetchedRestaurants)
       })
   }, [])
+
+  const handleSearchStringChange = (event) => {
+    const string = event.target.value
+    setSearchString(string)
+    setFilteredRestaurants(restaurants.filter(rest => rest.name.toLowerCase().includes((string).toLowerCase())))
+  }
 
   const removeRestaurant = async (restaurant) => {
     if (isLoggedIn) {
@@ -33,6 +43,7 @@ const RestaurantList = () => {
       const result = await restaurantService.remove(restaurant.id)
       if (result && result.status === 204) {
         setRestaurants(restaurants.filter(r => r.id !== restaurant.id))
+        setFilteredRestaurants(restaurants.filter(r => r.id !== restaurant.id))
       }
     } else {
       if (window.confirm(`Suggest the removal of ${restaurant.name}?`)) {
@@ -46,10 +57,12 @@ const RestaurantList = () => {
   }
 
   return (
-    <div data-testid='restaurantList' className="restaurantList">
+    <div data-testid='restaurantList' className='restaurantList'>
       <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
+      <SearchField handleSearchStringChange={handleSearchStringChange} searchString={searchString} />
       <List
-        entries={restaurants}
+        searchString={searchString}
+        entries={filteredRestaurants}
         renderNoEntries={() => <Alert variant='warning'>Sorry, No restaurants available :C</Alert>}
         renderEntry={(restaurant) =>
           <ListEntry

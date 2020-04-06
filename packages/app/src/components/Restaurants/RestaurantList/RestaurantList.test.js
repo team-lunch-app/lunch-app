@@ -95,3 +95,17 @@ test('pressing the edit button redirects to edit page', async () => {
   fireEvent.click(removeButton)
   await wait(() => expect(getPath().pathname).toBe('/edit/13'), { timeout: 500 })
 })
+
+test('search field renders', async () => {
+  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
+  const field = await queryByTestId('search-field')
+  expect(field).toBeInTheDocument()
+})
+
+test('text can be entered to the search field', async () => {
+  const { queryByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
+  const field = await queryByTestId('search-field')
+  const input = within(field).getByTestId('input-field')
+  fireEvent.change(input, { target: { value: 'zz' } })
+  expect(input.value).toBe('zz')
+})
