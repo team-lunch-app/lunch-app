@@ -1,0 +1,18 @@
+.modal-content {
+    padding-bottom: 1em;
+    width: 600px;
+    max-width: 95vw;
+}
+
+.map-modal-body > .map > .leaflet-container {
+    width: 550px;
+    height: 550px;
+}
+
+.map-modal-error > a {
+    color: lightblue;
+}
+
+.map-modal-error > a:hover {
+    color: blue;
+}

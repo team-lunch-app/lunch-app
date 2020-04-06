@@ -131,7 +131,7 @@ const Randomizer = ({
         : <>
           <Confetti />
           {resultSelected && <h1>No backing down now! You&apos;re having lunch at:</h1>}
-          <RestaurantEntry restaurant={restaurant} showMap />
+          <RestaurantEntry restaurant={restaurant} />
           {!resultSelected &&
             <Button
               data-testid='randomizer-approveButton'
