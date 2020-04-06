@@ -27,7 +27,7 @@ export const SuggestionList = () => {
   }
 
   return (
-    <div data-testid='suggestionList'>
+    <div data-testid='suggestionList' className="suggestionlist">
       <h1 data-testid='suggestionList-title' className='suggestionList-title'>Pending Suggestions</h1>
       <List
         entries={suggestions}
@@ -87,7 +87,7 @@ export const SuggestionEntry = ({ suggestion, handleApprove, handleReject }) => 
       {restaurant &&
         <>
           <Card.Body>
-            <Card.Title data-testid='suggestionEntry-restaurantName'>{restaurant && restaurant.name}</Card.Title>
+            <Card.Title data-testid='suggestionEntry-restaurantName' className="text-centered">{restaurant && restaurant.name}</Card.Title>
           </Card.Body>
           <Card.Body>
             <Table striped bordered responsive='sm' size='sm'>

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Carousel } from 'react-bootstrap'
 import photoService from '../../services/photo'
- 
+
 import './PhotoCarousel.css'
- 
+
 const PhotoCarousel = ({ placeId }) => {
   const [restaurantPhotos, setRestaurantPhotos] = useState()
- 
+
   useEffect(() => {
     const getPhotos = async () => {
       if (placeId !== undefined) {
@@ -17,10 +17,10 @@ const PhotoCarousel = ({ placeId }) => {
     }
     getPhotos()
   }, [placeId])
- 
+
   return (
-    <div className='photo-component'>
-      {restaurantPhotos &&
+    <>
+      {restaurantPhotos ?
         <Carousel
           indicators={false}
           slide='true'
@@ -29,19 +29,22 @@ const PhotoCarousel = ({ placeId }) => {
           {restaurantPhotos.map(photo => {
             return (
               <Carousel.Item key={photo.url} className='photo'>
-                <img  className="d-block w-100" src={photo.url} alt='The restaurant' />
+                <a href={photo.url}>
+                  <img className="d-block w-100" src={photo.url} alt='The restaurant' />
+                </a>
                 <Carousel.Caption dangerouslySetInnerHTML={{ __html: photo.html_attributions }} />
               </Carousel.Item>
             )
           })}
         </Carousel>
+        : <div className="carousel-inner" />
       }
-    </div >
+    </>
   )
 }
- 
+
 PhotoCarousel.propTypes = {
   placeId: PropTypes.string
 }
- 
+
 export default PhotoCarousel

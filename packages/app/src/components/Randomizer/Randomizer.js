@@ -127,7 +127,7 @@ const Randomizer = ({
     const hasRestaurant = !!restaurant
     return hasRestaurant
       ? isRolling
-        ? <h1 data-testid='roll-label'>{restaurant.name}</h1>
+        ? <h1 data-testid='roll-label' className="roll-label">{restaurant.name}</h1>
         : <>
           <Confetti />
           {resultSelected && <h1>No backing down now! You&apos;re having lunch at:</h1>}
@@ -144,7 +144,7 @@ const Randomizer = ({
               </span>
             </Button>}
         </>
-      : <h1 data-testid='randomizer-resultLabel'>Hungry? Press the button!</h1>
+      : <h1 data-testid='randomizer-resultLabel' className='roll-label'>Hungry? Press the button!</h1>
   }
 
   const rollsRemaining = maxNumberOfRolls - iteration

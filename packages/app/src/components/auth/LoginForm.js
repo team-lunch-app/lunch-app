@@ -3,6 +3,8 @@ import { Form, Button, Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import authService from '../../services/authentication'
 
+import './LoginForm.css'
+
 const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -23,7 +25,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <Form onSubmit={handleLogin}>
+      <Form className="loginform" onSubmit={handleLogin}>
         <Form.Group data-testid='loginform-usernameField'>
           <Form.Label >Username</Form.Label>
           <Form.Control

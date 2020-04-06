@@ -15,6 +15,8 @@ const NavBar = ({ loggedIn }) => {
     history.push('/')
   }
 
+  const feedbackUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJ5xgfitDjlvHMmcasz2atmjEu1UGwKmWdgWowcpRja0xn_g/viewform'
+
   return (
     <Navbar collapseOnSelect bg="light" expand="lg">
       <Navbar.Brand as={Link} href='#' to='/'>Lunch Application</Navbar.Brand>
@@ -33,6 +35,12 @@ const NavBar = ({ loggedIn }) => {
               : 'Suggest Editing Restaurants'
             }
           </Nav.Link>
+          <Nav.Link as={Link} href='#' to='/attributions' className="phone-only">
+            About
+          </Nav.Link>
+          <Nav.Item href='#' className="phone-only">
+            <a href={feedbackUrl}>Give Feedback</a>
+          </Nav.Item>
         </Nav>
         <Nav className="ml-auto">
           {loggedIn &&
@@ -49,13 +57,13 @@ const NavBar = ({ loggedIn }) => {
             </>
           }
         </Nav>
+        <Nav className="ml-auto">
+          {loggedIn
+            ? <Button data-testid='logout-button' onClick={logout} variant="danger" className="mr-auto">Logout</Button>
+            : <Button data-testid='admin-button' onClick={() => history.push('/login')} variant='light' size='sm' className='mr-auto'>Admin Login</Button>
+          }
+        </Nav>
       </Navbar.Collapse>
-      <Nav className="ml-auto">
-        {loggedIn
-          ? <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto">Logout</Button>
-          : <Button data-testid='admin-button' onClick={() => history.push('/login')} variant='light' size='sm' className='ml-auto'>Admin Login</Button>
-        }
-      </Nav>
     </Navbar>
   )
 }

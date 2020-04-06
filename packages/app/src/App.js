@@ -72,9 +72,10 @@ const App = () => {
         </Switch>
       </section>
       <footer className='main-footer'>
-        <Link to='/attributions'>About</Link>
-        <a href={feedbackUrl}> Give Feedback </a>
+        <Link to='/attributions' className="">About</Link>
+        <a href={feedbackUrl} className=""> Give Feedback </a>
       </footer>
+
     </>
   )
 }

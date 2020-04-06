@@ -8,9 +8,9 @@
     padding-left: 3em;
     padding-right: 3em;
     padding-top: 2em;
-    margin-bottom: 1em;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 1em; 
+    margin-top: 1em;
   }
 }
 
@@ -23,6 +23,7 @@
     align-items: center;
     padding-top: 2em;
     margin-bottom: 1em;
+    margin-top: 1em;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 1em; 
   }
@@ -36,6 +37,7 @@
 
 .randomizer-resultContent > h1 {
     background: none;
+    text-align:center;
 }
 
 .randomizer-resultContent > .randomizer-resultContent-main {
@@ -57,4 +59,9 @@
 .restaurantentry-showmap-button:hover {
   text-decoration: underline;
   color:rgba(255,255,255,1); 
+}
+
+.randomizer-resultApproval {
+  margin: 1em;
+  text-align: center;
 }
