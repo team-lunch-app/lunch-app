@@ -11,3 +11,11 @@
 .restaurantList-title {
     margin: 0.5em;
 }
+
+.search-form {
+    background: rgba(0,0,0,0.5);
+    padding: 2em;
+    border-radius: 1em;
+    min-width:320px;
+    margin-bottom: 1em;
+}

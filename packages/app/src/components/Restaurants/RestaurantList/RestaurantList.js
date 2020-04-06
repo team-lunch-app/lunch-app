@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Alert } from 'react-bootstrap'
+import { Alert, Form } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import restaurantService from '../../../services/restaurant'
 import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
 import List from '../../List/List'
 import ListEntry from '../../List/ListEntry'
-import SearchField from './SearchField'
+import Filter from '../../Filter/Filter/Filter'
 
 import './RestaurantList.css'
 
@@ -14,6 +14,7 @@ const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
   const [searchString, setSearchString] = useState('')
   const [filteredRestaurants, setFilteredRestaurants] = useState()
+  const [filterCategories, setFilterCategories] = useState([])
   const history = useHistory()
 
   const token = authService.getToken()
@@ -28,12 +29,30 @@ const RestaurantList = () => {
       })
   }, [])
 
-  const handleSearchStringChange = (event) => {
-    const string = event.target.value
-    setSearchString(string)
-    setFilteredRestaurants(restaurants.filter(rest => rest.name.toLowerCase().includes((string).toLowerCase())))
-  }
+  useEffect(() => {
+    if (restaurants) {
+      const restaurantsFilteredWithString = restaurants
+        .filter(rest => rest.name.toLowerCase()
+        .includes((searchString).toLowerCase()))
+    
+      const selectedCategories = filterCategories.map(c => c.name)
+      
+      const restaurantCategoryNamesToArray = (restaurantCategories) => {
+        return restaurantCategories.map(c => c.name)
+      }
 
+      const restaurantsfilteredWithStringsAndCategories = restaurantsFilteredWithString.filter(r => {
+        const categs = restaurantCategoryNamesToArray(r.categories)
+        return selectedCategories.every(element => categs.indexOf(element) > -1)
+      })
+      setFilteredRestaurants(restaurantsfilteredWithStringsAndCategories)
+    }
+  }, [searchString, filterCategories, restaurants])
+
+  const handleSearchStringChange = (event) => {
+    setSearchString(event.target.value)
+  }
+  
   const removeRestaurant = async (restaurant) => {
     if (isLoggedIn) {
       if (!window.confirm(`Are you sure you want to remove "${restaurant.name}"?`)) {
@@ -59,9 +78,23 @@ const RestaurantList = () => {
   return (
     <div data-testid='restaurantList' className='restaurantList'>
       <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
-      <SearchField handleSearchStringChange={handleSearchStringChange} searchString={searchString} />
+      <Form className='search-form'>
+        <Form.Group className='search-field' data-testid='search-field' >
+          <Form.Control
+            placeholder='Search'
+            onChange={handleSearchStringChange}
+            value={searchString}
+            data-testid='input-field'
+          />
+        </Form.Group>
+        <Filter
+          dropdownText='Categories'
+          emptyMessage={'No categories selected'}
+          filterCategories={filterCategories}
+          setFilterCategories={setFilterCategories}
+        />
+      </Form>
       <List
-        searchString={searchString}
         entries={filteredRestaurants}
         renderNoEntries={() => <Alert variant='warning'>Sorry, No restaurants available :C</Alert>}
         renderEntry={(restaurant) =>

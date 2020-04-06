@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, within, wait } from '@testing-library/react'
+import { fireEvent, within, wait, getByText } from '@testing-library/react'
 import restaurantService from '../../../services/restaurant'
 import categoryService from '../../../services/category'
 import authService from '../../../services/authentication'
@@ -21,17 +21,32 @@ beforeEach(() => {
       {
         name: 'Luigi\'s pizza',
         url: 'www.pizza.fi',
-        id: 1
+        id: 1,
+        categories: [
+          {
+          name: 'pizza'
+        },
+        ]
       },
       {
         name: 'Pizzeria Rax',
         url: 'www.rax.fi',
-        id: 2
+        id: 2,
+        categories: [
+          {
+            name: 'pizza'
+          },
+        ]
       },
       {
         name: 'Ravintola Artjärvi',
         url: 'www.bestfood.fi',
-        id: 3
+        id: 3,
+        categories: [
+          {
+            name: 'pizza'
+          },
+        ]
       }
     ]
   )
@@ -49,7 +64,8 @@ test('pressing the delete button calls the service to remove the restaurant if O
   restaurantService.getAll.mockResolvedValue([{
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',
-    id: 13
+    id: 13,
+    categories: []
   }])
 
   window.confirm = jest.fn(() => true)
@@ -68,7 +84,8 @@ test('pressing the delete button does not attempt to remove the restaurant if ca
   restaurantService.getAll.mockResolvedValue([{
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',
-    id: 13
+    id: 13,
+    categories: []
   }])
 
   window.confirm = jest.fn(() => false)
@@ -85,7 +102,8 @@ test('pressing the edit button redirects to edit page', async () => {
   restaurantService.getAll.mockResolvedValue([{
     name: 'Luigi\'s pizza',
     url: 'www.pizza.fi',
-    id: 13
+    id: 13,
+    categories: []
   }])
 
   const { getByTestId, getPath } = await actRender(<RestaurantList />, ['/restaurants'])
@@ -108,4 +126,28 @@ test('text can be entered to the search field', async () => {
   const input = within(field).getByTestId('input-field')
   fireEvent.change(input, { target: { value: 'zz' } })
   expect(input.value).toBe('zz')
+})
+
+test('text search works', async () => {
+  const { getByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
+  const field = await getByTestId('search-field')
+  const input = within(field).getByTestId('input-field')
+  fireEvent.change(input, { target: { value: 'zz' } })
+
+  const entries = within(getByTestId('list')).getAllByTestId('list-entry')
+  expect(entries.length).toBe(2)
+})
+
+test('category filter works', async () => {
+  const { getByTestId } = await actRender(<RestaurantList />, ['/restaurants'])
+  const entries = within(getByTestId('list')).getAllByTestId('list-entry')
+  expect(entries.length).toBe(3)
+
+  const toggle = await getByTestId('category-dropdown-toggle')
+  fireEvent.click(toggle)
+  const entry = await getByTestId('category-dropdown-entry')
+  fireEvent.click(entry)
+  const newEntries = within(getByTestId('list')).getByText('Sorry, No restaurants available :C')
+  expect(newEntries).toBeInTheDocument()
+
 })
