@@ -1,12 +1,5 @@
-import bowl from '../data/assets/bowl.obj'
-import bowlRim from '../data/assets/bowlrim.obj'
-import soup from '../data/assets/soup.obj'
-import salad from '../data/assets/salad.obj'
-import noodles from '../data/assets/noodles-lowpoly.obj'
-import chopsticks from '../data/assets/chopsticks.obj'
-import eggWhite from '../data/assets/eggwhite.obj'
-import eggYolk from '../data/assets/eggyellow.obj'
-import tofu from '../data/assets/tofu.obj'
+import bowlModel from '../data/assets/ramen-bowl.obj'
+import bowlTexture from '../data/assets/ramen-bowl-texture.png'
 
 let spinning = false
 let spinningTime = 0
@@ -18,8 +11,8 @@ export const foodScript = (sketch) => {
   let height = 400
 
   let models = new Map()
+  let textures = new Map()
 
-  let materials
   let bgColor
 
   /**
@@ -34,7 +27,8 @@ export const foodScript = (sketch) => {
 
     sketch.createCanvas(width, height, sketch.WEBGL)
     sketch.angleMode(sketch.DEGREES)
-    bgColor = sketch.color(225, 206, 201, 0)
+    sketch.textureMode(sketch.NORMAL)
+    bgColor = sketch.color(240, 220, 210, 0)
 
     /**
      * Load the different parts of the noodle bowl to
@@ -56,25 +50,8 @@ export const foodScript = (sketch) => {
      * waste of development time.
      */
 
-    customLoadModel('bowl', bowl)
-    customLoadModel('bowlRim', bowlRim)
-    customLoadModel('soup', soup)
-    customLoadModel('salad', salad)
-    customLoadModel('noodles', noodles)
-    customLoadModel('chopsticks', chopsticks)
-    customLoadModel('eggWhite', eggWhite)
-    customLoadModel('eggYolk', eggYolk)
-    customLoadModel('tofu', tofu)
-
-    materials = {
-      white: () => materialFunc(242, 242, 242, true),
-      blue: () => materialFunc(117, 198, 230, false),
-      soup: () => materialFunc(230, 173, 117, false),
-      salad: () => materialFunc(152, 255, 74, true),
-      noodle: () => materialFunc(255, 234, 176, false),
-      wood: () => materialFunc(128, 73, 73, false),
-      eggYolk: () => materialFunc(252, 186, 3, false)
-    }
+    customLoadModel('bowl', bowlModel)
+    customLoadTexture('bowl', bowlTexture)
   }
 
   /**
@@ -101,7 +78,8 @@ export const foodScript = (sketch) => {
 
     /* Ambient lighting based on the background color helps tie the models to the scene */
 
-    let ambientStrength = 0.9
+    let ambientStrength = 1
+
     sketch.ambientLight(
       sketch.red(bgColor) * ambientStrength,
       sketch.green(bgColor) * ambientStrength,
@@ -110,11 +88,17 @@ export const foodScript = (sketch) => {
 
     /* Main light source */
 
-    let lightStrength = 0.5
+    let lightStrength = 1
     let lightPos = sketch.createVector(width, -height, -25)
-    sketch.pointLight(lightStrength * 255, lightStrength * 255, lightStrength * 255, lightPos)
+    sketch.pointLight(
+      lightStrength * 255,//sketch.red(bgColor), 
+      lightStrength * 255,//sketch.green(bgColor), 
+      lightStrength * 255,//sketch.blue(bgColor), 
+      lightPos
+    )
 
     /* Render a clearly fake shadow under to bowl */
+
     sketch.push()
     sketch.translate(-15, 170, 0)
     sketch.rotateX(90)
@@ -136,20 +120,11 @@ export const foodScript = (sketch) => {
 
     /* If all model parts have been loaded */
 
-    if (models.size === 9) {
+    if (models.size === 1 && textures.size === 1) {
       sketch.shininess(20)
 
       /* Draw the different parts of the model */
-      drawModel('bowl', materials.white)
-      drawModel('bowlRim', materials.blue)
-      drawModel('soup', materials.soup)
-      drawModel('salad', materials.salad)
-      drawModel('noodles', materials.noodle)
-      drawModel('chopsticks', materials.wood)
-      drawModel('eggWhite', materials.white)
-      drawModel('eggYolk', materials.eggYolk)
-      drawModel('tofu', materials.white)
-
+      drawModel('bowl')
 
       spinning && spinningTime++
     } else {
@@ -164,9 +139,9 @@ export const foodScript = (sketch) => {
    * @param {*} m | The model to be drawn
    * @param {*} material | The material to be applied to the model
    */
-  const drawModel = (name, material) => {
+  const drawModel = (name) => {
     sketch.push()
-    material()
+    sketch.texture(textures.get(name))
     sketch.model(models.get(name))
     sketch.pop()
   }
@@ -187,25 +162,18 @@ export const foodScript = (sketch) => {
   }
 
   /**
-   * Helper: Set up a material - this code is ran in
-   * every iteration of p5's draw()
-   * @param {*} r | The amount of red the color has
-   * @param {*} g | The amount of green the color has
-   * @param {*} b | The amount of blue the color has
-   * @param {*} specular | Whether the material is specular or not
+   * Helper: asynchronously load a texture to be
+   * displayed. This could also be done synchronously
+   * with p5's preload(), but this way we can create our
+   * own loading animation, if we wish.
+   * @param {*} name | The desired key for the texture when it is placed in a map
+   * @param {*} path | The path to load the texture from
    */
-  const materialFunc = (r, g, b, specular) => {
-
-    /* I've noticed that a tiny bit of ambient light of each object's own color looks nicer */
-
-    let mult = 0.15
-    sketch.ambientLight(mult * r, mult * g, mult * b)
-
-    /* The actual surface material & color */
-
-    specular
-      ? sketch.specularMaterial(r, g, b)
-      : sketch.ambientMaterial(r, g, b)
+  const customLoadTexture = (name, path) => {
+    const textureLoaded = (texture) => {
+      textures.set(name, texture)
+    }
+    sketch.loadImage(path, textureLoaded)
   }
 }
 
