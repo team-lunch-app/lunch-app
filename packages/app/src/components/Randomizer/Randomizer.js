@@ -154,7 +154,7 @@ const Randomizer = ({
       {nope.active && <h1>NOPE</h1>}
       {selectRestaurantElement()}
       <div data-testid='foodmodel-container' className='foodmodel' style={{ display: `${(restaurant && !isRolling) ? 'none' : 'inline'}` }}>
-        <FoodModel rolling={isRolling} />
+        <FoodModel rolling={isRolling} rollsRemaining={rollsRemaining} />
       </div>
       {!resultSelected &&
         <>
