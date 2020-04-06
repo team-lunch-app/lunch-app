@@ -5,6 +5,8 @@ let spinning = false
 let spinningTime = 0
 let rotation = 0
 
+let rollsRemaining = 0
+
 export const foodScript = (sketch) => {
 
   let width = 400
@@ -30,25 +32,7 @@ export const foodScript = (sketch) => {
     sketch.textureMode(sketch.NORMAL)
     bgColor = sketch.color(240, 220, 210, 0)
 
-    /**
-     * Load the different parts of the noodle bowl to
-     * be rendered. 
-     * 
-     * Q: Why are the parts separate files and not in
-     * a singular file? 
-     * 
-     * A: Normally, the surface material information of a 
-     * .obj file is included in a separate .mtl file
-     * that should be loaded alongside the main file.
-     * However, p5 does not parse material information,
-     * thus only allowing one material per one object
-     * file loaded. By loading the different parts of our
-     * model separately, we can apply different materials
-     * to each of them. This clearly is impractical for
-     * larger, more detailed models, but for our use case
-     * writing a custom .obj parser would be a colossal
-     * waste of development time.
-     */
+    /* Load the model & texture */
 
     customLoadModel('bowl', bowlModel)
     customLoadTexture('bowl', bowlTexture)
@@ -114,11 +98,17 @@ export const foodScript = (sketch) => {
     sketch.rotateX(170)
     sketch.rotateZ(0)
 
-    spinning
-      ? sketch.rotateY(rotation += Math.abs(Math.sin(spinningTime / 18)) * 10)
-      : sketch.rotateY(rotation += Math.sin(sketch.frameCount / 8))
+    /* Rotation settings, can be changed to taste */
 
-    /* If all model parts have been loaded */
+    let spinningRotationLength = rollsRemaining
+    let spinningRotationSpeed = 2
+    let notSpinningRotationLength = 32
+
+    spinning
+      ? sketch.rotateY(rotation += Math.abs(spinningRotationLength) * spinningRotationSpeed)
+      : sketch.rotateY(rotation += Math.sin(sketch.frameCount / notSpinningRotationLength))
+
+    /* If model & texture have been loaded */
 
     if (models.size === 1 && textures.size === 1) {
       sketch.shininess(20)
@@ -189,4 +179,8 @@ export const setSpin = (newStatus) => {
   spinning = newStatus
   rotation = 0
   spinningTime = 0
+}
+
+export const setRollsRemaining = (value) => {
+  rollsRemaining = value
 }
