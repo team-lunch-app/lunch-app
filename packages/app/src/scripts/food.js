@@ -1,6 +1,3 @@
-import bowlModel from '../data/assets/ramen-bowl.obj'
-import bowlTexture from '../data/assets/ramen-bowl-texture.png'
-
 let spinning = false
 let spinningTime = 0
 let rotation = 0
@@ -25,7 +22,7 @@ export const foodScript = (sketch) => {
    * This code is only ran when the canvas/applet
    * is first rendered.
    */
-  sketch.setup = () => {
+  sketch.setup = async () => {
 
     sketch.createCanvas(width, height, sketch.WEBGL)
     sketch.angleMode(sketch.DEGREES)
@@ -33,9 +30,28 @@ export const foodScript = (sketch) => {
     bgColor = sketch.color(240, 220, 210, 0)
 
     /* Load the model & texture */
+    let cachedBowlModel = window.sessionStorage.getItem('ramenOBJ')
+    let cachedBowlTexture = window.sessionStorage.getItem('ramenTEX')
 
-    customLoadModel('bowl', bowlModel)
-    customLoadTexture('bowl', bowlTexture)
+    if (cachedBowlModel && cachedBowlTexture) {
+      console.log('found cached')
+      customLoadModel('bowl', cachedBowlModel)
+      customLoadTexture('bowl', cachedBowlTexture)
+    } else {
+      console.log('not cached')
+      
+      const bowlModelSrc = await import('../data/assets/ramen-bowl.obj')
+      const bowlTextureSrc = await import('../data/assets/ramen-bowl-texture.png')
+
+      console.log(bowlModelSrc.default)
+      console.log(bowlTextureSrc.default)
+
+      customLoadModel('bowl', String(bowlModelSrc.default))
+      customLoadTexture('bowl', String(bowlTextureSrc.default))
+
+      window.sessionStorage.setItem('ramenOBJ', bowlModelSrc.default)
+      window.sessionStorage.setItem('ramenTEX', bowlTextureSrc.default)
+    } 
   }
 
   /**
