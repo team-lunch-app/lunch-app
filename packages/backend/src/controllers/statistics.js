@@ -74,8 +74,8 @@ statisticsRouter.get('/topCategories', async (request, response, next, n = 5) =>
     const categories = await Category
       .find({}).populate('restaurants')
     categories.sort((a, b) => {
-      let acceptedA = 0;
-      let acceptedB = 0;
+      let acceptedA = 0
+      let acceptedB = 0
       a.restaurants.forEach(r => acceptedA += r.resultAmount - r.notSelectedAmount)
       b.restaurants.forEach(r => acceptedB += r.resultAmount - r.notSelectedAmount)
       return acceptedB - acceptedA

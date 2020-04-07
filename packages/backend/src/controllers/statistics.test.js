@@ -127,9 +127,9 @@ test('get request to /api/statistics/topCategories returns the right categories 
   await dbUtil.createRowsFrom(Category, getAdditionalCategories(restaurants[1].id, restaurants[2].id, restaurants[0].id))
   const response = await server.get('/api/statistics/topCategories')
   const contents = response.body
-  expect(contents[0].name).toBe("bigCat")
-  expect(contents[1].name).toBe("smallCat")
-  expect(contents[2].name).toBe("smallestCat")
+  expect(contents[0].name).toBe('bigCat')
+  expect(contents[1].name).toBe('smallCat')
+  expect(contents[2].name).toBe('smallestCat')
 })
 
 test('get request to /api/statistics returns statistics', async () => {
