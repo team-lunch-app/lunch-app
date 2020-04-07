@@ -25,7 +25,7 @@ For development, see [Development](./documentation/installation.md).
 
 Usage
 -----
-`TODO: Link to user guide`
+For detailed instructions on how to use the application, see the [User Manual](./documentation/usermanual.md)
 
 Contributing
 ------------
