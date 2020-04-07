@@ -29,7 +29,7 @@ To run the lottery, click the `I'm feeling lucky!` button. An animation will pla
 
 Two buttons are displayed below the lottery results. If you are satisfied with the given restaurant, click the `Ok, I'm picking this one!` button. Otherwise, you can re-run the lottery by clicking the `Nope, gimme another one!` button. 
 
-*Please note that both of these buttons affect the statistics for the resulting restaurant. While statistics do not affect the randomness of the lottery results, a percentage representing how often users picked a restaurant is shown every time a it is drawn in the lottery.*
+*Please note that both of these buttons affect the statistics for the resulting restaurant. While statistics do not affect the randomness of the lottery results, a percentage representing how often users picked a restaurant is shown every time it is drawn in the lottery.*
 
 ## Applying Filters to the Lottery 
 
