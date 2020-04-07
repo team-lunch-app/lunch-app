@@ -49,6 +49,8 @@ Finally, you may also filter restaurants based on their distance (in metres) to 
 
 If there is a restaurant that you would like to be added to the lottery pool, you may suggest its addition by navigating to the `Suggest a Restaurant` page via the navigation bar. Enter the name, possible website address and physical of the restaurant. To assist you, suggestions are given based on your input to the `Restaurant Name` field. Clicking on an autocomplete suggestion automatically fills the name, website and address fields.
 
+Clicking on an autocomplete suggestion also connects the restaurant to the Google API, which allows for showing photos and reviews of the restaurant when it gets selected in the lottery. Restaurants added without clicking on an autocomplete suggestion are not linked to the Google API and pictures/reviews will not be shown when they are chosen. Changing the restaurant's name after clicking on an autocomplete suggestion will also remove the connection to the API.
+
 You can select appropriate categories to add the restaurant to. You may leave a restaurant without any categories, but it will not be included in any category-based filtered lotteries (except with the `none` setting).
 
 To be able to submit the form, you must first check the validity of the restaurant's address by clicking the `Check` button next to the address field. This ensures that invalid addresses are not accidentally added to the application. If the address is valid, you will be shown a map of the suggested walking route to the restaurant. 
