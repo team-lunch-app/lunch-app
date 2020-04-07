@@ -8,6 +8,7 @@ const categoriesRouter = require('./controllers/categories')
 const authRouter = require('./controllers/auth')
 const suggestionRouter = require('./controllers/suggestions')
 const placesRouter = require('./controllers/places')
+const statisticsRouter = require('./controllers/statistics')
 
 const config = require('./config')
 
@@ -28,6 +29,7 @@ app.use('/api/categories', categoriesRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/suggestions', suggestionRouter)
 app.use('/api/places', placesRouter)
+app.use('/api/statistics', statisticsRouter)
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(config.staticDir, 'index.html'))

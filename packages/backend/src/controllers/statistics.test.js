@@ -66,7 +66,7 @@ const restaurantData = [
   },
 ]
 
-const getAdditionalCategories = (res1, res2, res3,) => [
+const getAdditionalCategories = (res1, res2, res3, ) => [
   {
     name: 'smallCat',
     restaurants: [res1, res2]
