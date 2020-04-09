@@ -33,7 +33,7 @@ const RestaurantList = () => {
     if (restaurants) {
       const restaurantsFilteredWithString = restaurants
         .filter(rest => rest.name.toLowerCase()
-        .includes((searchString).toLowerCase()))
+          .includes((searchString).toLowerCase()))
     
       const selectedCategories = filterCategories.map(c => c.name)
       

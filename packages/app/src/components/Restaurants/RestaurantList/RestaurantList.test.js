@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, within, wait, getByText } from '@testing-library/react'
+import { fireEvent, within, wait } from '@testing-library/react'
 import restaurantService from '../../../services/restaurant'
 import categoryService from '../../../services/category'
 import authService from '../../../services/authentication'
@@ -24,8 +24,8 @@ beforeEach(() => {
         id: 1,
         categories: [
           {
-          name: 'pizza'
-        },
+            name: 'pizza'
+          },
         ]
       },
       {
