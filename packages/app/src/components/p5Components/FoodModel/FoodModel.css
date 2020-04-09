@@ -1,10 +1,16 @@
 .foodmodel-canvas {
-    max-width: 400px;
-    max-height: 400px;
+    width: 400px;
+    height: 400px;
+    max-width: 85vw;
+    max-height: 85vw;
 }
 
 .foodmodel-canvas > * > .p5Canvas {
     pointer-events: none;
     width: 100% !important;
     height: 100% !important;
+}
+
+.foodmodel {
+    margin-top: auto;
 }

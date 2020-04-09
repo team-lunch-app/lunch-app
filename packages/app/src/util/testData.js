@@ -99,5 +99,37 @@ const getRestaurant = () => {
   )
 }
 
+const getAllPhotosForRestaurant = () => {
+  return (
+    {
+      data:
+        [
+          {
+            height: 3024,
+            html_attributions: ['<a href="https://maps.google.com/maps/contrib/113964038534896168778">Erkki Jaanhold</a>'],
+            photo_reference: 'CmRaAAAA29_TXMoH-PwzuuAcpPtvgRriecF7RpXprnx_ORgN3rvcyjqOQap3_krTPxfKWp5kF5abZncBJ8B812lmL7IESS0y2iubJ97dCtEUyzvUMlv_rBP9T2xQHWbJkACm2z1NEhAEb-kAX-epiD-8iV_dMJ7rGhQIg40u9D3IJS6r_-xIkvWH4KXNSg',
+            width: 4032,
+            url: 'https://lh3.googleusercontent.com/p/AF1QipPdQMvRBPNWwb44WZU47-mYPXumAKnZnRfqULZB'
+          },
+          {
+            height: 2268,
+            html_attributions: ['<a href="https://maps.google.com/maps/contrib/115272919380677058282">Henry Kong</a>'],
+            photo_reference: 'CmRaAAAAsvjwa24ioURJ7q4B7A-PYI4I9-1hBd9nQbdv0zaHrjjOdbTi4sJYtkiHFT6MWLbr0GsztA9hrKyTw19QO4YiixuHz5v78f7aqrbwXOnxEqepqMMf1oO6nCFWihEEqexREhA3OqzLJA5gAaFT_DKbL2dgGhTfBcMlIFOm-5cGYKxBNvAAm4yHVA',
+            width: 4032,
+            url: 'https://lh3.googleusercontent.com/p/AF1QipMDwtactiGe8W7GCkSjCGl3RNC3WndG2EfZk2xK=s1600-w360-h360'
 
-export default { getSuggestions, getRestaurant }
+          },
+          {
+            height: 4032,
+            html_attributions: ['<a href="https://maps.google.com/maps/contrib/107797582338284257486">Jussi Lemmetyinen</a>'],
+            photo_reference: 'CmRaAAAAH_G9OhWtsVt5KlfNB1LN2HRdCDn_Ho722z2F1uHj8-LfYXXpoccrHcCbCtDYlePX4w1cqjU3Ii_kYxkvWvU3ha3CeQaSNdoqlqZ_i9ZbTY76NCfty54JWFrVaKyqiq_mEhCMswvGkAKJNNiXXiG-1usbGhSle1IUd2f1Jqh-M-0vy-UvIRvmcg',
+            width: 3024,
+            url: 'https://lh3.googleusercontent.com/p/AF1QipOX4iL9UHTrC2drfcixqIOrsT41joGUJa6B12Fp=s1600-w360-h360'
+          }
+        ]
+    }
+  )
+}
+
+
+export default { getSuggestions, getRestaurant, getAllPhotosForRestaurant }

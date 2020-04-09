@@ -6,6 +6,7 @@
 .suggestionList-title {
     text-align: center;
     margin-bottom: 0.5em;
+    margin-top: 1em;
 }
 
 .suggestion-entry > .buttons > button {
@@ -22,4 +23,17 @@
 
 .suggestion-entry > .card-header.EDIT {
     background-color: #faa629;
+}
+
+.suggestionlist {
+    max-width: 100vw
+}
+
+.table-responsive-sm {
+    overflow-x: auto;
+    margin: auto;
+}
+
+.text-centered {
+    text-align:center;
 }

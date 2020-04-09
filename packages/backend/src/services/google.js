@@ -139,8 +139,8 @@ const getAllPhotos = async (placeId) => {
  * @param {string} reference The photo_reference attribute of the photo
  */
 const getUrl = async (reference) => {
-  const width = 360
-  const height = 360
+  const width = 420
+  const height = 420
   const result = await axios.get(`${baseUrl}/place/photo?maxwidth=${width}&maxheight=${height}&photoreference=${reference}&key=${API_KEY}`)
   const photoUrl = result.request._redirectable._options.href
   return photoUrl

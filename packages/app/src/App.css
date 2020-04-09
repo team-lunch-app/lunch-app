@@ -6,15 +6,38 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     min-height: 90vh;
 }
 
 .main-footer {
-    padding: 0.5em;
     position: fixed;
-    bottom: 0;
+    bottom: 0.5em;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .main-footer > a {
-    margin-right: 1em;
+    margin: 0 1em;
+}
+
+@media screen and (max-width: 990px) {
+    .main-footer {
+        display: none
+    }
+    .phone-only {
+        display: block;
+    }
+    .phone-only > a {
+        color: rgba(0,0,0,0.5)
+    }
+}
+
+@media screen and (min-width: 990px) {
+
+    .phone-only {
+        display: none
+    }
 }
