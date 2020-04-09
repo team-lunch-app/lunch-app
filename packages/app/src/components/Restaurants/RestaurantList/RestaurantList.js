@@ -6,19 +6,48 @@ import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
 import List from '../../List/List'
 import ListEntry from '../../List/ListEntry'
+import SearchBox from './SearchBox'
 
 import './RestaurantList.css'
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState()
+  const [searchString, setSearchString] = useState('')
+  const [filteredRestaurants, setFilteredRestaurants] = useState()
+  const [filterCategories, setFilterCategories] = useState([])
   const history = useHistory()
 
   const token = authService.getToken()
   const isLoggedIn = token !== undefined
 
   useEffect(() => {
-    restaurantService.getAll().then(setRestaurants)
+    restaurantService.getAll()
+      .then(fetchedRestaurants => {
+        fetchedRestaurants.sort((a, b) => a.name.localeCompare(b.name, 'fi'))
+        setRestaurants(fetchedRestaurants)
+        setFilteredRestaurants(fetchedRestaurants)
+      })
   }, [])
+
+  useEffect(() => {
+    if (restaurants) {
+      const restaurantsFilteredWithString = restaurants
+        .filter(rest => rest.name.toLowerCase()
+          .includes((searchString).toLowerCase()))
+    
+      const selectedCategories = filterCategories.map(c => c.name)
+      
+      const restaurantCategoryNamesToArray = (restaurantCategories) => {
+        return restaurantCategories.map(c => c.name)
+      }
+
+      const restaurantsfilteredWithStringsAndCategories = restaurantsFilteredWithString.filter(r => {
+        const categs = restaurantCategoryNamesToArray(r.categories)
+        return selectedCategories.every(element => categs.indexOf(element) > -1)
+      })
+      setFilteredRestaurants(restaurantsfilteredWithStringsAndCategories)
+    }
+  }, [searchString, filterCategories, restaurants])
 
   const removeRestaurant = async (restaurant) => {
     if (isLoggedIn) {
@@ -29,6 +58,7 @@ const RestaurantList = () => {
       const result = await restaurantService.remove(restaurant.id)
       if (result && result.status === 204) {
         setRestaurants(restaurants.filter(r => r.id !== restaurant.id))
+        setFilteredRestaurants(restaurants.filter(r => r.id !== restaurant.id))
       }
     } else {
       if (window.confirm(`Suggest the removal of ${restaurant.name}?`)) {
@@ -42,10 +72,16 @@ const RestaurantList = () => {
   }
 
   return (
-    <div data-testid='restaurantList' className="restaurantList">
+    <div data-testid='restaurantList' className='restaurantList'>
       <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
+      <SearchBox 
+        searchString={searchString}
+        setSearchString={setSearchString}
+        filterCategories={filterCategories}
+        setFilterCategories={setFilterCategories}
+      />
       <List
-        entries={restaurants}
+        entries={filteredRestaurants}
         renderNoEntries={() => <Alert variant='warning'>Sorry, No restaurants available :C</Alert>}
         renderEntry={(restaurant) =>
           <ListEntry
