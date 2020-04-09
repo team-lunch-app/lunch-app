@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Alert, Form } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import restaurantService from '../../../services/restaurant'
 import authService from '../../../services/authentication'
 import suggestionService from '../../../services/suggestion'
 import List from '../../List/List'
 import ListEntry from '../../List/ListEntry'
-import Filter from '../../Filter/Filter/Filter'
+import SearchBox from './SearchBox'
 
 import './RestaurantList.css'
 
@@ -49,10 +49,6 @@ const RestaurantList = () => {
     }
   }, [searchString, filterCategories, restaurants])
 
-  const handleSearchStringChange = (event) => {
-    setSearchString(event.target.value)
-  }
-  
   const removeRestaurant = async (restaurant) => {
     if (isLoggedIn) {
       if (!window.confirm(`Are you sure you want to remove "${restaurant.name}"?`)) {
@@ -78,22 +74,12 @@ const RestaurantList = () => {
   return (
     <div data-testid='restaurantList' className='restaurantList'>
       <h1 data-testid='restaurantList-title' className='restaurantList-title'>Restaurants</h1>
-      <Form className='search-form'>
-        <Form.Group className='search-field' data-testid='search-field' >
-          <Form.Control
-            placeholder='Search'
-            onChange={handleSearchStringChange}
-            value={searchString}
-            data-testid='input-field'
-          />
-        </Form.Group>
-        <Filter
-          dropdownText='Categories'
-          emptyMessage={'No categories selected'}
-          filterCategories={filterCategories}
-          setFilterCategories={setFilterCategories}
-        />
-      </Form>
+      <SearchBox 
+        searchString={searchString}
+        setSearchString={setSearchString}
+        filterCategories={filterCategories}
+        setFilterCategories={setFilterCategories}
+      />
       <List
         entries={filteredRestaurants}
         renderNoEntries={() => <Alert variant='warning'>Sorry, No restaurants available :C</Alert>}
