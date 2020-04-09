@@ -42,8 +42,14 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
   }
 
   const fetchSuggestions = async (name) => {
-    const fetched = await placeService.getSuggestions(name)
-    setSuggestions(fetched)
+    try {
+      const fetched = await placeService.getSuggestions(name)
+      setSuggestions(fetched)
+    } catch (error) {
+      error.response.status === 503
+        ? setErrors({ ...errors, general: 'Fetching autocomplete suggestions failed. Contact your admin about a possibly reached Google API query limit.' })
+        : setErrors({ ...errors, general: error })
+    }
   }
 
   const handleNameChange = (name) => {
@@ -81,7 +87,23 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
       setValidated(true)
       setErrors({})
     } catch (error) {
-      setErrors({ ...errors, general: error })
+      if (error.response) {
+        switch (error.response.status) {
+          case 503:
+            setErrors({ ...errors, general: 'Fetching autocomplete suggestions failed. Contact your admin about a possibly reached Google API query limit.' })
+            break
+          case 404:
+            setErrors({ ...errors, general: 'No details found for the selected option. It may have been removed from Google\'s services.' })
+            break
+          default:
+            setErrors({ ...errors, general: error })
+            break
+        }
+      } else {
+        /* In case an error occurs somewhere else than the HTTP request */
+        setErrors({ ...errors, general: error })
+      }
+
       setValidated(false)
     }
   }
