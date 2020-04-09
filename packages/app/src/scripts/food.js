@@ -81,44 +81,47 @@ export const foodScript = (sketch) => {
       lightPos
     )
 
-    /* Render a clearly fake shadow under to bowl */
-
-    sketch.push()
-    sketch.translate(-15, 170, 0)
-    sketch.rotateX(90)
-    sketch.fill(0, 0, 0, 180)
-    sketch.ellipse(0, 0, 100, 100)
-    sketch.pop()
-
-
-    /* Set up appropriate positioning and scaling */
-
-    sketch.scale(100)
-    sketch.translate(0, 1, 0)
-    sketch.rotateX(170)
-    sketch.rotateZ(0)
-
-    /* Rotation settings, can be changed to taste */
-
-    let spinningRotationLength = rollsRemaining
-    let spinningRotationSpeed = 2
-    let notSpinningRotationLength = 32
-
-    spinning
-      ? sketch.rotateY(rotation += Math.abs(spinningRotationLength) * spinningRotationSpeed)
-      : sketch.rotateY(rotation += Math.sin(sketch.frameCount / notSpinningRotationLength))
-
     /* If model & texture have been loaded */
 
     if (models.size === 1 && textures.size === 1) {
-      sketch.shininess(20)
 
-      /* Draw the different parts of the model */
+      /* Render a clearly fake shadow under the bowl */
+
+      sketch.push()
+      sketch.translate(-15, 170, 0)
+      sketch.rotateX(90)
+      sketch.fill(0, 0, 0, 180)
+      sketch.ellipse(0, 0, 100, 100)
+      sketch.pop()
+
+      /* Set up appropriate positioning and scaling */
+
+      sketch.scale(100)
+      sketch.translate(0, 1, 0)
+      sketch.rotateX(170)
+      sketch.rotateZ(0)
+
+      /* Rotation settings, can be changed to taste */
+
+      let spinningRotationLength = rollsRemaining
+      let spinningRotationSpeed = 2
+      let notSpinningRotationLength = 32
+
+      spinning
+        ? sketch.rotateY(rotation += Math.abs(spinningRotationLength) * spinningRotationSpeed)
+        : sketch.rotateY(rotation += Math.sin(sketch.frameCount / notSpinningRotationLength))
+
+      /* Draw the model */
       drawModel('bowl')
 
       spinning && spinningTime++
     } else {
-      /* Place custom loading animation here */
+
+      /* Draw custom loading animation */
+      sketch.noFill()
+      sketch.strokeWeight(3)
+      sketch.stroke(255)
+      sketch.arc(0, 0, 30, 30, -90 + sketch.frameCount * 7, sketch.frameCount * 10)
     }
   }
 
