@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Form, Button, Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import PropTypes from 'prop-types'
+
 import authService from '../../services/authentication'
 
 import './LoginForm.css'
 
-const LoginForm = () => {
+const LoginForm = ({ changeLoginStatus }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,6 +20,7 @@ const LoginForm = () => {
       history.push(passwordExpired
         ? '/admin/password-reset'
         : '/admin')
+      changeLoginStatus(true)
     } catch (error) {
       setError(error.message)
     }
@@ -47,6 +50,10 @@ const LoginForm = () => {
       </Form>
     </>
   )
+}
+
+LoginForm.propTypes = {
+  changeLoginStatus: PropTypes.func
 }
 
 export default LoginForm
