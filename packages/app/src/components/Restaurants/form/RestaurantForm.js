@@ -45,6 +45,7 @@ const RestaurantForm = ({ restaurant, setRestaurant, onSubmit, submitMessage = '
     try {
       const fetched = await placeService.getSuggestions(name)
       setSuggestions(fetched)
+      setErrors({ ...errors, general: undefined })
     } catch (error) {
       error.response.status === 503
         ? setErrors({ ...errors, general: 'Fetching autocomplete suggestions failed. Contact your admin about a possibly reached Google API query limit.' })
