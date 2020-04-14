@@ -89,8 +89,8 @@ const Randomizer = ({
     if (restaurants.length === 1) {
       setRestaurant(restaurants[0])
       resId = restaurants[0].id
-      await restaurantService.increaseResultAmount(resId)
       soundService.playFanfare()
+      await restaurantService.increaseResultAmount(resId)
     } else {
       setRolling(true)
       rollAfterTimeout(0, maxTimeBetweenRolls, shuffle(restaurants))
@@ -109,10 +109,10 @@ const Randomizer = ({
 
     setIteration(roll)
     if (rollsRemaining === 0) {
-      await restaurantService.increaseResultAmount(resId)
       soundService.playFanfare()
       setTimeoutHandle(undefined)
       setRolling(false)
+      await restaurantService.increaseResultAmount(resId)
     } else {
       const timeout = calculateTimeForNthRoll(roll)
       rollAfterTimeout(roll + 1, timeout, restaurants)
