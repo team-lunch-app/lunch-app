@@ -9,6 +9,7 @@
     - [Applying Filters to the Lottery](#applying-filters-to-the-lottery)
     - [Suggesting a New Restaurant](#suggesting-a-new-restaurant)
     - [Suggesting Changes to Existing Restaurants](#suggesting-changes-to-existing-restaurants)
+        - [Searching and Filtering the Restaurant List](#searching-and-filtering-the-restaurant-list)
         - [Suggesting Deleting Restaurants](#suggesting-deleting-restaurants)
         - [Suggesting Editing Restaurants](#suggesting-editing-restaurants)
 - [Administrator-specific Functionality](#administrator-specific-functionality)
@@ -62,6 +63,10 @@ To submit the form, click the `Add` button. As a regular user, a suggestion will
 ## Suggesting Changes to Existing Restaurants
 
 To suggest changes to existing restaurants within the application - for example, if you noticed that a restaurant's address was not quite right - navigate to the `Suggest Editing Restaurants` page within the navigation bar. On this page, you will be shown a list of restaurants within the application.
+
+### Searching and Filtering the Restaurant List
+
+You can search and filter existing restaurants by typing a name (or a few letters) in the search box and/or by selecting categories from the category dropdown. The restaurant list will be updated dynamically according to your selections. Note that the category filter selects restaurants that offer all of the selected food types. You can use the search box and the category filter simultaneously. The results will be shown in alphabetical order.
 
 ### Suggesting Deleting Restaurants
 
