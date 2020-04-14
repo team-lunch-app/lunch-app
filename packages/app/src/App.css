@@ -33,6 +33,10 @@
     .phone-only > a {
         color: rgba(0,0,0,0.5)
     }
+    .phone-only > a:hover {
+        color: rgba(0,0,0,0.9);
+        text-decoration: none
+    }
 }
 
 @media screen and (min-width: 990px) {

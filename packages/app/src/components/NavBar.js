@@ -35,12 +35,6 @@ const NavBar = ({ loggedIn }) => {
               : 'Suggest Editing Restaurants'
             }
           </Nav.Link>
-          <Nav.Link as={Link} href='#' to='/attributions' className="phone-only">
-            About
-          </Nav.Link>
-          <Nav.Item href='#' className="phone-only">
-            <a href={feedbackUrl}>Give Feedback</a>
-          </Nav.Item>
         </Nav>
         <Nav className="ml-auto">
           {loggedIn &&
@@ -57,7 +51,15 @@ const NavBar = ({ loggedIn }) => {
             </>
           }
         </Nav>
-        <Nav className="ml-auto">
+        <Nav>
+          <Nav.Link as={Link} href='#' to='/attributions' className="phone-only">
+            About
+          </Nav.Link>
+          <Nav.Item href='#' className="phone-only">
+            <a className="nav-link" href={feedbackUrl}>Give Feedback</a>
+          </Nav.Item>
+        </Nav>
+        <Nav>
           {loggedIn
             ? <Button data-testid='logout-button' onClick={logout} variant="danger" className="mr-auto">Logout</Button>
             : <Button data-testid='admin-button' onClick={() => history.push('/login')} variant='light' size='sm' className='mr-auto'>Admin Login</Button>
