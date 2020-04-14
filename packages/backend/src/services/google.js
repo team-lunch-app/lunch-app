@@ -91,7 +91,7 @@ const findDetails = async (placeId, fields) => {
  */
 const autocomplete = async (text) => {
   const outputFormat = 'json'   // 'json' | 'xml'
-  const response = await axios.get(`${baseUrl}/place/autocomplete/${outputFormat}?input=${text}&types=establishment&strictbounds&origin=${LATITUDE},${LONGITUDE}&location=${LATITUDE},${LONGITUDE}&radius=${SEARCH_RADIUS}&key=${API_KEY}`)
+  const response = await axios.get(`${baseUrl}/place/autocomplete/${outputFormat}?input=${encodeURI(text)}&types=establishment&strictbounds&origin=${LATITUDE},${LONGITUDE}&location=${LATITUDE},${LONGITUDE}&radius=${SEARCH_RADIUS}&key=${API_KEY}`)
   switch (response.data.status) {
     case 'OK':
       return response.data.predictions
