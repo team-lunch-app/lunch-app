@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { Link } from '@material-ui/icons'
+import { OverlayTrigger, Tooltip, Button } from 'react-bootstrap'
+import { Link, MapOutlined } from '@material-ui/icons'
 import PropTypes from 'prop-types'
 import { appName } from '../../config'
 import MapModal from '../MapModal/MapModal'
@@ -32,19 +32,21 @@ const RestaurantEntry = ({ restaurant }) => {
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       <p>
         {restaurant.url &&
-          <a data-testid='randomizer-restaurantUrl'
-            className='restaurant-url'
-            onClick={(event) => confirmLeave(event)}
-            href={processUrl(restaurant.url)}
-            target='_blank'
-            rel='noopener noreferrer'>
-            <span>Website </span>
-            <Link />
-          </a>
+        <Button
+          data-testid='randomizer-restaurantUrl'
+          className='link-button'
+          onClick={(event) => confirmLeave(event)}
+          href={processUrl(restaurant.url)}
+          target='_blank'
+          rel='noopener noreferrer'>
+          <span>Website </span>
+          <Link />
+        </Button>
         }
-        <button data-testid='restaurantentry-showmap-button' onClick={() => setShowMap(!showMap)} className='restaurantentry-showmap-button'>
-          {showMap ? 'Hide Directions' : 'Get Directions'}
-        </button>
+        <Button data-testid='restaurantentry-showmap-button' onClick={() => setShowMap(!showMap)} className='link-button'>
+          {showMap ? 'Hide Directions ' : 'Get Directions '}
+          <MapOutlined fontSize='small' />
+        </Button>
       </p>
       <div className="randomizer-resultDetails">
         {

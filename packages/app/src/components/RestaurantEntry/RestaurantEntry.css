@@ -49,16 +49,17 @@
     margin-bottom: 1em;
 }
 
-.restaurantentry-showmap-button {
+.link-button {
+  border-radius: 1em !important;
   margin: 0.5em;
-  background-color: Transparent;
-  outline:none;
-  color:rgba(255,255,255,0.9); 
+  background-color: rgba(0, 0, 0, 0.3);
+  color:white; 
   border:none;
 }
-.restaurantentry-showmap-button:hover {
-  text-decoration: underline;
-  color:rgba(255,255,255,1); 
+
+.link-button:hover, .link-button:focus, .link-button:active {
+  background-color: rgba(0, 0, 0, 0.5);
+  color:white;
 }
 
 .randomizer-resultApproval {
