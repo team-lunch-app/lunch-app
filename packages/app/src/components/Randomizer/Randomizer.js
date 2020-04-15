@@ -167,12 +167,12 @@ const Randomizer = ({
             maxNumberOfRolls={maxNumberOfRolls}
             rollsRemaining={rollsRemaining}
           />
-          <button
+          <Button
             className='randomizer-showFilterButton'
             onClick={() => setFilter({ ...filter, visible: !filter.visible })}>
             {filter.visible ? 'Hide filter ' : 'Set filter '}
             {filter.visible ? <ExpandLess /> : <ExpandMore />}
-          </button>
+          </Button>
           <Filter
             emptyMessage={<strong>#IEatAnything</strong>}
             filterCategories={filter.categories}

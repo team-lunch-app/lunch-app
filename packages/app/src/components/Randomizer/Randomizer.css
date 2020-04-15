@@ -15,10 +15,14 @@
 
 .randomizer-showFilterButton {
     margin: 0.5em;
-    background-color: Transparent;
-    outline:none;
+    background-color: rgba(0, 0, 0, 0.3);
     color:white; 
     border:none;
+}
+
+.randomizer-showFilterButton:active, .randomizer-showFilterButton:focus, .randomizer-showFilterButton:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    color:white;
 }
 
 .randomizer-approveButton {
