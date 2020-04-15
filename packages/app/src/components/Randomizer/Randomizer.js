@@ -229,8 +229,8 @@ const RandomizerButton = ({
       data-testid='randomizer-randomizeButton'
       onClick={handleClick}
       variant={hasResult ? 'secondary' : 'success'}
-      disabled={isRolling}
-      size={hasResult ? '' : 'lg'}>
+      size={!hasResult && 'lg'}
+      disabled={isRolling}>
       {label}
     </Button>
   )

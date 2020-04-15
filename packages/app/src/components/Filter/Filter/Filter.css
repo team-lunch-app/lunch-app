@@ -103,3 +103,11 @@
     right: 20px !important;
     left: -10px !important;
 }
+
+.dropdown-item {
+    white-space: normal;
+}
+
+.dropdown-item:not(:first-child) {
+    border-top: 1px solid rgba(0,0,0,0.2);
+}

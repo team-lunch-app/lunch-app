@@ -31,8 +31,7 @@
 }
 .randomizer-button-group {
     display: flex;
-    width: 360px;
-    max-width: 90%;
+    max-width: 100%;
     align-items: center;
     justify-content: center;
     margin-top: 3vh;
