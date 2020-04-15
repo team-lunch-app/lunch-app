@@ -3,6 +3,7 @@ import { Nav, Navbar, Button } from 'react-bootstrap'
 import { Link, useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
+import { appName } from '../config'
 import authService from '../services/authentication'
 
 const NavBar = ({ loggedIn, changeLoginStatus }) => {
@@ -18,7 +19,7 @@ const NavBar = ({ loggedIn, changeLoginStatus }) => {
 
   return (
     <Navbar collapseOnSelect bg="light" expand="lg">
-      <Navbar.Brand as={Link} href='#' to='/'>Lunch Application</Navbar.Brand>
+      <Navbar.Brand as={Link} href='#' to='/'>{appName}</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

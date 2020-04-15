@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { Link } from '@material-ui/icons'
 import PropTypes from 'prop-types'
+import { appName } from '../../config'
 import MapModal from '../MapModal/MapModal'
 import Comments from '../Comments/Comments'
 import PhotoCarousel from '../Photos/PhotoCarousel'
@@ -66,7 +67,7 @@ const RestaurantEntry = ({ restaurant }) => {
           </Tooltip>
         } >
         <p className='randomizer-resultApproval'>
-          Lunch Lottery users picked this restaurant {Math.round((restaurant.selectedAmount / restaurant.resultAmount * 100))}% of the time
+          {appName} users picked this restaurant {Math.round((restaurant.selectedAmount / restaurant.resultAmount * 100))}% of the time
         </p>
       </OverlayTrigger>
       }
