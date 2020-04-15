@@ -1,8 +1,11 @@
 import axios from 'axios'
 import poly from '@mapbox/polyline'
 
-const unityLat = 60.170000
-const unityLon = 24.941944
+import { officeLat, officeLon } from '../config'
+
+const unityLat = officeLat
+const unityLon = officeLon
+
 const baseUrl = 'https://api.digitransit.fi'
 const maxDistance = 50
 

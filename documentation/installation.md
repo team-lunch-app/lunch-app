@@ -64,6 +64,16 @@ For security reasons, there are no hard-coded defaults for security-critical con
 | PORT                 | no       | The port the server listens to. Defaults to `3001` |
 | SALT_ROUNDS          | no       | Number of `bcrypt` salt rounds. Default is `10`, but higher values are stongly encouraged for production use. Generally, higher value means more secure  passwords, but higher computational cost. |
 | NODE_ENV             | no       | Tells the app a bit about where it is running. *Should* always be set to `production` when running in production environment, but not strictly necessary. |
+| OFFICE_LAT           | no       | The latitude for the origin point that is used when calculating distances to restaurants. Defaults to `60.170000` if not set. *Please note that you may need to adjust the front-end variable as well (see below)* |
+| OFFICE_LON           | no       | The logitude for the origin point that is used when calculating distances to restaurants. Defaults to `24.941944` if not set. *Please note that you may need to adjust the front-end variable as well (see below)* |
+
+**Additionally**, there are some configuration variables available for the application's front-end. These can be set in `/packages/app/src/config.js`.
+
+| Configuration variable | Required | Used by              | Description |
+|------------------------|----------|----------------------|-------------|
+| appName                | no       | `packages/app/src/components/NavBar.js`, `packages/app/src/components/RestaurantEntry/RestaurantEntry.js` (Component), `packages/app/src/index.js` | The name of the application. Defaults to `Lunch Lottery`. Note that the document's title is only changed when the application is done loading. If you'd like to adjust the temporary loading title, go to `packages/app/public/index.html` |
+| officeLat              | no       | `location.js` (Service) | The latitude of the origin point that is used when fetching directions from the DigiTransit API. Defaults to `60.170000` if not set. *Please note that you may need to adjust the back-end variable as well (see above)* |
+| officeLon              | no       | `location.js` (Service) |The longitude of the origin point that is used when fetching directions from the DigiTransit API. Defaults to `24.941944` if not set. *Please note that you may need to adjust the back-end variable as well (see above)* |
 
 
 ### Google API Key
