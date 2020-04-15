@@ -81,6 +81,7 @@ const Randomizer = ({
   }
 
   const startRolling = async () => {
+    filter.visible && setFilter({ ...filter, visible: false })
     if (restaurant && restaurant.id) {
       await restaurantService.increaseNotSelectedAmount(restaurant.id)
     }
@@ -132,17 +133,6 @@ const Randomizer = ({
           <Confetti />
           {resultSelected && <h1>No backing down now! You&apos;re having lunch at:</h1>}
           <RestaurantEntry restaurant={restaurant} />
-          {!resultSelected &&
-            <Button
-              data-testid='randomizer-approveButton'
-              className='randomizer-approveButton'
-              onClick={handleApproveResult}
-              variant='success'
-              size='lg'>
-              <span>
-                <ThumbUpAlt /> Ok, I&apos;m picking this one!
-              </span>
-            </Button>}
         </>
       : <h1 data-testid='randomizer-resultLabel' className='roll-label'>Hungry? Press the button!</h1>
   }
@@ -152,12 +142,12 @@ const Randomizer = ({
   return (
     <div data-testid='randomizer' className='randomizer'>
       {nope.active && <h1>NOPE</h1>}
-      {selectRestaurantElement()}
+
       <div data-testid='foodmodel-container' className='foodmodel' style={{ display: `${(restaurant && !isRolling) ? 'none' : 'inline'}` }}>
         <FoodModel rolling={isRolling} rollsRemaining={rollsRemaining} />
       </div>
       {!resultSelected &&
-        <>
+        <div className="randomizer-button-group">
           <RandomizerButton
             onClick={startRolling}
             setError={setError}
@@ -167,8 +157,24 @@ const Randomizer = ({
             maxNumberOfRolls={maxNumberOfRolls}
             rollsRemaining={rollsRemaining}
           />
+          {(!isRolling && !!restaurant) &&
+            <Button
+              data-testid='randomizer-approveButton'
+              className='randomizer-button flex'
+              onClick={handleApproveResult}
+              variant='success'>
+              <span>
+                <ThumbUpAlt /> Ok, I&apos;m picking this one!
+              </span>
+            </Button>
+          }
+        </div>
+      }
+      {!resultSelected &&
+        <>
           <Button
             className='randomizer-showFilterButton'
+            disabled={isRolling}
             onClick={() => setFilter({ ...filter, visible: !filter.visible })}>
             {filter.visible ? 'Hide filter ' : 'Set filter '}
             {filter.visible ? <ExpandLess /> : <ExpandMore />}
@@ -185,6 +191,7 @@ const Randomizer = ({
           />
         </>
       }
+      {selectRestaurantElement()}
     </div>
   )
 }
@@ -196,7 +203,7 @@ const RandomizerButton = ({
   isPicky,
   hasResult,
   rollsRemaining,
-  maxNumberOfRolls,
+  maxNumberOfRolls
 }) => {
   const handleClick = async (event) => {
     event.preventDefault()
@@ -218,11 +225,12 @@ const RandomizerButton = ({
 
   return (
     <Button
+      className={hasResult ? 'flex randomizer-button' : 'randomizer-button'}
       data-testid='randomizer-randomizeButton'
       onClick={handleClick}
       variant={hasResult ? 'secondary' : 'success'}
-      size={!hasResult && 'lg'}
-      disabled={isRolling}>
+      disabled={isRolling}
+      size={hasResult ? '' : 'lg'}>
       {label}
     </Button>
   )
