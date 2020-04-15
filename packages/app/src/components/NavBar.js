@@ -5,13 +5,12 @@ import PropTypes from 'prop-types'
 
 import authService from '../services/authentication'
 
-const NavBar = ({ loggedIn }) => {
+const NavBar = ({ loggedIn, changeLoginStatus }) => {
   const history = useHistory()
-  const token = authService.getToken()
-  const isLoggedIn = token !== undefined
 
   const logout = () => {
     authService.logout()
+    changeLoginStatus(false)
     history.push('/')
   }
 
@@ -24,13 +23,13 @@ const NavBar = ({ loggedIn }) => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link as={Link} href='#' data-testid='addForm-link' to='/add'>
-            {isLoggedIn
+            {loggedIn
               ? 'Add a Restaurant'
               : 'Suggest a Restaurant'
             }
           </Nav.Link>
           <Nav.Link as={Link} href='#' data-testid='restaurantList-link' to='/restaurants'>
-            {isLoggedIn
+            {loggedIn
               ? 'Edit Restaurants'
               : 'Suggest Editing Restaurants'
             }
@@ -72,6 +71,7 @@ const NavBar = ({ loggedIn }) => {
 
 NavBar.propTypes = {
   loggedIn: PropTypes.bool,
+  changeLoginStatus: PropTypes.func
 }
 
 export default NavBar

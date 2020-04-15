@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import { Route, Switch, Redirect, useHistory, Link } from 'react-router-dom'
 import Randomizer from './components/Randomizer/Randomizer'
@@ -25,13 +25,14 @@ const App = () => {
   const history = useHistory()
   const feedbackUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfJ5xgfitDjlvHMmcasz2atmjEu1UGwKmWdgWowcpRja0xn_g/viewform'
 
-  useEffect(() => authService.restoreUser(), [])
+  const [token, setToken] = useState()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  // Grab the token from authservice
-  // components also using this independently: AddForm, RestaurantEntry
-  // If caching the token is implemented, fix them too
-  const token = authService.getToken()
-  const isLoggedIn = token !== undefined
+  useEffect(() => {
+    authService.restoreUser()
+    setToken(authService.getToken())
+    setIsLoggedIn(token !== undefined)
+  }, [token])
 
   const adminRoutes =
     <Route path="/admin" render={() =>
@@ -50,7 +51,7 @@ const App = () => {
   return (
     <>
       <header className='main-navbar'>
-        <NavBar loggedIn={isLoggedIn} />
+        <NavBar loggedIn={isLoggedIn} changeLoginStatus={setIsLoggedIn} />
       </header>
       <section className='main-container'>
         <Switch>
@@ -65,7 +66,7 @@ const App = () => {
           <Route exact path="/restaurants" render={() => <RestaurantList />} />
           <Route exact path="/login" render={() => isLoggedIn
             ? <Redirect to={'/admin/suggestions'} />
-            : <LoginForm />} />
+            : <LoginForm changeLoginStatus={setIsLoggedIn} />} />
           {adminRoutes}
 
           <Route path="*" render={() => <Redirect to='/error/404' />} />
