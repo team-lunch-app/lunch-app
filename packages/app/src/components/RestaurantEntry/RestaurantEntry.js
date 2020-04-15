@@ -9,7 +9,7 @@ import PhotoCarousel from '../Photos/PhotoCarousel'
 
 import '../RestaurantEntry/RestaurantEntry.css'
 
-const RestaurantEntry = ({ restaurant }) => {
+const RestaurantEntry = ({ restaurant, hidden }) => {
 
   const [showMap, setShowMap] = useState(false)
 
@@ -28,7 +28,7 @@ const RestaurantEntry = ({ restaurant }) => {
   const placeId = restaurant.placeId
 
   return (
-    <div className='randomizer-resultContent'>
+    <div className='randomizer-resultContent' style={{display: (hidden ? 'none' : 'flex')}}>
       <h1 data-testid='randomizer-resultLabel'>{restaurant.name}</h1>
       <p>
         {restaurant.url &&
@@ -80,7 +80,8 @@ const RestaurantEntry = ({ restaurant }) => {
 
 RestaurantEntry.propTypes = {
   restaurant: PropTypes.object.isRequired,
-  showMap: PropTypes.bool
+  showMap: PropTypes.bool,
+  hidden: PropTypes.bool
 }
 
 export default RestaurantEntry
