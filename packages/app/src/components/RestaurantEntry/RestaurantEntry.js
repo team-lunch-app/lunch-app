@@ -63,10 +63,6 @@ const RestaurantEntry = ({ restaurant }) => {
         placement='right'
         overlay={
           <Tooltip >
-            {/*restaurant.name + ' has won the lottery ' + restaurant.resultAmount + ' times. '
-              + 'It was selected ' + restaurant.selectedAmount + ' times. '
-        + '(Re-rolled ' + restaurant.notSelectedAmount + ' times)'*/}
-
             {'* ' + restaurant.name + ' has been selected ' + restaurant.selectedAmount + ' times. '
               + 'It has been re-rolled ' + restaurant.notSelectedAmount + ' times. '
               + '(Total number of times as the lottery result: ' + restaurant.resultAmount + ')'
