@@ -21,10 +21,10 @@ statisticsRouter.get('/topAccepted/', async (request, response, next, n = 5) => 
     const restaurants = await Restaurant
       .find({}).populate('categories')
     restaurants.sort((a, b) => {
-      if (a.notSelectedAmount === b.notSelectedAmount) {
+      if (a.selectedAmount/a.resultAmount === b.selectedAmount/b.resultAmount) {
         return b.resultAmount - a.resultAmount
       } else {
-        return a.notSelectedAmount / a.resultAmount - b.notSelectedAmount / b.resultAmount
+        return b.selectedAmount / b.resultAmount - a.selectedAmount / a.resultAmount
 
       }
     })

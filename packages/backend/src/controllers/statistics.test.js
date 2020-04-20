@@ -26,6 +26,7 @@ const restaurantData = [
     },
     distance: 300,
     notSelectedAmount: 80,
+    selectedAmount: 10,
     resultAmount: 99
   },
   {
@@ -38,6 +39,7 @@ const restaurantData = [
     },
     distance: 500,
     notSelectedAmount: 1,
+    selectedAmount: 80,
     resultAmount: 102
   },
   {
@@ -50,6 +52,7 @@ const restaurantData = [
     },
     distance: 700,
     notSelectedAmount: 50,
+    selectedAmount: 50,
     resultAmount: 101
   },
   {
@@ -62,7 +65,21 @@ const restaurantData = [
     },
     distance: 707,
     notSelectedAmount: 80,
+    selectedAmount: 12,
     resultAmount: 90
+  },
+  {
+    name: 'Steissin hese',
+    url: 'https://www.steissin-hese.fi',
+    address: 'Jokukatu 4',
+    coordinates: {
+      latitude: 26,
+      longitude: 62
+    },
+    distance: 70,
+    notSelectedAmount: 0,
+    selectedAmount: 0,
+    resultAmount: 0
   },
 ]
 
@@ -102,8 +119,9 @@ test('get request to /api/statistics/topAccepted returns the right restaurants i
   const contents = response.body
   expect(contents[0].name).toBe(restaurants[1].name)
   expect(contents[1].name).toBe(restaurants[2].name)
-  expect(contents[2].name).toBe(restaurants[0].name)
-  expect(contents[3].name).toBe(restaurants[3].name)
+  expect(contents[2].name).toBe(restaurants[3].name)
+  expect(contents[3].name).toBe(restaurants[0].name)
+  expect(contents[4].name).toBe(restaurants[4].name)
 })
 
 test('get request to /api/statistics/topResult returns the right restaurants in the right order', async () => {
@@ -113,6 +131,7 @@ test('get request to /api/statistics/topResult returns the right restaurants in 
   expect(contents[1].name).toBe(restaurants[2].name)
   expect(contents[2].name).toBe(restaurants[0].name)
   expect(contents[3].name).toBe(restaurants[3].name)
+  expect(contents[4].name).toBe(restaurants[4].name)
 })
 
 test('get request to /api/statistics/biggestCategories returns the right categories in the right order', async () => {
@@ -143,7 +162,7 @@ test('get request to /api/statistics returns statistics', async () => {
 test('put request to /api/lotteryAmount/ increases lotteryAmount', async () => {
   const expectedAmount = statistics[0].lotteryAmount + 1
   await server
-    .put(`/api/statistics/lotteryAmount/`)
+    .put('/api/statistics/lotteryAmount/')
     .expect(200)
   const response = await server.get('/api/statistics')
   expect(response.body.lotteryAmount).toBe(expectedAmount)
@@ -152,7 +171,7 @@ test('put request to /api/lotteryAmount/ increases lotteryAmount', async () => {
 test('put request to /api/selectedAmount/ increases selectedAmount', async () => {
   const expectedAmount = statistics[0].selectedAmount + 1
   await server
-    .put(`/api/statistics/selectedAmount/`)
+    .put('/api/statistics/selectedAmount/')
     .expect(200)
   const response = await server.get('/api/statistics')
   expect(response.body.selectedAmount).toBe(expectedAmount)
@@ -161,7 +180,7 @@ test('put request to /api/selectedAmount/ increases selectedAmount', async () =>
 test('put request to /api/notSelectedAmount/ increases notSelectedAmount', async () => {
   const expectedAmount = statistics[0].notSelectedAmount + 1
   await server
-    .put(`/api/statistics/notSelectedAmount/`)
+    .put('/api/statistics/notSelectedAmount/')
     .expect(200)
   const response = await server.get('/api/statistics')
   expect(response.body.notSelectedAmount).toBe(expectedAmount)
@@ -170,7 +189,7 @@ test('put request to /api/notSelectedAmount/ increases notSelectedAmount', async
 test('put request to /api/notDecidedAmount/ increases notDecidedAmount', async () => {
   const expectedAmount = statistics[0].notDecidedAmount + 1
   await server
-    .put(`/api/statistics/notDecidedAmount/`)
+    .put('/api/statistics/notDecidedAmount/')
     .expect(200)
   const response = await server.get('/api/statistics')
   expect(response.body.notDecidedAmount).toBe(expectedAmount)
