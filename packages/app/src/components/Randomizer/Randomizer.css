@@ -20,7 +20,7 @@
     border:none;
 }
 
-.randomizer-showFilterButton:active, .randomizer-showFilterButton:focus, .randomizer-showFilterButton:hover {
+.randomizer-showFilterButton:focus, .randomizer-showFilterButton:hover {
     background-color: rgba(0, 0, 0, 0.5);
     color:white;
 }

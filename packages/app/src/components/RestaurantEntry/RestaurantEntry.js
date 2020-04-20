@@ -35,6 +35,7 @@ const RestaurantEntry = ({ restaurant, hidden }) => {
         <Button
           data-testid='randomizer-restaurantUrl'
           className='link-button'
+          variant='info'
           onClick={(event) => confirmLeave(event)}
           href={processUrl(restaurant.url)}
           target='_blank'
@@ -43,7 +44,7 @@ const RestaurantEntry = ({ restaurant, hidden }) => {
           <Link />
         </Button>
         }
-        <Button data-testid='restaurantentry-showmap-button' onClick={() => setShowMap(!showMap)} className='link-button'>
+        <Button data-testid='restaurantentry-showmap-button' variant='info' onClick={() => setShowMap(!showMap)} className='link-button'>
           {showMap ? 'Hide Directions ' : 'Get Directions '}
           <MapOutlined fontSize='small' />
         </Button>
