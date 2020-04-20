@@ -6,39 +6,40 @@ import Chart from 'chart.js'
 const roundToTwoDecimals = (x) => Math.round((x + Number.EPSILON) * 100) / 100
 
 /**
- * Renders a doghnut chart from the data provided.
+ * Renders a bar chart from the data provided. For details on what's going on, see the doghnut component.
  */
-const Doughnut = ({ title, data }) => {
-  /** 
-   * Reference to the chart canvas container. This is not directly related to React state (thus not useState),
-   * as we only need this in order to tell the Chart.js where it should render. Chart.js handles the rendering
-   * here, not React.
-   */
+const Bar = ({ title, data }) => {
   const chartRef = useRef()
 
-  // Once the component is mounted, create the chart
   useEffect(() => {
-    // Grab 2d canvas for Chart.js
     const context = chartRef.current.getContext('2d')
 
-    // Read labels/values from input data
     const labels = data.map((entry) => entry.label)
     const nTotal = data.map((entry) => entry.num).reduce((a, b) => a + b, 0)
     const values = data.map((entry) => (nTotal > 0 ? roundToTwoDecimals(entry.num / nTotal) : 0.5) * 100)
 
-    // Create the chart
+    
+    /**
+     * Create strings with format `rgb(r, g, b)` where components are in range [0, 255]
+     */
+    const random255 = () => Math.round(Math.random() * 255)
+    const getRandomColor = () => `rgb(${random255()}, ${random255()}, ${random255()}, 0.85)`
+
     new Chart(context, {
-      type: 'doughnut',
+      type: 'bar',
       data: {
         labels: labels,
         datasets: [
           {
             backgroundColor: [
-              'rgba(128, 240, 0, 0.85)',
-              'rgba(220, 51, 0, 0.85)',
+              getRandomColor(),
+              getRandomColor(),
+              getRandomColor(),
+              getRandomColor(),
+              getRandomColor(),
             ],
             data: values,
-            borderWidth: 2
+            borderWidth: 4
           }
         ]
       },
@@ -49,26 +50,37 @@ const Doughnut = ({ title, data }) => {
           fontColor: 'white',
           fontSize: '24'
         },
-        legend: {
-          display: true,
-          rtl: true,
-          position: 'bottom',
-          labels: {
-            fontColor: 'white'
-          }
+        scales: {
+          yAxes: [{
+            ticks: {
+              fontColor: 'white',
+              fontSize: 18,
+              stepSize: 10,
+              beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            ticks: {
+              fontColor: 'white',
+              fontSize: 14,
+              stepSize: 1,
+              beginAtZero: true
+            }
+          }]
         },
+        legend: { display: false, },
       }
     })
   }, [data, title])
 
   return (
     <div>
-      <canvas width={400} height={400} ref={chartRef} />
+      <canvas width={600} height={400} ref={chartRef} />
     </div>
   )
 }
 
-Doughnut.propTypes = {
+Bar.propTypes = {
   title: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string.isRequired,
@@ -76,4 +88,4 @@ Doughnut.propTypes = {
   })).isRequired,
 }
 
-export default Doughnut
+export default Bar
