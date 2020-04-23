@@ -28,6 +28,8 @@ const Statistics = () => {
     return <div>Loading...</div>
   }
 
+  console.log('stats:', stats)
+
   return (
     <div className={styles.view}>
       <h1>Let&apos;s run the numbers!</h1>
@@ -110,11 +112,11 @@ const TopResultBars = ({ data }) => {
 }
 
 Charts.propTypes = {
-  stats: PropTypes.shape({
+  stats: PropTypes.arrayOf(PropTypes.shape({
     notDecidedAmount: PropTypes.number.isRequired,
     selectedAmount: PropTypes.number.isRequired,
     notSelectedAmount: PropTypes.number.isRequired,
-  }).isRequired,
+  })).isRequired,
   topAccepted: PropTypes.array.isRequired,
   topResult: PropTypes.array.isRequired, 
 }
