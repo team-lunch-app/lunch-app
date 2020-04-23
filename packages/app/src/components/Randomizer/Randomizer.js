@@ -217,7 +217,6 @@ const RandomizerButton = ({
     try {
       await onClick()
     } catch (errorResponse) {
-      console.log(errorResponse)
       errorResponse.response
         ? setError(errorResponse.response.data.error)
         : setError(errorResponse)
