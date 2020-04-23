@@ -94,6 +94,7 @@ const Randomizer = ({
     if (restaurants.length === 1) {
       shouldLoad.current = true
       setRestaurant(selectedRestaurant.current)
+      filter.visible && setFilter({ ...filter, visible: false })
       soundService.playFanfare()
       await restaurantService.increaseResultAmount(selectedRestaurant.current.id)
     } else {
