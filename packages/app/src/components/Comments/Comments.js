@@ -6,7 +6,6 @@ import { FormatQuote } from '@material-ui/icons'
 
 const Comments = ({ placeId }) => {
   const [restaurantReviews, setReviews] = useState()
-  const [showReviews, setShowReviews] = useState()
 
   useEffect(() => {
     const getReviews = async () => {
@@ -14,27 +13,24 @@ const Comments = ({ placeId }) => {
         try {
           const reviews = await commentService.getCommentsForRestaurant(placeId)
           setReviews(reviews)
-          setShowReviews(reviews.rating !== undefined)
         } catch (error) {
-          setShowReviews(false)
+          console.log(error)
         }
-      } else {
-        setShowReviews(false)
       }
-    } 
+    }
     getReviews()
   }, [placeId])
 
   return (
     <div data-testid='review-component' className='review-component'>
-      {showReviews &&
-      <>
-        <h5 className='review-rating'>Average rating on Google: {restaurantReviews.rating}</h5>
-        {restaurantReviews.reviews.map(rev => 
-          <p key={rev.text}><FormatQuote />{rev.text} &mdash;&nbsp;{rev.author_name}</p>)}
-      </>
+      {(restaurantReviews && restaurantReviews.reviews && restaurantReviews.rating)
+        ? <>
+          <h5 className='review-rating'>Average rating on Google: {restaurantReviews.rating}</h5>
+          {restaurantReviews.reviews.map(rev =>
+            <p key={rev.text}><FormatQuote />{rev.text} &mdash;&nbsp;{rev.author_name}</p>)}
+        </>
+        : <h5 data-testid='no-reviews'>No reviews yet...</h5>
       }
-      {!showReviews && <h5 data-testid='no-reviews'>No reviews yet...</h5>}
     </div>
   )
 }

@@ -20,7 +20,6 @@ const CategoryDropdown = ({ text, selected, onAdd, onRemove }) => {
       show={dropdownOpen}
       onSelect={(eventKey) => {
         const clicked = categories.find(c => `${c.id}` === `${eventKey}`)
-
         if (isActive(clicked)) {
           onRemove(clicked.id)
         } else {

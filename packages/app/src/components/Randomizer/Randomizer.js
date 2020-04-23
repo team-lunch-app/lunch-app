@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { Button } from 'react-bootstrap'
 import { ExpandMore, ExpandLess, ThumbUpAlt, ThumbDownAlt } from '@material-ui/icons'
@@ -26,8 +26,10 @@ const Randomizer = ({
   maxTimeBetweenRolls = 1000,
   resultWaitTime = 1250
 }) => {
-  let resId = null
   const [restaurant, setRestaurant] = useState()
+  const selectedRestaurant = useRef()
+  const rollsRemaining = useRef()
+  const shouldLoad = useRef()
   const [iteration, setIteration] = useState(maxNumberOfRolls)
   const [isRolling, setRolling] = useState(false)
   const [resultSelected, setResultSelected] = useState(false)
@@ -62,7 +64,6 @@ const Randomizer = ({
     }
   }
 
-
   const calculateTimeForNthRoll = (n) => {
     const t = n / maxNumberOfRolls
     const time = easingFunc(maxTimeBetweenRolls, minTimeBetweenRolls, t)
@@ -73,47 +74,55 @@ const Randomizer = ({
   }
 
   const handleApproveResult = async () => {
-    if (restaurant && restaurant.id) {
-      await restaurantService.increaseSelectedAmount(restaurant.id)
-      setRestaurant({ ...restaurant, selectedAmount: restaurant.selectedAmount + 1 })
-      setResultSelected(true)
+    if (selectedRestaurant.current && selectedRestaurant.current.id) {
+      selectedRestaurant.current = ({ ...selectedRestaurant.current, selectedAmount: selectedRestaurant.current.selectedAmount + 1 })
+      restaurantService.increaseSelectedAmount(selectedRestaurant.current.id)
     }
+    setResultSelected(true)
   }
 
   const startRolling = async () => {
-    filter.visible && setFilter({ ...filter, visible: false })
-    if (restaurant && restaurant.id) {
-      await restaurantService.increaseNotSelectedAmount(restaurant.id)
+    shouldLoad.current = false
+    rollsRemaining.current = maxNumberOfRolls
+    if (selectedRestaurant.current && selectedRestaurant.current.id) {
+      await restaurantService.increaseNotSelectedAmount(selectedRestaurant.current.id)
     }
-    const restaurants = await restaurantService.getAllMatches(filter.type, filter.categories, filter.distance)
+    let restaurants = await restaurantService.getAllMatches(filter.type, filter.categories, filter.distance)
+    restaurants = shuffle(restaurants)
+    selectedRestaurant.current = restaurants[maxNumberOfRolls % restaurants.length]
 
     if (restaurants.length === 1) {
-      setRestaurant(restaurants[0])
-      resId = restaurants[0].id
+      shouldLoad.current = true
+      setRestaurant(selectedRestaurant.current)
+      filter.visible && setFilter({ ...filter, visible: false })
       soundService.playFanfare()
-      await restaurantService.increaseResultAmount(resId)
+      await restaurantService.increaseResultAmount(selectedRestaurant.current.id)
     } else {
       setRolling(true)
-      rollAfterTimeout(0, maxTimeBetweenRolls, shuffle(restaurants))
+      filter.visible && setFilter({ ...filter, visible: false })
+      rollAfterTimeout(0, maxTimeBetweenRolls, restaurants)
     }
   }
 
+
   const rollNext = async (roll, restaurants) => {
     setRestaurant(restaurants[roll % restaurants.length])
-    resId = restaurants[roll % restaurants.length].id
-    const rollsRemaining = maxNumberOfRolls - roll
+    rollsRemaining.current = maxNumberOfRolls - roll
 
-    const easterEggDidTrigger = nope.updateAndTryTrigger(restaurants, rollsRemaining)
+    const easterEggDidTrigger = nope.updateAndTryTrigger(restaurants, rollsRemaining.current)
     if (easterEggDidTrigger) {
       return
     }
 
     setIteration(roll)
-    if (rollsRemaining === 0) {
+    if (rollsRemaining.current < 5) {
+      shouldLoad.current = true
+    }
+    if (rollsRemaining.current === 0) {
       soundService.playFanfare()
       setTimeoutHandle(undefined)
       setRolling(false)
-      await restaurantService.increaseResultAmount(resId)
+      await restaurantService.increaseResultAmount(selectedRestaurant.current.id)
     } else {
       const timeout = calculateTimeForNthRoll(roll)
       rollAfterTimeout(roll + 1, timeout, restaurants)
@@ -126,25 +135,24 @@ const Randomizer = ({
     }
 
     const hasRestaurant = !!restaurant
-    return hasRestaurant
-      ? isRolling
-        ? <h1 data-testid='roll-label' className="roll-label">{restaurant.name}</h1>
-        : <>
-          <Confetti />
-          {resultSelected && <h1>No backing down now! You&apos;re having lunch at:</h1>}
-          <RestaurantEntry restaurant={restaurant} />
-        </>
+    return hasRestaurant ?
+      <>
+        {isRolling && <h1 data-testid='roll-label' className="roll-label">{restaurant.name}</h1>}
+        {!isRolling && <Confetti />}
+        {resultSelected && <h1>No backing down now! You&apos;re having lunch at:</h1>}
+        {shouldLoad.current && <RestaurantEntry hidden={isRolling} restaurant={selectedRestaurant.current} />}
+      </>
       : <h1 data-testid='randomizer-resultLabel' className='roll-label'>Hungry? Press the button!</h1>
   }
 
-  const rollsRemaining = maxNumberOfRolls - iteration
+  rollsRemaining.current = maxNumberOfRolls - iteration
   const isPicky = filter.categories.length > 0
   return (
     <div data-testid='randomizer' className='randomizer'>
       {nope.active && <h1>NOPE</h1>}
 
       <div data-testid='foodmodel-container' className='foodmodel' style={{ display: `${(restaurant && !isRolling) ? 'none' : 'inline'}` }}>
-        <FoodModel rolling={isRolling} rollsRemaining={rollsRemaining} />
+        <FoodModel rolling={isRolling} rollsRemaining={rollsRemaining.current} />
       </div>
       {!resultSelected &&
         <div className="randomizer-button-group">
@@ -155,7 +163,7 @@ const Randomizer = ({
             isRolling={isRolling}
             hasResult={restaurant !== undefined && !isRolling}
             maxNumberOfRolls={maxNumberOfRolls}
-            rollsRemaining={rollsRemaining}
+            rollsRemaining={rollsRemaining.current}
           />
           {(!isRolling && !!restaurant) &&
             <Button
@@ -210,7 +218,10 @@ const RandomizerButton = ({
     try {
       await onClick()
     } catch (errorResponse) {
-      setError(errorResponse.response.data.error)
+      errorResponse.response
+        ? setError(errorResponse.response.data.error)
+        : setError(errorResponse)
+
       soundService.playTrombone()
     }
   }
