@@ -125,6 +125,15 @@ button {
   border-color: white;
 }
 
+.btn-info:active {
+  background-color: rgb(32, 166, 155) !important;
+  box-shadow: rgba(32, 166, 155, 0.3) !important;
+}
+
+.btn-info:focus {
+  box-shadow: none;
+}
+
 /* CARDS */
 
 .card {

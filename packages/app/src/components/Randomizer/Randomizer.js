@@ -183,6 +183,7 @@ const Randomizer = ({
           <Button
             className='randomizer-showFilterButton'
             disabled={isRolling}
+            variant='info'
             onClick={() => setFilter({ ...filter, visible: !filter.visible })}>
             {filter.visible ? 'Hide filter ' : 'Set filter '}
             {filter.visible ? <ExpandLess /> : <ExpandMore />}

@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Carousel } from 'react-bootstrap'
+import { Carousel, Alert } from 'react-bootstrap'
 import photoService from '../../services/photo'
 
 import './PhotoCarousel.css'
 
 const PhotoCarousel = ({ placeId }) => {
   const [restaurantPhotos, setRestaurantPhotos] = useState()
+  const [error, setError] = useState()
 
   useEffect(() => {
     const getPhotos = async () => {
-      if (placeId !== undefined) {
+      try {
         const photos = await photoService.getAllPhotosForRestaurant(placeId)
         setRestaurantPhotos(photos)
+      } catch (error) {
+        switch (error.response.status) {
+          case 503:
+            setError('Fetching photos failed. Contact your admin about a possibly reached Google API query limit.')
+            break
+          case 404:
+            setError(error.response.data.error)
+            break 
+          default:
+            break
+        }
       }
     }
     getPhotos()
@@ -20,6 +32,10 @@ const PhotoCarousel = ({ placeId }) => {
 
   return (
     <>
+      {error && 
+        <Alert data-testid='error-msg-generic' variant='danger' className='photos-alert'>
+          {error}
+        </Alert>}
       {restaurantPhotos ?
         <Carousel
           indicators={false}
