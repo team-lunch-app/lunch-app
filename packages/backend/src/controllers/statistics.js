@@ -3,16 +3,21 @@ const Statistics = require('../models/statistics')
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
 
-// getAll
+const findOrCreateStatistics = async () => {
+  const statistics = await Statistics.findOne({})
+  if (!statistics) {
+    const statistics = new Statistics({})
+
+    const saved = await statistics.save()
+    return saved
+  }
+  return statistics
+}
+
+// find or create and get
 statisticsRouter.get('/', async (request, response, next) => {
-  try {
-    const statistics = await Statistics
-      .find({})
-    return response.json(statistics.map(rest => rest.toJSON()))
-  }
-  catch (error) {
-    next(error)
-  }
+  const statistics = await findOrCreateStatistics()
+  return response.json(statistics.toJSON())
 })
 
 // get top n accepted
@@ -21,12 +26,14 @@ statisticsRouter.get('/topAccepted/', async (request, response, next, n = 5) => 
     const restaurants = await Restaurant
       .find({}).populate('categories')
     restaurants.sort((a, b) => {
-      if (a.notSelectedAmount === b.notSelectedAmount) {
-        return b.resultAmount - a.resultAmount
-      } else {
-        return a.notSelectedAmount / a.resultAmount - b.notSelectedAmount / b.resultAmount
+      const acceptRatioA = a.resultAmount !== 0
+        ? a.selectedAmount / a.resultAmount
+        : 0
+      const acceptRatioB = b.resultAmount !== 0
+        ? b.selectedAmount / b.resultAmount
+        : 0
 
-      }
+      return acceptRatioB - acceptRatioA
     })
     topRestaurants = restaurants.slice(0, n)
     response.json(topRestaurants.map(rest => rest.toJSON()))
@@ -88,53 +95,5 @@ statisticsRouter.get('/topCategories', async (request, response, next, n = 5) =>
   }
 })
 
-// increase lotteryAmount
-statisticsRouter.put('/lotteryAmount/:id', async (request, response, next) => {
-  try {
-    const statistics = await Statistics.findById(request.params.id)
-    statistics.lotteryAmount = statistics.lotteryAmount + 1
-    await Statistics.findByIdAndUpdate(statistics.id, statistics)
-    return response.status(200).end()
-  } catch (error) {
-    next(error)
-  }
-})
-
-// increase notSelectedAmount
-statisticsRouter.put('/notSelectedAmount/:id', async (request, response, next) => {
-  try {
-    const statistics = await Statistics.findById(request.params.id)
-    statistics.notSelectedAmount = statistics.notSelectedAmount + 1
-    await Statistics.findByIdAndUpdate(statistics.id, statistics)
-    return response.status(200).end()
-  } catch (error) {
-    next(error)
-  }
-})
-
-// increase selectedAmount
-statisticsRouter.put('/selectedAmount/:id', async (request, response, next) => {
-  try {
-    const statistics = await Statistics.findById(request.params.id)
-    statistics.selectedAmount = statistics.selectedAmount + 1
-    await Statistics.findByIdAndUpdate(statistics.id, statistics)
-    return response.status(200).end()
-  } catch (error) {
-    next(error)
-  }
-})
-
-// increase notDecidedAmount
-statisticsRouter.put('/notDecidedAmount/:id', async (request, response, next) => {
-  try {
-    const statistics = await Statistics.findById(request.params.id)
-    statistics.notDecidedAmount = statistics.notDecidedAmount + 1
-    await Statistics.findByIdAndUpdate(statistics.id, statistics)
-    return response.status(200).end()
-  } catch (error) {
-    next(error)
-  }
-})
-
-module.exports = statisticsRouter
+module.exports = { findOrCreateStatistics, statisticsRouter }
 

@@ -1,5 +1,3 @@
-const features = require('../../../util/features')
-
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
@@ -44,7 +42,6 @@ const restaurantSchema = new mongoose.Schema({
   ],
   placeId: {
     type: String,
-    required: features.googleApi,
   },
   selectedAmount: {
     type: Number,

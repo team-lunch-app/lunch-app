@@ -1,0 +1,32 @@
+.view {
+  padding-left: 3em;
+  padding-right: 3em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+  margin: 2em;
+}
+
+.view > h1 {
+  text-align: center;
+}
+
+.container {
+  margin-bottom: 1em;
+}
+
+.statistics {
+  padding-bottom: 0.5em;
+  margin-bottom: 1.5em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.statistics > p {
+  max-width: 60vw;
+  border-radius: 1em;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 1em;
+  line-height: 1.1em;
+}

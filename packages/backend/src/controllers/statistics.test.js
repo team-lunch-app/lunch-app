@@ -26,6 +26,7 @@ const restaurantData = [
     },
     distance: 300,
     notSelectedAmount: 80,
+    selectedAmount: 10,
     resultAmount: 99
   },
   {
@@ -38,6 +39,7 @@ const restaurantData = [
     },
     distance: 500,
     notSelectedAmount: 1,
+    selectedAmount: 80,
     resultAmount: 102
   },
   {
@@ -50,6 +52,7 @@ const restaurantData = [
     },
     distance: 700,
     notSelectedAmount: 50,
+    selectedAmount: 50,
     resultAmount: 101
   },
   {
@@ -62,7 +65,21 @@ const restaurantData = [
     },
     distance: 707,
     notSelectedAmount: 80,
+    selectedAmount: 12,
     resultAmount: 90
+  },
+  {
+    name: 'Steissin hese',
+    url: 'https://www.steissin-hese.fi',
+    address: 'Jokukatu 4',
+    coordinates: {
+      latitude: 26,
+      longitude: 62
+    },
+    distance: 70,
+    notSelectedAmount: 0,
+    selectedAmount: 0,
+    resultAmount: 0
   },
 ]
 
@@ -81,14 +98,12 @@ const getAdditionalCategories = (res1, res2, res3, ) => [
   },
 ]
 
+let restaurants, server, statistics
 beforeEach(async () => {
   dbUtil.connect()
   server = supertest(app)
   statistics = await dbUtil.createRowsFrom(Statistics, statisticsData)
   restaurants = await dbUtil.createRowsFrom(Restaurant, restaurantData)
-  id = statistics[0].id
-  user = await dbUtil.createUser('jaskajoku', 'kissa')
-  token = authorization.createToken(user._id, user.username)
 })
 
 afterEach(async () => {
@@ -100,8 +115,9 @@ test('get request to /api/statistics/topAccepted returns the right restaurants i
   const contents = response.body
   expect(contents[0].name).toBe(restaurants[1].name)
   expect(contents[1].name).toBe(restaurants[2].name)
-  expect(contents[2].name).toBe(restaurants[0].name)
-  expect(contents[3].name).toBe(restaurants[3].name)
+  expect(contents[2].name).toBe(restaurants[3].name)
+  expect(contents[3].name).toBe(restaurants[0].name)
+  expect(contents[4].name).toBe(restaurants[4].name)
 })
 
 test('get request to /api/statistics/topResult returns the right restaurants in the right order', async () => {
@@ -111,6 +127,7 @@ test('get request to /api/statistics/topResult returns the right restaurants in 
   expect(contents[1].name).toBe(restaurants[2].name)
   expect(contents[2].name).toBe(restaurants[0].name)
   expect(contents[3].name).toBe(restaurants[3].name)
+  expect(contents[4].name).toBe(restaurants[4].name)
 })
 
 test('get request to /api/statistics/biggestCategories returns the right categories in the right order', async () => {
@@ -135,41 +152,51 @@ test('get request to /api/statistics/topCategories returns the right categories 
 test('get request to /api/statistics returns statistics', async () => {
   const response = await server.get('/api/statistics')
   const contents = response.body
-  expect(contents.length).toBe(1)
+  expect(contents.lotteryAmount).toBe(statistics[0].lotteryAmount)
 })
 
-test('put request to /api/lotteryAmount/:id increases lotteryAmount', async () => {
-  const expectedAmount = statistics[0].lotteryAmount + 1
+test('put request to /api/restaurants/increaseResult/:id increases total', async () => {
+  const expectedAmount = statistics[0].totalAmount + 1
   await server
-    .put(`/api/statistics/lotteryAmount/${id}`)
+    .put(`/api/restaurants/increaseResult/${restaurants[0].id}`)
     .expect(200)
   const response = await server.get('/api/statistics')
-  expect(response.body[0].lotteryAmount).toBe(expectedAmount)
+  expect(response.body.totalAmount).toBe(expectedAmount)
 })
 
-test('put request to /api/selectedAmount/:id increases selectedAmount', async () => {
+test('put request to /api/restaurants/increaseSelected/:id increases selectedAmount', async () => {
   const expectedAmount = statistics[0].selectedAmount + 1
   await server
-    .put(`/api/statistics/selectedAmount/${id}`)
+    .put(`/api/restaurants/increaseSelected/${restaurants[0].id}`)
     .expect(200)
   const response = await server.get('/api/statistics')
-  expect(response.body[0].selectedAmount).toBe(expectedAmount)
+  expect(response.body.selectedAmount).toBe(expectedAmount)
 })
 
-test('put request to /api/notSelectedAmount/:id increases notSelectedAmount', async () => {
+test('put request to /api/restaurants/increaseNotSelected/:id increases notSelectedAmount', async () => {
   const expectedAmount = statistics[0].notSelectedAmount + 1
   await server
-    .put(`/api/statistics/notSelectedAmount/${id}`)
+    .put(`/api/restaurants/increaseNotSelected/${restaurants[0].id}`)
     .expect(200)
   const response = await server.get('/api/statistics')
-  expect(response.body[0].notSelectedAmount).toBe(expectedAmount)
+  expect(response.body.notSelectedAmount).toBe(expectedAmount)
 })
 
-test('put request to /api/notDecidedAmount/:id increases notDecidedAmount', async () => {
-  const expectedAmount = statistics[0].notDecidedAmount + 1
+test('put request to /api/restaurants/increaseSelected/:id increases decidedAmount', async () => {
+  const expectedAmount = statistics[0].decidedAmount + 1
   await server
-    .put(`/api/statistics/notDecidedAmount/${id}`)
+    .put(`/api/restaurants/increaseSelected/${restaurants[0].id}`)
     .expect(200)
   const response = await server.get('/api/statistics')
-  expect(response.body[0].notDecidedAmount).toBe(expectedAmount)
+  expect(response.body.decidedAmount).toBe(expectedAmount)
 })
+
+test('put request to /api/restaurants/increaseNotSelected/:id increases decidedAmount', async () => {
+  const expectedAmount = statistics[0].decidedAmount + 1
+  await server
+    .put(`/api/restaurants/increaseNotSelected/${restaurants[0].id}`)
+    .expect(200)
+  const response = await server.get('/api/statistics')
+  expect(response.body.decidedAmount).toBe(expectedAmount)
+})
+

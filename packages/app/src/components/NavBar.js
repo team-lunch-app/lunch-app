@@ -1,9 +1,14 @@
 import React from 'react'
 import { Nav, Navbar, Button } from 'react-bootstrap'
+import Equalizer from '@material-ui/icons/Equalizer'
+import Lock from '@material-ui/icons/Lock'
+import LockOpen from '@material-ui/icons/LockOpen'
 import { Link, useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import { appName } from '../config'
+import './NavBar.css'
+
 import authService from '../services/authentication'
 
 const NavBar = ({ loggedIn, changeLoginStatus }) => {
@@ -60,9 +65,14 @@ const NavBar = ({ loggedIn, changeLoginStatus }) => {
           </Nav.Item>
         </Nav>
         <Nav>
+          <Nav.Link as={Link} href='#' data-testid='statistics-link' to='/statistics'>
+            Statistics <Equalizer />
+          </Nav.Link>
+        </Nav>
+        <Nav>
           {loggedIn
-            ? <Button data-testid='logout-button' onClick={logout} variant="danger" className="mr-auto">Logout</Button>
-            : <Button data-testid='admin-button' onClick={() => history.push('/login')} variant='light' size='sm' className='mr-auto'>Admin Login</Button>
+            ? <Button data-testid='logout-button' onClick={logout} variant="danger" className="ml-auto"><Lock /> Logout</Button>
+            : <Button data-testid='admin-button' onClick={() => history.push('/login')} variant='outline-secondary' size='sm' className='ml-auto'><LockOpen /> Admin Login</Button>
           }
         </Nav>
       </Navbar.Collapse>

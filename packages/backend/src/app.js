@@ -8,7 +8,7 @@ const categoriesRouter = require('./controllers/categories')
 const authRouter = require('./controllers/auth')
 const suggestionRouter = require('./controllers/suggestions')
 const placesRouter = require('./controllers/places')
-const statisticsRouter = require('./controllers/statistics')
+const { statisticsRouter } = require('./controllers/statistics')
 
 const config = require('./config')
 
