@@ -17,6 +17,7 @@
     justify-content: flex-start;
     width: 480px;
     max-width:100vw;
+    margin-bottom: 1em;
 }
 @media only screen and (min-width: 600px) {
     .category-filter {
@@ -101,4 +102,12 @@
 .dropdown-menu.show {
     right: 20px !important;
     left: -10px !important;
+}
+
+.dropdown-item {
+    white-space: normal;
+}
+
+.dropdown-item:not(:first-child) {
+    border-top: 1px solid rgba(0,0,0,0.2);
 }

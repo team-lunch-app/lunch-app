@@ -29,6 +29,25 @@
     margin-top: 1em;
     margin-bottom: 0.5em;
 }
+.randomizer-button-group {
+    display: flex;
+    max-width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3vh;
+}
+
+.flex {
+    flex: 1 1 auto
+}
+
+.randomizer-button {
+    margin: 0 0.25em;
+}
+
+.randomizer-button {
+    margin: 0 0.25em;
+}
 
 .roll-label {
     position: fixed;
