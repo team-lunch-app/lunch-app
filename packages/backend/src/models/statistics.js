@@ -1,10 +1,13 @@
-const features = require('../../../util/features')
-
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
 const statisticsSchema = new mongoose.Schema({
-  lotteryAmount: {
+  decidedAmount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  totalAmount: {
     type: Number,
     required: true,
     default: 0
@@ -19,11 +22,6 @@ const statisticsSchema = new mongoose.Schema({
     required: true,
     default: 0
   },
-  notDecidedAmount: {
-    type: Number,
-    required: true,
-    default: 0
-  }
 })
 
 statisticsSchema.set('toJSON', {

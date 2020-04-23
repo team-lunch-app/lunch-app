@@ -6,6 +6,10 @@
   margin: 2em;
 }
 
+.view > h1 {
+  text-align: center;
+}
+
 .container {
   margin-bottom: 1em;
 }

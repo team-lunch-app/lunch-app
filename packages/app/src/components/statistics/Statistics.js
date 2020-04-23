@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import Doughnut from './Doughnut'
 import Bar from './Bar'
 
-import { shuffle } from '../../util/shuffle'
-
 import statsService from '../../services/statistics'
 
 import styles from './Statistics.module.css'
@@ -28,8 +26,6 @@ const Statistics = () => {
     return <div>Loading...</div>
   }
 
-  console.log('stats:', stats)
-
   return (
     <div className={styles.view}>
       <h1>Let&apos;s run the numbers!</h1>
@@ -44,10 +40,10 @@ const Charts = ({ stats, topAccepted, topResult }) => {
       <TopAcceptedBars data={topAccepted} />
       <TopResultBars data={topResult} />
       <AcceptanceDoughnuts
-        nLazy={stats.notDecidedAmount || 60}
-        nResponsible={stats.selectedAmount || 40}
-        nAccept={stats.selectedAmount || 80}
-        nReRoll={stats.notSelectedAmount || 20} />
+        nLazy={(stats.totalAmount - stats.decidedAmount)}
+        nResponsible={stats.decidedAmount}
+        nAccept={stats.selectedAmount}
+        nReRoll={stats.notSelectedAmount} />
     </div>
   )
 }
@@ -77,10 +73,9 @@ const TopAcceptedBars = ({ data }) => {
   const parsedData = data.map(entry => (
     {
       label: entry.name,
-      num: entry.selectedAmount,
+      num: entry.selectedAmount / entry.resultAmount,
     }
   ))
-  shuffle(parsedData)
 
   return (
     <div className={styles.statistics}>
@@ -99,7 +94,6 @@ const TopResultBars = ({ data }) => {
       num: entry.resultAmount,
     }
   ))
-  shuffle(parsedData)
 
   return (
     <div className={styles.statistics}>
@@ -112,13 +106,14 @@ const TopResultBars = ({ data }) => {
 }
 
 Charts.propTypes = {
-  stats: PropTypes.arrayOf(PropTypes.shape({
-    notDecidedAmount: PropTypes.number.isRequired,
+  stats: PropTypes.shape({
+    decidedAmount: PropTypes.number.isRequired,
+    totalAmount: PropTypes.number.isRequired,
     selectedAmount: PropTypes.number.isRequired,
     notSelectedAmount: PropTypes.number.isRequired,
-  })).isRequired,
+  }).isRequired,
   topAccepted: PropTypes.array.isRequired,
-  topResult: PropTypes.array.isRequired, 
+  topResult: PropTypes.array.isRequired,
 }
 
 AcceptanceDoughnuts.propTypes = {

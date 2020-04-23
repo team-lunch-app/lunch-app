@@ -20,5 +20,5 @@ const getTopResult = async () => {
 export default {
   getAll,
   getTopAccepted,
-  getTopResult,
+  getTopResult
 }

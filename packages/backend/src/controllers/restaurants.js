@@ -2,7 +2,10 @@ const restaurantsRouter = require('express').Router()
 const Restaurant = require('../models/restaurant')
 const Category = require('../models/category')
 const Suggestion = require('../models/suggestion')
+const Statistics = require('../models/statistics')
 const authorization = require('../util/authorization')
+
+const { findOrCreateStatistics } = require('./statistics')
 
 const tryCreateRestaurant = async (restaurant) => {
   const created = await new Restaurant(restaurant).save()
@@ -177,6 +180,11 @@ restaurantsRouter.put('/increaseResult/:id', async (request, response, next) => 
     const restaurant = await Restaurant.findById(request.params.id)
     restaurant.resultAmount = restaurant.resultAmount + 1
     await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+
+    const statistics = await findOrCreateStatistics()
+    statistics.totalAmount = statistics.totalAmount + 1
+    await statistics.save()
+
     return response.status(200).end()
   } catch (error) {
     next(error)
@@ -189,6 +197,12 @@ restaurantsRouter.put('/increaseSelected/:id', async (request, response, next) =
     const restaurant = await Restaurant.findById(request.params.id)
     restaurant.selectedAmount = restaurant.selectedAmount + 1
     await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+
+    const statistics = await findOrCreateStatistics()
+    statistics.selectedAmount = statistics.selectedAmount + 1
+    statistics.decidedAmount = statistics.decidedAmount + 1
+    await statistics.save()
+
     return response.status(200).end()
   } catch (error) {
     next(error)
@@ -201,6 +215,12 @@ restaurantsRouter.put('/increaseNotSelected/:id', async (request, response, next
     const restaurant = await Restaurant.findById(request.params.id)
     restaurant.notSelectedAmount = restaurant.notSelectedAmount + 1
     await Restaurant.findByIdAndUpdate(restaurant.id, restaurant)
+
+    const statistics = await findOrCreateStatistics()
+    statistics.notSelectedAmount = statistics.notSelectedAmount + 1
+    statistics.decidedAmount = statistics.decidedAmount + 1
+    await statistics.save()
+
     return response.status(200).end()
   } catch (error) {
     next(error)
