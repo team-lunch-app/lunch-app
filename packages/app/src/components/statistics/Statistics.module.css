@@ -1,9 +1,6 @@
 .view {
-  padding-left: 3em;
-  padding-right: 3em;
-  padding-top: 2em;
-  padding-bottom: 2em;
   margin: 2em;
+  max-width: 100vw;
 }
 
 .view > h1 {
@@ -19,6 +16,8 @@
   margin-bottom: 1.5em;
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
 }
@@ -29,4 +28,5 @@
   background-color: rgba(0, 0, 0, 0.4);
   padding: 1em;
   line-height: 1.1em;
+  margin: 1em 2em;
 }

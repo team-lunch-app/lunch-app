@@ -63,7 +63,7 @@ const Doughnut = ({ title, data }) => {
 
   return (
     <div>
-      <canvas width={400} height={400} ref={chartRef} />
+      <canvas width={400} height={400} ref={chartRef} style={{maxWidth:'100vw'}} />
     </div>
   )
 }
