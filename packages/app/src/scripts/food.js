@@ -58,7 +58,7 @@ export const foodScript = (sketch) => {
 
     sketch.smooth()
     sketch.noStroke()
-    sketch.background(bgColor)
+    sketch.background(0,0,0,0)
 
     /* Ambient lighting based on the background color helps tie the models to the scene */
 
